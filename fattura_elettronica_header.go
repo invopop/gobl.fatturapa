@@ -94,9 +94,9 @@ func newFatturaElettronicaHeader(inv bill.Invoice) (*FatturaElettronicaHeader, e
 				IdPaese:  inv.Supplier.TaxID.Country.String(),
 				IdCodice: inv.Supplier.TaxID.Code.String(),
 			},
-			ProgressivoInvio:    inv.Code,
-			FormatoTrasmissione: FormatoTrasmissione,
-			CodiceDestinatario:  inv.Meta["fatturapa-codice-destinatario"],
+			ProgressivoInvio:    "TODO",
+			FormatoTrasmissione: "TODO",
+			CodiceDestinatario:  "TODO",
 		},
 		CedentePrestatore: CedentePrestatore{
 			DatiAnagrafici: DatiAnagrafici{
