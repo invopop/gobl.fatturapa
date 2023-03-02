@@ -24,7 +24,7 @@ type Document struct {
 	invoice *bill.Invoice  `xml:"-"` // Invoice contained in envelope.
 
 	XMLName     xml.Name `xml:"p:FatturaElettronica"`
-	FpNamespace string   `xml:"xmlns:p,attr`
+	FpNamespace string   `xml:"xmlns:p,attr"`
 
 	FatturaElettronicaHeader *FatturaElettronicaHeader
 	FatturaElettronicaBody   *FatturaElettronicaBody
