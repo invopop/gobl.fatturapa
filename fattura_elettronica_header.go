@@ -20,7 +20,7 @@ type FatturaElettronicaHeader struct {
 
 // Data related to the transmitting subject
 type DatiTrasmissione struct {
-	IdTrasmittente      VATID
+	IdTrasmittente      TaxID
 	ProgressivoInvio    string
 	FormatoTrasmissione string
 	CodiceDestinatario  string
@@ -39,28 +39,19 @@ type CessionarioCommittente struct {
 }
 
 type DatiAnagrafici struct {
-	IdFiscaleIVA VATID `xml:",omitempty"`
-	// CodiceFiscale is the Italian fiscal code, distinct from VATID
+	IdFiscaleIVA *TaxID `xml:",omitempty"`
+	// CodiceFiscale is the Italian fiscal code, distinct from TaxID
 	CodiceFiscale string `xml:",omitempty"`
 	Anagrafica    Anagrafica
 	// RegimeFiscale identifies the tax system to be applied
 	// Has the form RFXX where XX is numeric; required only for the supplier
-	RegimeFiscale string
+	RegimeFiscale string `xml:",omitempty"`
 }
 
 // Anagrafica contains information related to an individual or company
 type Anagrafica struct {
 	// Name of the organization
 	Denominazione string
-}
-
-// VATID is the VAT identification number consisting of a country code and the
-// actual VAT number.
-type VATID struct {
-	// ISO 3166-1 alpha-2 country code
-	IdPaese string
-	// Actual VAT number
-	IdCodice string
 }
 
 // Sede contains the address of the party
@@ -90,7 +81,7 @@ func newFatturaElettronicaHeader(inv bill.Invoice) (*FatturaElettronicaHeader, e
 
 	return &FatturaElettronicaHeader{
 		DatiTrasmissione: DatiTrasmissione{
-			IdTrasmittente: VATID{
+			IdTrasmittente: TaxID{
 				IdPaese:  inv.Supplier.TaxID.Country.String(),
 				IdCodice: inv.Supplier.TaxID.Code.String(),
 			},
@@ -100,7 +91,7 @@ func newFatturaElettronicaHeader(inv bill.Invoice) (*FatturaElettronicaHeader, e
 		},
 		CedentePrestatore: CedentePrestatore{
 			DatiAnagrafici: DatiAnagrafici{
-				IdFiscaleIVA: VATID{
+				IdFiscaleIVA: &TaxID{
 					IdPaese:  inv.Supplier.TaxID.Country.String(),
 					IdCodice: inv.Supplier.TaxID.Code.String(),
 				},
@@ -141,10 +132,10 @@ func newCustomerDataAnagrafici(c *org.Party) (*DatiAnagrafici, error) {
 		},
 	}
 
-	// Apply VATID or fiscal code. At least one of them is required.
-	// FatturaPA only evaluates VATID if both are present
+	// Apply TaxID or fiscal code. At least one of them is required.
+	// FatturaPA only evaluates TaxID if both are present
 	if c.TaxID != nil {
-		da.IdFiscaleIVA = VATID{
+		da.IdFiscaleIVA = &TaxID{
 			IdPaese:  c.TaxID.Country.String(),
 			IdCodice: c.TaxID.Code.String(),
 		}
@@ -156,7 +147,7 @@ func newCustomerDataAnagrafici(c *org.Party) (*DatiAnagrafici, error) {
 		}
 
 		if da.CodiceFiscale == "" {
-			return nil, errors.New("customer has no VATID or fiscal code")
+			return nil, errors.New("customer has no TaxID or fiscal code")
 		}
 	}
 

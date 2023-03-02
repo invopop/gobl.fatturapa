@@ -1,7 +1,7 @@
 # gobl.fatturapa
 GOBL Conversion into FatturaPA in Italy
 
-## Elements Not covered in GOBL
+## Elements Not covered in GOBL (apart f)
 
 ### DatiTrasmissione.ProgressivoInvio
 

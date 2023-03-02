@@ -2,6 +2,7 @@ package fatturapa
 
 import (
 	"strconv"
+	"strings"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
@@ -16,7 +17,7 @@ const (
 type FatturaElettronicaBody struct {
 	DatiGenerali    DatiGenerali
 	DatiBeniServizi DatiBeniServizi
-	DatiPagamento   DatiPagamento
+	DatiPagamento   DatiPagamento `xml:",omitempty"`
 }
 
 type DatiGenerali struct {
@@ -65,7 +66,7 @@ type DatiPagamento struct {
 
 type DettaglioPagamento struct {
 	ModalitaPagamento     string
-	DataScadenzaPagamento string
+	DataScadenzaPagamento string `xml:",omitempty"`
 	ImportoPagamento      string
 }
 
@@ -115,10 +116,19 @@ func extractLines(inv bill.Invoice) []DettaglioLinee {
 	for _, line := range inv.Lines {
 		desc := ""
 		vatRate := ""
+		l := len(line.Notes)
 
-		for _, note := range line.Notes {
+		for i, note := range line.Notes {
 			if note.Key == cbc.NoteKeyGoods {
-				desc += note.Text + "\n"
+				desc += strings.TrimSpace(note.Text)
+
+				if desc[len(desc)-1] != '.' {
+					desc += "."
+				}
+
+				if i < l-1 {
+					desc += " "
+				}
 			}
 		}
 
