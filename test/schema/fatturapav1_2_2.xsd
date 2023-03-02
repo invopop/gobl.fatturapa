@@ -547,7 +547,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="DatiAnagrafici" type="DatiAnagraficiCedenteType"/>
-			<xs:element name="Sede" type="IndirizzoType"/>
+			<xs:element name="Address" type="IndirizzoType"/>
 			<xs:element name="StabileOrganizzazione" type="IndirizzoType" minOccurs="0"/>
 			<xs:element name="IscrizioneREA" type="IscrizioneREAType" minOccurs="0"/>
 			<xs:element name="Contatti" type="ContattiType" minOccurs="0"/>
@@ -724,7 +724,7 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element name="DatiAnagrafici" type="DatiAnagraficiCessionarioType"/>
-			<xs:element name="Sede" type="IndirizzoType"/>
+			<xs:element name="Address" type="IndirizzoType"/>
 			<xs:element name="StabileOrganizzazione" type="IndirizzoType" minOccurs="0"/>
 			<xs:element name="RappresentanteFiscale" type="RappresentanteFiscaleCessionarioType" minOccurs="0"/>
 		</xs:sequence>
