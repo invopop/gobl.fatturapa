@@ -5,8 +5,8 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/common"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -143,23 +143,20 @@ func extractLines(inv bill.Invoice) []DettaglioLinee {
 }
 
 func extractTaxRates(inv bill.Invoice) []DatiRiepilogo {
-	rates := make(map[num.Percentage]num.Amount)
+	var riepiloghi []DatiRiepilogo
+	var vatRates []*tax.RateTotal
 
-	for _, line := range inv.Lines {
-		for _, tax := range line.Taxes {
-			if tax.Category == common.TaxCategoryVAT {
-				rates[tax.Percent] = rates[tax.Percent].Add(line.Sum)
-			}
+	for _, cat := range inv.Totals.Taxes.Categories {
+		if cat.Code == common.TaxCategoryVAT {
+			vatRates = cat.Rates
 		}
 	}
 
-	var riepiloghi []DatiRiepilogo
-
-	for rate, base := range rates {
+	for _, rate := range vatRates {
 		riepiloghi = append(riepiloghi, DatiRiepilogo{
-			AliquotaIVA:       rate.String(),
-			ImponibileImporto: base.String(),
-			Imposta:           rate.Multiply(base).String(),
+			AliquotaIVA:       rate.Percent.String(),
+			ImponibileImporto: rate.Base.String(),
+			Imposta:           rate.Amount.String(),
 			EsigibilitaIVA:    "I", // TODO
 		})
 	}
