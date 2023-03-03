@@ -19,13 +19,13 @@ const (
 	mainBranch = "main"
 )
 
-// ConvertYAML finds all the yaml data files and converts them to complete gobl JSON documents.
-func ConvertYAML() error {
-	return test.ConvertYAML()
+// ConvertFromYAML finds all the yaml data files and converts them to complete gobl JSON documents.
+func ConvertFromYAML() error {
+	return test.ConvertFromYAML()
 }
 
-// ConvertXML takes previously converted GOBL JSON and produces XML files.
-func ConvertXML() error {
+// ConvertToXML takes previously converted GOBL JSON and produces XML files.
+func ConvertToXML() error {
 	return test.ConvertToXML()
 }
 

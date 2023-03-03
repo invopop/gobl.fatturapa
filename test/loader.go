@@ -25,8 +25,8 @@ func LoadGOBL(name string) (*fatturapa.Document, error) {
 	return doc, nil
 }
 
-// ConvertYAML takes the YAML test data and converts into useful json gobl documents.
-func ConvertYAML() error {
+// ConvertFromYAML takes the YAML test data and converts into useful json gobl documents.
+func ConvertFromYAML() error {
 	var files []string
 	err := filepath.Walk(GetDataPath(), func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == ".yaml" {
