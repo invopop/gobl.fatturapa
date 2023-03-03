@@ -28,7 +28,7 @@ type DatiRiepilogo struct {
 	AliquotaIVA       string
 	ImponibileImporto string
 	Imposta           string
-	EsigibilitaIVA    string
+	EsigibilitaIVA    string `xml:",omitempty"`
 }
 
 func newDatiBeniServizi(inv bill.Invoice) DatiBeniServizi {
@@ -95,7 +95,6 @@ func newDatiRiepilogo(inv bill.Invoice) []DatiRiepilogo {
 			AliquotaIVA:       rate.Percent.String(),
 			ImponibileImporto: rate.Base.String(),
 			Imposta:           rate.Amount.String(),
-			EsigibilitaIVA:    "I", // TODO
 		})
 	}
 

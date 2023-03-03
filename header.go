@@ -5,7 +5,8 @@ import (
 )
 
 const (
-	FormatoTrasmissione = "FPA12"
+	FormatoTrasmissione        = "FPA12"
+	InboxKeyCodiceDestinatario = "codice-destinario"
 )
 
 // FatturaElettronicaHeader contains all data related to the parties involved
@@ -43,13 +44,21 @@ func newFatturaElettronicaHeader(inv bill.Invoice) (*FatturaElettronicaHeader, e
 }
 
 func newDatiTrasmissione(inv bill.Invoice) DatiTrasmissione {
+	cd := ""
+
+	for _, inbox := range inv.Customer.Inboxes {
+		if inbox.Key == InboxKeyCodiceDestinatario {
+			cd = inbox.Code
+		}
+	}
+
 	return DatiTrasmissione{
 		IdTrasmittente: TaxID{
 			IdPaese:  inv.Supplier.TaxID.Country.String(),
 			IdCodice: inv.Supplier.TaxID.Code.String(),
 		},
-		ProgressivoInvio:    "TODO",
+		ProgressivoInvio:    inv.Code,
 		FormatoTrasmissione: "TODO",
-		CodiceDestinatario:  "TODO",
+		CodiceDestinatario:  cd,
 	}
 }
