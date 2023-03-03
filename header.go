@@ -8,6 +8,8 @@ const (
 	FormatoTrasmissione = "FPA12"
 )
 
+// FatturaElettronicaHeader contains all data related to the parties involved
+// in the document.
 type FatturaElettronicaHeader struct {
 	DatiTrasmissione       DatiTrasmissione       `xml:",omitempty"`
 	CedentePrestatore      CedentePrestatore      `xml:",omitempty"`

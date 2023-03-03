@@ -9,12 +9,16 @@ const (
 	TipoDocumentoDefault = "TD01"
 )
 
+// FatturaElettronicaBody contains all invoice data apart from the parties
+// involved, which are contained in FatturaElettronicaHeader.
 type FatturaElettronicaBody struct {
 	DatiGenerali    DatiGenerali
 	DatiBeniServizi DatiBeniServizi
 	DatiPagamento   DatiPagamento `xml:",omitempty"`
 }
 
+// DatiGenerali contains general data about the invoice such as retained taxes,
+// invoice number, invoice date, document type, etc.
 type DatiGenerali struct {
 	DatiGeneraliDocumento DatiGeneraliDocumento
 }

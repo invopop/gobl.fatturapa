@@ -27,7 +27,7 @@ type Document struct {
 	FpNamespace string   `xml:"xmlns:p,attr"`
 
 	FatturaElettronicaHeader *FatturaElettronicaHeader
-	FatturaElettronicaBody   *FatturaElettronicaBody
+	FatturaElettronicaBody   []*FatturaElettronicaBody
 
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
 }
@@ -74,7 +74,7 @@ func NewInvoice(env *gobl.Envelope) (*Document, error) {
 		invoice:                  invoice,
 		FpNamespace:              NamespaceFatturaPA,
 		FatturaElettronicaHeader: header,
-		FatturaElettronicaBody:   body,
+		FatturaElettronicaBody:   []*FatturaElettronicaBody{body},
 	}
 
 	return d, nil
