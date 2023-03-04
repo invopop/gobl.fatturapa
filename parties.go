@@ -3,6 +3,7 @@ package fatturapa
 import (
 	"errors"
 
+	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
 )
 
@@ -47,7 +48,9 @@ type Anagrafica struct {
 	CodEORI string `xml:",omitempty"`
 }
 
-func newCedentePrestatore(s *org.Party) (*CedentePrestatore, error) {
+func newCedentePrestatore(inv *bill.Invoice) (*CedentePrestatore, error) {
+	s := inv.Supplier
+
 	address, err := newAddress(s)
 	if err != nil {
 		return nil, err
@@ -60,13 +63,15 @@ func newCedentePrestatore(s *org.Party) (*CedentePrestatore, error) {
 				IdCodice: s.TaxID.Code.String(),
 			},
 			Anagrafica:    newAnagrafica(s),
-			RegimeFiscale: RegimeFiscaleDefault,
+			RegimeFiscale: findCodeRegimeFiscale(inv),
 		},
 		Address: *address,
 	}, nil
 }
 
-func newCessionarioCommittente(c *org.Party) (*CessionarioCommittente, error) {
+func newCessionarioCommittente(inv *bill.Invoice) (*CessionarioCommittente, error) {
+	c := inv.Customer
+
 	address, err := newAddress(c)
 	if err != nil {
 		return nil, err

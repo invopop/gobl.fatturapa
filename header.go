@@ -31,7 +31,7 @@ func newFatturaElettronicaHeader(inv *bill.Invoice) (*FatturaElettronicaHeader, 
 		return nil, err
 	}
 
-	customer, err := newCessionarioCommittente(inv.Customer)
+	customer, err := newCessionarioCommittente(inv)
 	if err != nil {
 		return nil, err
 	}

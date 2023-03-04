@@ -46,7 +46,7 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, erro
 	return &FatturaElettronicaBody{
 		DatiGenerali: DatiGenerali{
 			DatiGeneraliDocumento: DatiGeneraliDocumento{
-				TipoDocumento: TipoDocumentoDefault,
+				TipoDocumento: findCodeTipoDocumento(inv),
 				Divisa:        string(inv.Currency),
 				Data:          inv.IssueDate.String(),
 				Numero:        inv.Code,

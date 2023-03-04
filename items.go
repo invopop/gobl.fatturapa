@@ -20,6 +20,7 @@ type DettaglioLinee struct {
 	PrezzoUnitario string
 	PrezzoTotale   string
 	AliquotaIVA    string
+	Natura         string `xml:",omitempty"`
 }
 
 type DatiRiepilogo struct {
@@ -56,6 +57,7 @@ func newDettaglioLinee(inv *bill.Invoice) []DettaglioLinee {
 			PrezzoUnitario: line.Item.Price.String(),
 			PrezzoTotale:   line.Sum.String(),
 			AliquotaIVA:    vatRate,
+			Natura:         findCodeNatura(line),
 		})
 	}
 
