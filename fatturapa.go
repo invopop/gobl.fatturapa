@@ -58,12 +58,12 @@ func NewInvoice(env *gobl.Envelope) (*Document, error) {
 	// Make sure we're dealing with raw data
 	invoice = invoice.RemoveIncludedTaxes(2)
 
-	header, err := newFatturaElettronicaHeader(*invoice)
+	header, err := newFatturaElettronicaHeader(invoice)
 	if err != nil {
 		return nil, err
 	}
 
-	body, err := newFatturaElettronicaBody(*invoice)
+	body, err := newFatturaElettronicaBody(invoice)
 	if err != nil {
 		return nil, err
 	}

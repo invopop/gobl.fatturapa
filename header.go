@@ -25,8 +25,8 @@ type DatiTrasmissione struct {
 	CodiceDestinatario  string
 }
 
-func newFatturaElettronicaHeader(inv bill.Invoice) (*FatturaElettronicaHeader, error) {
-	supplier, err := newCedentePrestatore(inv.Supplier)
+func newFatturaElettronicaHeader(inv *bill.Invoice) (*FatturaElettronicaHeader, error) {
+	supplier, err := newCedentePrestatore(inv)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func newFatturaElettronicaHeader(inv bill.Invoice) (*FatturaElettronicaHeader, e
 	}, nil
 }
 
-func newDatiTrasmissione(inv bill.Invoice) DatiTrasmissione {
+func newDatiTrasmissione(inv *bill.Invoice) DatiTrasmissione {
 	cd := ""
 
 	for _, inbox := range inv.Customer.Inboxes {

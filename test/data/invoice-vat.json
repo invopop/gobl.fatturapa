@@ -85,16 +85,6 @@
 			{
 				"i": 1,
 				"quantity": "20",
-				"notes": [
-					{
-						"key": "goods",
-						"text": "This is a note"
-					},
-					{
-						"key": "goods",
-						"text": "This is another note"
-					}
-				],
 				"item": {
 					"name": "Development services",
 					"price": "90.00",

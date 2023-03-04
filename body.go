@@ -42,7 +42,7 @@ type DettaglioPagamento struct {
 	ImportoPagamento      string
 }
 
-func newFatturaElettronicaBody(inv bill.Invoice) (*FatturaElettronicaBody, error) {
+func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, error) {
 	return &FatturaElettronicaBody{
 		DatiGenerali: DatiGenerali{
 			DatiGeneraliDocumento: DatiGeneraliDocumento{
@@ -66,7 +66,7 @@ func newFatturaElettronicaBody(inv bill.Invoice) (*FatturaElettronicaBody, error
 	}, nil
 }
 
-func extractInvoiceReasons(inv bill.Invoice) []string {
+func extractInvoiceReasons(inv *bill.Invoice) []string {
 	// find inv.Notes with NoteKey as cbc.NoteKeyReason
 	var reasons []string
 

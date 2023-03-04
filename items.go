@@ -2,10 +2,8 @@ package fatturapa
 
 import (
 	"strconv"
-	"strings"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/tax"
 )
@@ -31,34 +29,18 @@ type DatiRiepilogo struct {
 	EsigibilitaIVA    string `xml:",omitempty"`
 }
 
-func newDatiBeniServizi(inv bill.Invoice) DatiBeniServizi {
+func newDatiBeniServizi(inv *bill.Invoice) DatiBeniServizi {
 	return DatiBeniServizi{
 		DettaglioLinee: newDettaglioLinee(inv),
 		DatiRiepilogo:  newDatiRiepilogo(inv),
 	}
 }
 
-func newDettaglioLinee(inv bill.Invoice) []DettaglioLinee {
+func newDettaglioLinee(inv *bill.Invoice) []DettaglioLinee {
 	var dl []DettaglioLinee
 
 	for _, line := range inv.Lines {
-		desc := ""
 		vatRate := ""
-		l := len(line.Notes)
-
-		for i, note := range line.Notes {
-			if note.Key == cbc.NoteKeyGoods {
-				desc += strings.TrimSpace(note.Text)
-
-				if desc[len(desc)-1] != '.' {
-					desc += "."
-				}
-
-				if i < l-1 {
-					desc += " "
-				}
-			}
-		}
 
 		for _, tax := range line.Taxes {
 			if tax.Category == common.TaxCategoryVAT {
@@ -69,7 +51,7 @@ func newDettaglioLinee(inv bill.Invoice) []DettaglioLinee {
 
 		dl = append(dl, DettaglioLinee{
 			NumeroLinea:    strconv.Itoa(line.Index),
-			Descrizione:    desc,
+			Descrizione:    line.Item.Name,
 			Quantita:       line.Quantity.String(),
 			PrezzoUnitario: line.Item.Price.String(),
 			PrezzoTotale:   line.Sum.String(),
@@ -80,7 +62,7 @@ func newDettaglioLinee(inv bill.Invoice) []DettaglioLinee {
 	return dl
 }
 
-func newDatiRiepilogo(inv bill.Invoice) []DatiRiepilogo {
+func newDatiRiepilogo(inv *bill.Invoice) []DatiRiepilogo {
 	var dr []DatiRiepilogo
 	var vatRates []*tax.RateTotal
 
