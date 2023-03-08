@@ -95,13 +95,13 @@ There are some integration and XML generation tests available in the `/test` pat
 The first will convert YAML source data into GOBL JSON documents:
 
 ```
-mage -v convertYAML
+mage -v convertFromYAML
 ```
 
 The second will generate the FatturaPA XML documents from the GOBL sources, using the digital certificates that are available in the `/test/certificates` path:
 
 ```
-mage -v convertXML
+mage -v convertToXML
 ```
 
 Sample data sources are contained in the `/test/data` directory. YAML and JSON (for tests) documents are stored in the Git repository, but the XML must be generated using the above commands.
