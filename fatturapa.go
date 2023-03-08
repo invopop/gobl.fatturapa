@@ -13,9 +13,17 @@ import (
 	"github.com/invopop/xmldsig"
 )
 
+// <p:FatturaElettronica xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+//   xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
+//   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPA12" xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 http://www.fatturapa.gov.it/export/fatturazione/sdi/fatturapa/v1.2/Schema_del_file_xml_FatturaPA_versione_1.2.xsd">
+
 // Namespace used for FatturaPA. DSig stuff is handled in the signatures.
 const (
-	NamespaceFatturaPA = "https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd"
+	NamespaceFatturaPA = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
+	NamespaceDSig      = "http://www.w3.org/2000/09/xmldsig#"
+	NamespaceXSI       = "http://www.w3.org/2001/XMLSchema-instance"
+	Versione           = "FPA12"
+	SchemaLocation     = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd"
 )
 
 // Document is a pseudo-model for containing the XML document being created.
@@ -23,8 +31,12 @@ type Document struct {
 	env     *gobl.Envelope `xml:"-"` // Envelope to convert.
 	invoice *bill.Invoice  `xml:"-"` // Invoice contained in envelope.
 
-	XMLName     xml.Name `xml:"p:FatturaElettronica"`
-	FpNamespace string   `xml:"xmlns:p,attr"`
+	XMLName        xml.Name `xml:"p:FatturaElettronica"`
+	FPANamespace   string   `xml:"xmlns:p,attr"`
+	DSigNamespace  string   `xml:"xmlns:ds,attr"`
+	XSINamespace   string   `xml:"xmlns:xsi,attr"`
+	Versione       string   `xml:"versione,attr"`
+	SchemaLocation string   `xml:"xsi:schemaLocation,attr"`
 
 	FatturaElettronicaHeader *FatturaElettronicaHeader
 	FatturaElettronicaBody   []*FatturaElettronicaBody
@@ -72,7 +84,11 @@ func NewInvoice(env *gobl.Envelope) (*Document, error) {
 	d := &Document{
 		env:                      env,
 		invoice:                  invoice,
-		FpNamespace:              NamespaceFatturaPA,
+		FPANamespace:             NamespaceFatturaPA,
+		DSigNamespace:            NamespaceDSig,
+		XSINamespace:             NamespaceXSI,
+		Versione:                 Versione,
+		SchemaLocation:           SchemaLocation,
 		FatturaElettronicaHeader: header,
 		FatturaElettronicaBody:   []*FatturaElettronicaBody{body},
 	}
