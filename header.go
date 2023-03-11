@@ -58,7 +58,7 @@ func newDatiTrasmissione(inv *bill.Invoice) DatiTrasmissione {
 			IdCodice: inv.Supplier.TaxID.Code.String(),
 		},
 		ProgressivoInvio:    inv.Code,
-		FormatoTrasmissione: "TODO",
+		FormatoTrasmissione: FormatoTrasmissione, // TODO
 		CodiceDestinatario:  cd,
 	}
 }

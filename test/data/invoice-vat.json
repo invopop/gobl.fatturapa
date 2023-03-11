@@ -12,8 +12,9 @@
 		"series": "SAMPLE",
 		"code": "001",
 		"currency": "EUR",
+		"type": "standard",
 		"tax": {
-			"schemes": [
+			"tags": [
 				"freelance"
 			]
 		},
@@ -78,6 +79,12 @@
 			"emails": [
 				{
 					"addr": "leoni@mario.com"
+				}
+			],
+			"inboxes": [
+				{
+					"key": "codice-destinario",
+					"code": "ABCDEF1"
 				}
 			]
 		},

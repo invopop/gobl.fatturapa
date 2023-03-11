@@ -2,19 +2,19 @@ package fatturapa
 
 import (
 	"github.com/invopop/gobl/bill"
-)
-
-const (
-	regimeFiscaleCodeDefault = "RF01"
-	tipoDocumentoCodeDefault = "TD01"
+	"github.com/invopop/gobl/regimes/it"
 )
 
 func findCodeRegimeFiscale(inv *bill.Invoice) string {
-	return regimeFiscaleCodeDefault
+	ss := inv.ScenarioSummary()
+
+	return ss.Meta[it.KeyFatturaPARegimeFiscale]
 }
 
 func findCodeTipoDocumento(inv *bill.Invoice) string {
-	return tipoDocumentoCodeDefault
+	ss := inv.ScenarioSummary()
+
+	return ss.Meta[it.KeyFatturaPATipoDocumento]
 }
 
 func findCodeNatura(line *bill.Line) string {

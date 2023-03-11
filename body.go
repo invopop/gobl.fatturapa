@@ -5,10 +5,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 )
 
-const (
-	TipoDocumentoDefault = "TD01"
-)
-
 // FatturaElettronicaBody contains all invoice data apart from the parties
 // involved, which are contained in FatturaElettronicaHeader.
 type FatturaElettronicaBody struct {
