@@ -29,6 +29,14 @@ type DatiGeneraliDocumento struct {
 	Data          string
 	Numero        string
 	Causale       []string
+	DatiRitenuta  []DatiRitenuta
+}
+
+type DatiRitenuta struct {
+	TipoRitenuta     string
+	ImportoRitenuta  string
+	AliquotaRitenuta string
+	CausalePagamento string
 }
 
 type DatiPagamento struct {
@@ -51,6 +59,7 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, erro
 				Data:          inv.IssueDate.String(),
 				Numero:        inv.Code,
 				Causale:       extractInvoiceReasons(inv),
+				DatiRitenuta:  extractRetainedTaxes(inv),
 			},
 		},
 		DatiBeniServizi: newDatiBeniServizi(inv),
@@ -77,4 +86,21 @@ func extractInvoiceReasons(inv *bill.Invoice) []string {
 	}
 
 	return reasons
+}
+
+func extractRetainedTaxes(inv *bill.Invoice) []DatiRitenuta {
+	var taxes []DatiRitenuta
+
+	for _, tax := range inv.Totals.Taxes.Categories {
+		if tax.Retained {
+			taxes = append(taxes, DatiRitenuta{
+				TipoRitenuta:     "RT01",
+				ImportoRitenuta:  tax.Amount.String(),
+				AliquotaRitenuta: tax.Rates[0].Percent.String(),
+				CausalePagamento: "TODO",
+			})
+		}
+	}
+
+	return taxes
 }
