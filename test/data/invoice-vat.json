@@ -133,15 +133,31 @@
 						"cat": "VAT",
 						"rate": "zero",
 						"percent": "0.0%",
-						"tag": "not-subject-other"
+						"tags": ["not-subject-other"]
 					}
 				],
 				"total": "100.00"
 			}
 		],
+		"discounts": [
+			{
+				"percent": "50%",
+				"amount": "860.00",
+				"reason": "10th year anniversary discount"
+			}
+		],
+		"charges": [
+			{
+				"percent": "10%",
+				"amount": "172.00",
+				"reason": "10th year anniversary charge"
+			}
+		],
 		"totals": {
 			"sum": "1720.00",
-			"total": "1720.00",
+			"discount": "860.00",
+			"charge": "172.00",
+			"total": "1032.00",
 			"taxes": {
 				"categories": [
 					{
@@ -181,9 +197,9 @@
 				"sum": "32.40"
 			},
 			"tax": "32.40",
-			"total_with_tax": "1752.40",
-			"payable": "1752.40",
-			"due": "1752.40"
+			"total_with_tax": "1064.40",
+			"payable": "1064.40",
+			"due": "1064.40"
 		}
 	},
 	"sigs": [

@@ -5,6 +5,11 @@ import (
 	"github.com/invopop/gobl/cbc"
 )
 
+const (
+	ScontoMaggiorazioneTypeDiscount = "SC" // sconto
+	ScontoMaggiorazioneTypeCharge   = "MG" // maggiorazione
+)
+
 // FatturaElettronicaBody contains all invoice data apart from the parties
 // involved, which are contained in FatturaElettronicaHeader.
 type FatturaElettronicaBody struct {
@@ -20,12 +25,13 @@ type DatiGenerali struct {
 }
 
 type DatiGeneraliDocumento struct {
-	TipoDocumento string
-	Divisa        string
-	Data          string
-	Numero        string
-	Causale       []string
-	DatiRitenuta  []DatiRitenuta
+	TipoDocumento       string
+	Divisa              string
+	Data                string
+	Numero              string
+	Causale             []string
+	DatiRitenuta        []DatiRitenuta
+	ScontoMaggiorazione []ScontoMaggiorazione
 }
 
 type DatiRitenuta struct {
@@ -33,6 +39,12 @@ type DatiRitenuta struct {
 	ImportoRitenuta  string
 	AliquotaRitenuta string
 	CausalePagamento string
+}
+
+type ScontoMaggiorazione struct {
+	Tipo        string
+	Percentuale string
+	Importo     string
 }
 
 type DatiPagamento struct {
@@ -50,12 +62,13 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, erro
 	return &FatturaElettronicaBody{
 		DatiGenerali: DatiGenerali{
 			DatiGeneraliDocumento: DatiGeneraliDocumento{
-				TipoDocumento: findCodeTipoDocumento(inv),
-				Divisa:        string(inv.Currency),
-				Data:          inv.IssueDate.String(),
-				Numero:        inv.Code,
-				Causale:       extractInvoiceReasons(inv),
-				DatiRitenuta:  extractRetainedTaxes(inv),
+				TipoDocumento:       findCodeTipoDocumento(inv),
+				Divisa:              string(inv.Currency),
+				Data:                inv.IssueDate.String(),
+				Numero:              inv.Code,
+				Causale:             extractInvoiceReasons(inv),
+				DatiRitenuta:        extractRetainedTaxes(inv),
+				ScontoMaggiorazione: extractPriceAdjustments(inv),
 			},
 		},
 		DatiBeniServizi: newDatiBeniServizi(inv),
@@ -99,4 +112,26 @@ func extractRetainedTaxes(inv *bill.Invoice) []DatiRitenuta {
 	}
 
 	return taxes
+}
+
+func extractPriceAdjustments(inv *bill.Invoice) []ScontoMaggiorazione {
+	var scontiMaggiorazioni []ScontoMaggiorazione
+
+	for _, discount := range inv.Discounts {
+		scontiMaggiorazioni = append(scontiMaggiorazioni, ScontoMaggiorazione{
+			Tipo:        ScontoMaggiorazioneTypeDiscount,
+			Percentuale: discount.Percent.String(),
+			Importo:     discount.Amount.String(),
+		})
+	}
+
+	for _, charge := range inv.Charges {
+		scontiMaggiorazioni = append(scontiMaggiorazioni, ScontoMaggiorazione{
+			Tipo:        ScontoMaggiorazioneTypeCharge,
+			Percentuale: charge.Percent.String(),
+			Importo:     charge.Amount.String(),
+		})
+	}
+
+	return scontiMaggiorazioni
 }

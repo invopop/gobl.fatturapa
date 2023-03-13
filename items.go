@@ -14,13 +14,14 @@ type DatiBeniServizi struct {
 }
 
 type DettaglioLinee struct {
-	NumeroLinea    string
-	Descrizione    string
-	Quantita       string
-	PrezzoUnitario string
-	PrezzoTotale   string
-	AliquotaIVA    string
-	Natura         string `xml:",omitempty"`
+	NumeroLinea         string
+	Descrizione         string
+	Quantita            string
+	PrezzoUnitario      string
+	PrezzoTotale        string
+	AliquotaIVA         string
+	Natura              string                `xml:",omitempty"`
+	ScontoMaggiorazione []ScontoMaggiorazione `xml:",omitempty"`
 }
 
 type DatiRiepilogo struct {
@@ -51,13 +52,14 @@ func newDettaglioLinee(inv *bill.Invoice) []DettaglioLinee {
 		}
 
 		dl = append(dl, DettaglioLinee{
-			NumeroLinea:    strconv.Itoa(line.Index),
-			Descrizione:    line.Item.Name,
-			Quantita:       line.Quantity.String(),
-			PrezzoUnitario: line.Item.Price.String(),
-			PrezzoTotale:   line.Sum.String(),
-			AliquotaIVA:    vatRate,
-			Natura:         findCodeNatura(line),
+			NumeroLinea:         strconv.Itoa(line.Index),
+			Descrizione:         line.Item.Name,
+			Quantita:            line.Quantity.String(),
+			PrezzoUnitario:      line.Item.Price.String(),
+			PrezzoTotale:        line.Sum.String(),
+			AliquotaIVA:         vatRate,
+			Natura:              findCodeNatura(line),
+			ScontoMaggiorazione: extractLinePriceAdjustments(line),
 		})
 	}
 
@@ -83,4 +85,26 @@ func newDatiRiepilogo(inv *bill.Invoice) []DatiRiepilogo {
 	}
 
 	return dr
+}
+
+func extractLinePriceAdjustments(line *bill.Line) []ScontoMaggiorazione {
+	var scontiMaggiorazioni []ScontoMaggiorazione
+
+	for _, discount := range line.Discounts {
+		scontiMaggiorazioni = append(scontiMaggiorazioni, ScontoMaggiorazione{
+			Tipo:        ScontoMaggiorazioneTypeDiscount,
+			Percentuale: discount.Percent.String(),
+			Importo:     discount.Amount.String(),
+		})
+	}
+
+	for _, charge := range line.Charges {
+		scontiMaggiorazioni = append(scontiMaggiorazioni, ScontoMaggiorazione{
+			Tipo:        ScontoMaggiorazioneTypeCharge,
+			Percentuale: charge.Percent.String(),
+			Importo:     charge.Amount.String(),
+		})
+	}
+
+	return scontiMaggiorazioni
 }
