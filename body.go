@@ -3,6 +3,7 @@ package fatturapa
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/regimes/it"
 )
 
 const (
@@ -102,8 +103,10 @@ func extractRetainedTaxes(inv *bill.Invoice) []DatiRitenuta {
 
 	for _, tax := range inv.Totals.Taxes.Categories {
 		if tax.Retained {
+			code := regime.Category(tax.Code).Meta[it.KeyFatturaPANatura]
+
 			taxes = append(taxes, DatiRitenuta{
-				TipoRitenuta:     "RT01",
+				TipoRitenuta:     code,
 				ImportoRitenuta:  tax.Amount.String(),
 				AliquotaRitenuta: tax.Rates[0].Percent.String(),
 				CausalePagamento: "TODO",

@@ -58,7 +58,7 @@ func newDettaglioLinee(inv *bill.Invoice) []DettaglioLinee {
 			PrezzoUnitario:      line.Item.Price.String(),
 			PrezzoTotale:        line.Sum.String(),
 			AliquotaIVA:         vatRate,
-			Natura:              findCodeNatura(line),
+			Natura:              findCodeNaturaZeroVat(line),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
 		})
 	}
