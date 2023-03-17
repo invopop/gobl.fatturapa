@@ -114,7 +114,8 @@
 					{
 						"cat": "IRPEF",
 						"rate": "standard",
-						"percent": "20.0%"
+						"percent": "20.0%",
+						"tags": ["truffle-gathering"]
 					}
 				],
 				"total": "1620.00"

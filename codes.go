@@ -48,3 +48,27 @@ func findCodeNaturaZeroVat(line *bill.Line) string {
 
 	return ""
 }
+
+func findCodeCausalePagamento(inv *bill.Invoice, tc cbc.Code) string {
+	taxCategory := regime.Category(tc)
+
+	for _, line := range inv.Lines {
+		for _, tax := range line.Taxes {
+			if tax.Category == tc {
+				if len(tax.Tags) == 0 {
+					continue
+				}
+
+				for _, tag := range taxCategory.Tags {
+					for _, t := range tax.Tags {
+						if tag.Key == t {
+							return tag.Meta[it.KeyFatturaPACausalePagamento]
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return ""
+}

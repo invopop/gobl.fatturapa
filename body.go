@@ -99,22 +99,22 @@ func extractInvoiceReasons(inv *bill.Invoice) []string {
 }
 
 func extractRetainedTaxes(inv *bill.Invoice) []DatiRitenuta {
-	var taxes []DatiRitenuta
+	var dr []DatiRitenuta
 
 	for _, tax := range inv.Totals.Taxes.Categories {
 		if tax.Retained {
-			code := regime.Category(tax.Code).Meta[it.KeyFatturaPANatura]
+			code := regime.Category(tax.Code).Meta[it.KeyFatturaPATipoRitenuta]
 
-			taxes = append(taxes, DatiRitenuta{
+			dr = append(dr, DatiRitenuta{
 				TipoRitenuta:     code,
 				ImportoRitenuta:  tax.Amount.String(),
 				AliquotaRitenuta: tax.Rates[0].Percent.String(),
-				CausalePagamento: "TODO",
+				CausalePagamento: findCodeCausalePagamento(inv, tax.Code),
 			})
 		}
 	}
 
-	return taxes
+	return dr
 }
 
 func extractPriceAdjustments(inv *bill.Invoice) []ScontoMaggiorazione {
