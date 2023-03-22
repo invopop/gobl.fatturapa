@@ -5,6 +5,7 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/it"
+	"github.com/invopop/gobl/tax"
 )
 
 func findCodeRegimeFiscale(inv *bill.Invoice) string {
@@ -51,20 +52,25 @@ func findCodeNaturaZeroVat(line *bill.Line) string {
 
 func findCodeCausalePagamento(inv *bill.Invoice, tc cbc.Code) string {
 	taxCategory := regime.Category(tc)
+	var lineTaxes []tax.Combo
 
 	for _, line := range inv.Lines {
-		for _, tax := range line.Taxes {
-			if tax.Category == tc {
-				if len(tax.Tags) == 0 {
-					continue
-				}
+		for _, lt := range line.Taxes {
+			if lt.Category == tc {
+				lineTaxes = append(lineTaxes, *lt)
+			}
+		}
+	}
 
-				for _, tag := range taxCategory.Tags {
-					for _, t := range tax.Tags {
-						if tag.Key == t {
-							return tag.Meta[it.KeyFatturaPACausalePagamento]
-						}
-					}
+	for _, lt := range lineTaxes {
+		if len(lt.Tags) == 0 {
+			continue
+		}
+
+		for _, tag := range taxCategory.Tags {
+			for _, t := range lt.Tags {
+				if tag.Key == t {
+					return tag.Meta[it.KeyFatturaPACausalePagamento]
 				}
 			}
 		}
