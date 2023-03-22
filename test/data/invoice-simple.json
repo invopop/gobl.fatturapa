@@ -1,0 +1,189 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
+		"dig": {
+			"alg": "sha256",
+			"val": "0395bc2567e308fca053bed0d53065e438a3271cd6f80982d337ea2c2d434d17"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"series": "SAMPLE",
+		"code": "001",
+		"currency": "EUR",
+		"type": "standard",
+		"tax": {
+			"tags": [
+				"freelance"
+			]
+		},
+		"issue_date": "2023-03-02",
+		"supplier": {
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"name": "MªF. Services",
+			"people": [
+				{
+					"name": {
+						"given": "GIANCARLO",
+						"surname": "ROSSI"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"num": "1",
+					"street": "VIALE DELLA LIBERTÀ",
+					"locality": "ROMA",
+					"region": "RM",
+					"code": "00100",
+					"country": "IT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"identities": [
+				{
+					"type": "CF",
+					"code": "RSSGNC73A02F205X"
+				}
+			],
+			"name": "MARIO LEONI",
+			"people": [
+				{
+					"name": {
+						"given": "MARIO",
+						"surname": "LEONI",
+						"prefix": "Dott."
+					}
+				}
+			],
+			"addresses": [
+				{
+					"num": "32",
+					"street": "VIALE DELI LAVORATORI",
+					"locality": "FIRENZE",
+					"region": "FI",
+					"code": "50100",
+					"country": "IT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "leoni@mario.com"
+				}
+			],
+			"inboxes": [
+				{
+					"key": "codice-destinario",
+					"code": "ABCDEF1"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "22.0%"
+					}
+				],
+				"total": "1620.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Truffle Gathering",
+					"price": "100.00",
+					"unit": "h"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "zero",
+						"percent": "0.0%",
+						"tags": ["not-subject-other"]
+					}
+				],
+				"total": "100.00"
+			}
+		],
+		"discounts": [
+			{
+				"percent": "50%",
+				"amount": "860.00",
+				"reason": "10th year anniversary discount"
+			}
+		],
+		"charges": [
+			{
+				"percent": "10%",
+				"amount": "172.00",
+				"reason": "10th year anniversary charge"
+			}
+		],
+		"totals": {
+			"sum": "1720.00",
+			"discount": "860.00",
+			"charge": "172.00",
+			"total": "1032.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1620.00",
+								"percent": "22.0%",
+								"amount": "356.40"
+							},
+							{
+								"key": "zero",
+								"base": "100.00",
+								"percent": "0.0%",
+								"amount": "0.00"
+							}
+						],
+						"base": "1720.00",
+						"amount": "356.40"
+					}
+				],
+				"sum": "356.40"
+			},
+			"tax": "356.40",
+			"total_with_tax": "1388.40",
+			"payable": "1388.40",
+			"due": "1388.40"
+		}
+	},
+	"sigs": [
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6IjNhZmMwMzU3LWQ0YjQtNDM3Ni1hNmI1LTg5ODViODI1NTllOCJ9.eyJ1dWlkIjoiNjc5YTJmMjUtNzQ4My0xMWVjLTk3MjItN2VhMmNiNDM2ZmY2IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAzOTViYzI1NjdlMzA4ZmNhMDUzYmVkMGQ1MzA2NWU0MzhhMzI3MWNkNmY4MDk4MmQzMzdlYTJjMmQ0MzRkMTcifX0.F1nUZH1R9isgR2XP_4UP6vWDfUwc5kTTriwKyckqgP0x0TKQZrk4KR0M_zZ3GqXXvshWoXEinSJDNtDHBuW4kg"
+	]
+}

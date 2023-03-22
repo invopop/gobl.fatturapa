@@ -3,7 +3,6 @@ package fatturapa
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/regimes/it"
 )
 
 const (
@@ -33,13 +32,6 @@ type DatiGeneraliDocumento struct {
 	Causale             []string
 	DatiRitenuta        []DatiRitenuta
 	ScontoMaggiorazione []ScontoMaggiorazione
-}
-
-type DatiRitenuta struct {
-	TipoRitenuta     string
-	ImportoRitenuta  string
-	AliquotaRitenuta string
-	CausalePagamento string
 }
 
 type ScontoMaggiorazione struct {
@@ -96,25 +88,6 @@ func extractInvoiceReasons(inv *bill.Invoice) []string {
 	}
 
 	return reasons
-}
-
-func extractRetainedTaxes(inv *bill.Invoice) []DatiRitenuta {
-	var dr []DatiRitenuta
-
-	for _, tax := range inv.Totals.Taxes.Categories {
-		if tax.Retained {
-			code := regime.Category(tax.Code).Meta[it.KeyFatturaPATipoRitenuta]
-
-			dr = append(dr, DatiRitenuta{
-				TipoRitenuta:     code,
-				ImportoRitenuta:  tax.Amount.String(),
-				AliquotaRitenuta: tax.Rates[0].Percent.String(),
-				CausalePagamento: findCodeCausalePagamento(inv, tax.Code),
-			})
-		}
-	}
-
-	return dr
 }
 
 func extractPriceAdjustments(inv *bill.Invoice) []ScontoMaggiorazione {
