@@ -45,7 +45,10 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	doc, err := fatturapa.LoadGOBL(input)
+	// TODO: where should the client be injected when using the CLI?
+	client := fatturapa.NewClient("IT", "01234567890")
+
+	doc, err := client.LoadGOBL(input)
 	if err != nil {
 		return err
 	}
