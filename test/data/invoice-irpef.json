@@ -114,7 +114,8 @@
 					{
 						"cat": "IRPEF",
 						"rate": "standard",
-						"percent": "20.0%"
+						"percent": "20.0%",
+						"tags": ["self-employed-habitual"]
 					}
 				],
 				"total": "1620.00"
@@ -123,7 +124,7 @@
 				"i": 2,
 				"quantity": "1",
 				"item": {
-					"name": "Zero test",
+					"name": "Truffle Gathering",
 					"price": "100.00",
 					"unit": "h"
 				},
@@ -134,6 +135,12 @@
 						"rate": "zero",
 						"percent": "0.0%",
 						"tags": ["not-subject-other"]
+					},
+					{
+						"cat": "IRPEF",
+						"rate": "standard",
+						"percent": "20.0%",
+						"tags": ["truffle-gathering"]
 					}
 				],
 				"total": "100.00"
@@ -185,21 +192,21 @@
 						"rates": [
 							{
 								"key": "standard",
-								"base": "1620.00",
+								"base": "1720.00",
 								"percent": "20.0%",
-								"amount": "324.00"
+								"amount": "344.00"
 							}
 						],
-						"base": "1620.00",
-						"amount": "324.00"
+						"base": "1720.00",
+						"amount": "344.00"
 					}
 				],
-				"sum": "32.40"
+				"sum": "12.40"
 			},
-			"tax": "32.40",
-			"total_with_tax": "1064.40",
-			"payable": "1064.40",
-			"due": "1064.40"
+			"tax": "12.40",
+			"total_with_tax": "1044.40",
+			"payable": "1044.40",
+			"due": "1044.40"
 		}
 	},
 	"sigs": [
