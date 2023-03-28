@@ -4,6 +4,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/it"
 )
 
 const (
@@ -42,8 +43,11 @@ func newDatiTrasmissione(inv *bill.Invoice, c Client, uuid string) DatiTrasmissi
 }
 
 func formatoTransmissione(cus *org.Party) string {
-	// TODO: check the tax ID type and return FPA12 if the invoice is issued
-	// to a government entity. Return FPR12 otherwise.
+	taxId := cus.TaxID
+
+	if taxId.Country == l10n.IT && taxId.Type == it.TaxIdentityTypeGovernment {
+		return FormatoTrasmissioneFPA12
+	}
 
 	return FormatoTrasmissioneFPR12
 }

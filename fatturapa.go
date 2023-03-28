@@ -87,7 +87,7 @@ func (c Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
 		FPANamespace:             NamespaceFatturaPA,
 		DSigNamespace:            NamespaceDSig,
 		XSINamespace:             NamespaceXSI,
-		Versione:                 Versione,
+		Versione:                 header.DatiTrasmissione.FormatoTrasmissione,
 		SchemaLocation:           SchemaLocation,
 		FatturaElettronicaHeader: header,
 		FatturaElettronicaBody:   []*FatturaElettronicaBody{body},
