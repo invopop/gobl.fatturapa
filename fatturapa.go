@@ -45,7 +45,7 @@ type Document struct {
 }
 
 // LoadGOBL will build a FatturaPA Document from the source buffer
-func (c Client) LoadGOBL(src io.Reader) (*Document, error) {
+func (c *Client) LoadGOBL(src io.Reader) (*Document, error) {
 	buf := new(bytes.Buffer)
 	if _, err := buf.ReadFrom(src); err != nil {
 		return nil, err
@@ -61,7 +61,7 @@ func (c Client) LoadGOBL(src io.Reader) (*Document, error) {
 
 // NewInvoice expects the base envelope and provides a new Document
 // containing the XML version.
-func (c Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
+func (c *Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
 	invoice, ok := env.Extract().(*bill.Invoice)
 	if !ok {
 		return nil, errors.New("expected an invoice")

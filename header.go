@@ -12,7 +12,7 @@ type FatturaElettronicaHeader struct {
 	CessionarioCommittente CessionarioCommittente `xml:",omitempty"`
 }
 
-func newFatturaElettronicaHeader(inv *bill.Invoice, c Client, uuid string) (*FatturaElettronicaHeader, error) {
+func newFatturaElettronicaHeader(inv *bill.Invoice, c *Client, uuid string) (*FatturaElettronicaHeader, error) {
 	supplier, err := newCedentePrestatore(inv)
 	if err != nil {
 		return nil, err
