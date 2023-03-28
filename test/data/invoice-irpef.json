@@ -50,12 +50,10 @@
 			]
 		},
 		"customer": {
-			"identities": [
-				{
-					"type": "CF",
-					"code": "RSSGNC73A02F205X"
-				}
-			],
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
 			"name": "MARIO LEONI",
 			"people": [
 				{
@@ -83,7 +81,7 @@
 			],
 			"inboxes": [
 				{
-					"key": "codice-destinario",
+					"key": "codice-destinatario",
 					"code": "ABCDEF1"
 				}
 			]

@@ -84,9 +84,11 @@ cat input.json > ./gobl.fatturapa > output.xml
 
 - In all cases Go structures have been written using the same naming from the XML style document. This means names are not repeated in tags and generally makes it a bit easier map the XML output to the internal structures.
 
-## Current Conversion Limitations
+## Usage
 
-TODO
+### CLI
+
+Copy `.env.example` to `.env` and update the values to configure the application.
 
 ## Integration Tests
 
@@ -106,36 +108,18 @@ mage -v convertToXML
 
 Sample data sources are contained in the `/test/data` directory. YAML and JSON (for tests) documents are stored in the Git repository, but the XML must be generated using the above commands.
 
-## Mapping to GOBL
+## Current Conversion Limitations
 
-### DatiTrasmissione.ProgressivoInvio
+The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
 
-The ProgressivoInvio field is a unique identifier assigned by the sender to each invoice that is being sent to the recipient, whereas the Numero field under DatiGeneraliDocumento is the invoice number assigned by the issuer of the invoice.
+- FatturaPA allows multiple invoices within the document, but this library only supports a single invoice per transmission.
+- `DatiBeniServizi.DatiRiepilogo.EsigibilitaIVA` code defaults to "I" (immediata) for all invoices.
 
-### DatiTrasmissione.FormatoTrasmissione
-
-The FormatoTrasmissione field is used to specify the format of the invoice. The value of this field is either FPA12 (invoice to public administrations) or FPR12 (invoice to private parties)
-
-### DatiTrasmissione.CodiceDestinatario
-
-Number of the invoice office this invoice is being sent to. 6-digit code if FormatoTrasmissione is FPA12 and 7-digit code if FormatoTrasmissione is FPR12.
-
-`GOBL`: Using `Inbox.Code` from `bill.Invoice.Supplier.Inboxes` where key is
-`codice-destinario`.
-
-### DatiPagamento.CondizioniPagamento
-
-allowed values:
-
-- TP01: Payment by instalments
-- TP02: full payment
-- TP03: advance payment
-
-### DatiBeniServizi.DatiRiepilogo.EsigibilitaIVA
-
-allowed values:
-
-- I: VAT payable immediately
-- D: deferred VAT payments
-- S: split payments
-
+Some of the optional elements currently not supported include:
+- `Allegati` (attachments)
+- `DatiOrdineAcquisto` (data related to purchase orders)
+- `DatiContratto` (data related to contracts)
+- `DatiConvenzione` (data related to conventions)
+- `DatiRicezione` (data related to receipts)
+- `DatiFattureCollegate` (data related to linked invoices)
+- `DatiBollo` (data related to duty stamps)

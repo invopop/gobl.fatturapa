@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/ghodss/yaml v1.0.0
-	github.com/invopop/gobl v0.38.1
+	github.com/invopop/gobl v0.39.0
 	github.com/invopop/xmldsig v0.6.1
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.6.1
@@ -23,6 +23,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/invopop/jsonschema v0.7.0 // indirect
 	github.com/invopop/validation v0.3.0 // indirect
+	github.com/joho/godotenv v1.5.1 // indirect
 	github.com/otiai10/copy v1.9.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
