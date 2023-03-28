@@ -2,8 +2,11 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
 
 	fatturapa "github.com/invopop/gobl.fatturapa"
+	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
@@ -45,8 +48,10 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	// TODO: where should the client be injected when using the CLI?
-	client := fatturapa.NewClient("IT", "01234567890")
+	client, err := loadClientFromConfig()
+	if err != nil {
+		return err
+	}
 
 	doc, err := client.LoadGOBL(input)
 	if err != nil {
@@ -63,4 +68,27 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 
 	return nil
+}
+
+func loadClientFromConfig() (*fatturapa.Client, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	countryCode := os.Getenv("TRANSMITTER_COUNTRY_CODE")
+	taxID := os.Getenv("TRANSMITTER_TAX_ID")
+
+	if countryCode == "" {
+		return nil, fmt.Errorf("TRANSMITTER_COUNTRY_CODE not set in .env file")
+	}
+
+	if taxID == "" {
+		return nil, fmt.Errorf("TRANSMITTER_TAX_ID not set in .env file")
+	}
+
+	return &fatturapa.Client{
+		CountryCode: countryCode,
+		TaxID:       taxID,
+	}, nil
 }

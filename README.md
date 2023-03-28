@@ -84,9 +84,11 @@ cat input.json > ./gobl.fatturapa > output.xml
 
 - In all cases Go structures have been written using the same naming from the XML style document. This means names are not repeated in tags and generally makes it a bit easier map the XML output to the internal structures.
 
-## Current Conversion Limitations
+## Usage
 
-TODO
+### CLI
+
+Copy `.env.example` to `.env` and update the values to configure the application.
 
 ## Integration Tests
 
@@ -106,7 +108,7 @@ mage -v convertToXML
 
 Sample data sources are contained in the `/test/data` directory. YAML and JSON (for tests) documents are stored in the Git repository, but the XML must be generated using the above commands.
 
-## Limitations
+## Current Conversion Limitations
 
 The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
 
