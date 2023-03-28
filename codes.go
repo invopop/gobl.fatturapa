@@ -8,24 +8,16 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-const (
-	keyRegimeFiscale    cbc.Key = it.KeyFatturaPARegimeFiscale
-	keyTipoDocumento    cbc.Key = it.KeyFatturaPATipoDocumento
-	keyNatura           cbc.Key = it.KeyFatturaPANatura
-	keyTipoRitenuta     cbc.Key = it.KeyFatturaPATipoRitenuta
-	keyCausalePagamento cbc.Key = it.KeyFatturaPACausalePagamento
-)
-
 func findCodeRegimeFiscale(inv *bill.Invoice) string {
 	ss := inv.ScenarioSummary()
 
-	return ss.Meta[keyRegimeFiscale]
+	return ss.Meta[it.KeyFatturaPARegimeFiscale]
 }
 
 func findCodeTipoDocumento(inv *bill.Invoice) string {
 	ss := inv.ScenarioSummary()
 
-	return ss.Meta[keyTipoDocumento]
+	return ss.Meta[it.KeyFatturaPATipoDocumento]
 }
 
 func findCodeNaturaZeroVat(line *bill.Line) string {
@@ -51,7 +43,7 @@ func findCodeNaturaZeroVat(line *bill.Line) string {
 
 	for _, tag := range taxCategoryVat.Tags {
 		if tag.Key == tagKey {
-			return tag.Meta[keyNatura]
+			return tag.Meta[it.KeyFatturaPANatura]
 		}
 	}
 
@@ -61,7 +53,7 @@ func findCodeNaturaZeroVat(line *bill.Line) string {
 func findCodeTipoRitenuta(tc cbc.Code) string {
 	taxCategory := regime.Category(tc)
 
-	return taxCategory.Meta[keyTipoRitenuta]
+	return taxCategory.Meta[it.KeyFatturaPATipoRitenuta]
 }
 
 func findCodeCausalePagamento(line *bill.Line, tc cbc.Code) string {
@@ -82,7 +74,7 @@ func findCodeCausalePagamento(line *bill.Line, tc cbc.Code) string {
 		for _, tag := range taxCategory.Tags {
 			for _, t := range lt.Tags {
 				if tag.Key == t {
-					return tag.Meta[keyCausalePagamento]
+					return tag.Meta[it.KeyFatturaPACausalePagamento]
 				}
 			}
 		}

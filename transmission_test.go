@@ -10,7 +10,7 @@ import (
 
 func TestTransmissionData(t *testing.T) {
 	t.Run("should contain transmitting subject info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-vat.json", test.Client)
+		doc, err := test.LoadGOBL("invoice-simple.json", test.Client)
 		require.NoError(t, err)
 
 		dt := doc.FatturaElettronicaHeader.DatiTrasmissione

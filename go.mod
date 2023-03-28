@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/ghodss/yaml v1.0.0
-	github.com/invopop/gobl v0.38.1
+	github.com/invopop/gobl v0.39.0
 	github.com/invopop/xmldsig v0.6.1
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.6.1

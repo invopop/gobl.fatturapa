@@ -10,7 +10,7 @@ import (
 
 func TestPartiesSupplier(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-vat.json", test.Client)
+		doc, err := test.LoadGOBL("invoice-simple.json", test.Client)
 		require.NoError(t, err)
 
 		s := doc.FatturaElettronicaHeader.CedentePrestatore
@@ -29,13 +29,13 @@ func TestPartiesSupplier(t *testing.T) {
 
 func TestPartiesCustomer(t *testing.T) {
 	t.Run("should contain the customer party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-vat.json", test.Client)
+		doc, err := test.LoadGOBL("invoice-simple.json", test.Client)
 		require.NoError(t, err)
 
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente
 
 		assert.Equal(t, "IT", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
-		assert.Equal(t, "12345678903", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "RSSGNC73A02F205X", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 		assert.Equal(t, "MARIO", c.DatiAnagrafici.Anagrafica.Nome)
 		assert.Equal(t, "LEONI", c.DatiAnagrafici.Anagrafica.Cognome)
 		assert.Equal(t, "Dott.", c.DatiAnagrafici.Anagrafica.Titolo)
