@@ -6,14 +6,16 @@ import (
 	"os"
 
 	fatturapa "github.com/invopop/gobl.fatturapa"
+	"github.com/invopop/xmldsig"
 	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
 type convertOpts struct {
 	*rootOpts
-	cert     string
-	password string
+	cert          string
+	password      string
+	withTimestamp bool
 }
 
 func convert(o *rootOpts) *convertOpts {
@@ -29,6 +31,7 @@ func (c *convertOpts) cmd() *cobra.Command {
 	f := cmd.Flags()
 	f.StringVarP(&c.cert, "cert", "c", "", "Certificate for signing in pkcs12 format")
 	f.StringVarP(&c.password, "password", "p", "", "Password of the certificate")
+	f.BoolVarP(&c.withTimestamp, "with-timestamp", "t", false, "Add timestamp to the output file")
 
 	return cmd
 }
@@ -48,7 +51,7 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	client, err := loadClientFromConfig()
+	client, err := loadClientFromConfig(c)
 	if err != nil {
 		return err
 	}
@@ -70,7 +73,7 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func loadClientFromConfig() (*fatturapa.Client, error) {
+func loadClientFromConfig(c *convertOpts) (*fatturapa.Client, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -87,8 +90,37 @@ func loadClientFromConfig() (*fatturapa.Client, error) {
 		return nil, fmt.Errorf("TRANSMITTER_TAX_ID not set in .env file")
 	}
 
-	return &fatturapa.Client{
+	transmitter := fatturapa.Transmitter{
 		CountryCode: countryCode,
 		TaxID:       taxID,
-	}, nil
+	}
+
+	var opts []fatturapa.Option
+
+	if c.cert != "" {
+		cert, err := loadCertificate(c.cert, c.password)
+		if err != nil {
+			return nil, err
+		}
+
+		opts = append(opts, fatturapa.WithCertificate(cert))
+	}
+
+	if c.withTimestamp {
+		opts = append(opts, fatturapa.WithTimestamp())
+	}
+
+	return fatturapa.NewClient(
+		&transmitter,
+		opts...,
+	), nil
+}
+
+func loadCertificate(certPath, password string) (*xmldsig.Certificate, error) {
+	cert, err := xmldsig.LoadCertificate(certPath, password)
+	if err != nil {
+		return nil, fmt.Errorf("loading certificate %s: %w", certPath, err)
+	}
+
+	return cert, nil
 }

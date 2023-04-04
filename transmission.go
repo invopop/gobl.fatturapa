@@ -33,8 +33,8 @@ type DatiTrasmissione struct {
 func newDatiTrasmissione(inv *bill.Invoice, c *Client, uuid string) DatiTrasmissione {
 	return DatiTrasmissione{
 		IdTrasmittente: TaxID{
-			IdPaese:  c.CountryCode,
-			IdCodice: c.TaxID,
+			IdPaese:  c.Transmitter.CountryCode,
+			IdCodice: c.Transmitter.TaxID,
 		},
 		ProgressivoInvio:    uuid[:8],
 		FormatoTrasmissione: formatoTransmissione(inv.Customer),

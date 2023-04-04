@@ -14,7 +14,16 @@ TODO: copyright, license, build statuses
 There are a couple of entry points to build a new Fatturapa document. If you already have a GOBL Envelope available in Go, you could convert and output to a data file like this:
 
 ```golang
-doc, err := fatturapa.NewInvoice(env)
+// FatturaPA requires data of the transmitter (the entity who sends the invoice
+// to the SDI) to be included in the document.
+transmitter := fatturapa.Transmitter{
+    CountryCode: countryCode, // ISO 3166-1 alpha-2
+    TaxID:       taxID,       // Valid tax ID of transmitter
+}
+
+client := fatturapa.NewClient(transmitter)
+
+doc, err := client.NewInvoice(env)
 if err != nil {
     panic(err)
 }
@@ -39,7 +48,7 @@ if err != nil {
 // do something with doc
 ```
 
-Outputting to a FatturaPA XML is most useful when the document is signed. Use a certificate to sign the document as follows:
+FatturaPA XML for B2G transaction requires the document to be signed. Use a certificate to sign the document as follows:
 
 ```golang
 // import from github.com/invopop/xmldsig
@@ -48,7 +57,13 @@ if err != nil {
     panic(err)
 }
 
-doc, err := fatturapa.NewInvoice(env, fatturapa.WithCertificate(cert))
+client := fatturapa.NewClient(
+	&transmitter,
+	fatturapa.WithCertificate(cert),
+	fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
+)
+
+doc, err := client.NewInvoice(env)
 if err != nil {
     panic(err)
 }
@@ -57,6 +72,8 @@ if err != nil {
 ### CLI
 
 The command line interface can be useful for situations when you're using a language other than Golang in your application.
+
+In order to include the transmitter data, copy `.env.example` to `.env` and update the values to configure the application.
 
 ```bash
 # install example
@@ -84,12 +101,6 @@ cat input.json > ./gobl.fatturapa > output.xml
 
 - In all cases Go structures have been written using the same naming from the XML style document. This means names are not repeated in tags and generally makes it a bit easier map the XML output to the internal structures.
 
-## Usage
-
-### CLI
-
-Copy `.env.example` to `.env` and update the values to configure the application.
-
 ## Integration Tests
 
 There are some integration and XML generation tests available in the `/test` path. To execute them, there are two [Magefile](https://magefile.org/) commands.
@@ -113,7 +124,6 @@ Sample data sources are contained in the `/test/data` directory. YAML and JSON (
 The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
 
 - FatturaPA allows multiple invoices within the document, but this library only supports a single invoice per transmission.
-- `DatiBeniServizi.DatiRiepilogo.EsigibilitaIVA` code defaults to "I" (immediata) for all invoices.
 
 Some of the optional elements currently not supported include:
 - `Allegati` (attachments)

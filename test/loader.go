@@ -16,8 +16,12 @@ import (
 var signingKey = dsig.NewES256Key()
 
 // LoadGOBL loads a GoBL test file into structs
-func LoadGOBL(name string, client fatturapa.Client) (*fatturapa.Document, error) {
+func LoadGOBL(name string, client *fatturapa.Client) (*fatturapa.Document, error) {
 	envelopeReader, _ := os.Open(GetDataPath() + name)
+
+	if client == nil {
+		client = TestClient()
+	}
 
 	doc, err := client.LoadGOBL(envelopeReader)
 	if err != nil {
@@ -95,7 +99,7 @@ func ConvertToXML() error {
 	for _, file := range files {
 		fmt.Printf("processing file: %v\n", file)
 
-		doc, err := LoadGOBL(file, Client)
+		doc, err := LoadGOBL(file, TestClient())
 		if err != nil {
 			return err
 		}

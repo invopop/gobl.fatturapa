@@ -3,11 +3,18 @@ package fatturapa
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/pay"
 )
 
 const (
 	ScontoMaggiorazioneTypeDiscount = "SC" // sconto
 	ScontoMaggiorazioneTypeCharge   = "MG" // maggiorazione
+)
+
+const (
+	CondizioniPagamentoInstallments = "TP01" // pagamenti in rate
+	CondizioniPagamentoFull         = "TP02" // pagamento completo
+	CondizioniPagamentoAdvance      = "TP03" // anticipo
 )
 
 // FatturaElettronicaBody contains all invoice data apart from the parties
@@ -65,15 +72,17 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, erro
 			},
 		},
 		DatiBeniServizi: newDatiBeniServizi(inv),
-		DatiPagamento: DatiPagamento{
-			CondizioniPagamento: "TP02", // TODO
-			DettaglioPagamento: []DettaglioPagamento{
-				{
-					ModalitaPagamento: "MP05", // TODO
-					ImportoPagamento:  inv.Totals.Due.String(),
-				},
-			},
-		},
+		// GOBL does not yet support Italian codes for payment methods.
+		//
+		// DatiPagamento: DatiPagamento{
+		// 	CondizioniPagamento: determinePaymentConditions(inv.Payment),
+		// 	DettaglioPagamento: []DettaglioPagamento{
+		// 		{
+		// 			ModalitaPagamento: "MP05", // TODO
+		// 			ImportoPagamento:  inv.Totals.Due.String(),
+		// 		},
+		// 	},
+		// },
 	}, nil
 }
 
@@ -110,4 +119,17 @@ func extractPriceAdjustments(inv *bill.Invoice) []ScontoMaggiorazione {
 	}
 
 	return scontiMaggiorazioni
+}
+
+func determinePaymentConditions(payment *bill.Payment) string {
+	switch {
+	case payment.Terms == nil:
+		return CondizioniPagamentoFull
+	case len(payment.Terms.DueDates) > 1:
+		return CondizioniPagamentoInstallments
+	case payment.Terms.Key == pay.TermKeyAdvance:
+		return CondizioniPagamentoAdvance
+	default:
+		return CondizioniPagamentoFull
+	}
 }
