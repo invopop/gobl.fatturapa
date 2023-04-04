@@ -3,7 +3,6 @@ package fatturapa
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
-	"github.com/invopop/gobl/pay"
 )
 
 const (
@@ -20,15 +19,15 @@ const (
 // FatturaElettronicaBody contains all invoice data apart from the parties
 // involved, which are contained in FatturaElettronicaHeader.
 type FatturaElettronicaBody struct {
-	DatiGenerali    DatiGenerali
-	DatiBeniServizi DatiBeniServizi
-	DatiPagamento   DatiPagamento `xml:",omitempty"`
+	DatiGenerali    *DatiGenerali
+	DatiBeniServizi *DatiBeniServizi
+	DatiPagamento   *DatiPagamento `xml:",omitempty"`
 }
 
 // DatiGenerali contains general data about the invoice such as retained taxes,
 // invoice number, invoice date, document type, etc.
 type DatiGenerali struct {
-	DatiGeneraliDocumento DatiGeneraliDocumento
+	DatiGeneraliDocumento *DatiGeneraliDocumento
 }
 
 type DatiGeneraliDocumento struct {
@@ -37,8 +36,8 @@ type DatiGeneraliDocumento struct {
 	Data                string
 	Numero              string
 	Causale             []string
-	DatiRitenuta        []DatiRitenuta
-	ScontoMaggiorazione []ScontoMaggiorazione
+	DatiRitenuta        []*DatiRitenuta
+	ScontoMaggiorazione []*ScontoMaggiorazione
 }
 
 type ScontoMaggiorazione struct {
@@ -49,7 +48,7 @@ type ScontoMaggiorazione struct {
 
 type DatiPagamento struct {
 	CondizioniPagamento string
-	DettaglioPagamento  []DettaglioPagamento
+	DettaglioPagamento  []*DettaglioPagamento
 }
 
 type DettaglioPagamento struct {
@@ -60,8 +59,8 @@ type DettaglioPagamento struct {
 
 func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, error) {
 	return &FatturaElettronicaBody{
-		DatiGenerali: DatiGenerali{
-			DatiGeneraliDocumento: DatiGeneraliDocumento{
+		DatiGenerali: &DatiGenerali{
+			DatiGeneraliDocumento: &DatiGeneraliDocumento{
 				TipoDocumento:       findCodeTipoDocumento(inv),
 				Divisa:              string(inv.Currency),
 				Data:                inv.IssueDate.String(),
@@ -99,11 +98,11 @@ func extractInvoiceReasons(inv *bill.Invoice) []string {
 	return reasons
 }
 
-func extractPriceAdjustments(inv *bill.Invoice) []ScontoMaggiorazione {
-	var scontiMaggiorazioni []ScontoMaggiorazione
+func extractPriceAdjustments(inv *bill.Invoice) []*ScontoMaggiorazione {
+	var scontiMaggiorazioni []*ScontoMaggiorazione
 
 	for _, discount := range inv.Discounts {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, ScontoMaggiorazione{
+		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeDiscount,
 			Percentuale: discount.Percent.String(),
 			Importo:     discount.Amount.String(),
@@ -111,7 +110,7 @@ func extractPriceAdjustments(inv *bill.Invoice) []ScontoMaggiorazione {
 	}
 
 	for _, charge := range inv.Charges {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, ScontoMaggiorazione{
+		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeCharge,
 			Percentuale: charge.Percent.String(),
 			Importo:     charge.Amount.String(),
@@ -121,15 +120,15 @@ func extractPriceAdjustments(inv *bill.Invoice) []ScontoMaggiorazione {
 	return scontiMaggiorazioni
 }
 
-func determinePaymentConditions(payment *bill.Payment) string {
-	switch {
-	case payment.Terms == nil:
-		return CondizioniPagamentoFull
-	case len(payment.Terms.DueDates) > 1:
-		return CondizioniPagamentoInstallments
-	case payment.Terms.Key == pay.TermKeyAdvance:
-		return CondizioniPagamentoAdvance
-	default:
-		return CondizioniPagamentoFull
-	}
-}
+// func determinePaymentConditions(payment *bill.Payment) string {
+// 	switch {
+// 	case payment.Terms == nil:
+// 		return CondizioniPagamentoFull
+// 	case len(payment.Terms.DueDates) > 1:
+// 		return CondizioniPagamentoInstallments
+// 	case payment.Terms.Key == pay.TermKeyAdvance:
+// 		return CondizioniPagamentoAdvance
+// 	default:
+// 		return CondizioniPagamentoFull
+// 	}
+// }

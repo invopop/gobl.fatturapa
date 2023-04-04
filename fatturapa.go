@@ -69,7 +69,8 @@ func (c *Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
 	// Make sure we're dealing with raw data
 	invoice = invoice.RemoveIncludedTaxes(2)
 
-	header, err := newFatturaElettronicaHeader(invoice, c, env.Head.UUID.String())
+	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
+	header, err := newFatturaElettronicaHeader(invoice, datiTrasmissione)
 	if err != nil {
 		return nil, err
 	}

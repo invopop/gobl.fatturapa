@@ -7,12 +7,12 @@ import (
 // FatturaElettronicaHeader contains all data related to the parties involved
 // in the document.
 type FatturaElettronicaHeader struct {
-	DatiTrasmissione       DatiTrasmissione       `xml:",omitempty"`
-	CedentePrestatore      CedentePrestatore      `xml:",omitempty"`
-	CessionarioCommittente CessionarioCommittente `xml:",omitempty"`
+	DatiTrasmissione       *DatiTrasmissione `xml:",omitempty"`
+	CedentePrestatore      *Party            `xml:",omitempty"`
+	CessionarioCommittente *Party            `xml:",omitempty"`
 }
 
-func newFatturaElettronicaHeader(inv *bill.Invoice, c *Client, uuid string) (*FatturaElettronicaHeader, error) {
+func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *DatiTrasmissione) (*FatturaElettronicaHeader, error) {
 	supplier, err := newCedentePrestatore(inv)
 	if err != nil {
 		return nil, err
@@ -24,8 +24,8 @@ func newFatturaElettronicaHeader(inv *bill.Invoice, c *Client, uuid string) (*Fa
 	}
 
 	return &FatturaElettronicaHeader{
-		DatiTrasmissione:       newDatiTrasmissione(inv, c, uuid),
-		CedentePrestatore:      *supplier,
-		CessionarioCommittente: *customer,
+		DatiTrasmissione:       datiTrasmissione,
+		CedentePrestatore:      supplier,
+		CessionarioCommittente: customer,
 	}, nil
 }

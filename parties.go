@@ -11,16 +11,10 @@ const (
 	RegimeFiscaleDefault = "RF01"
 )
 
-// CedentePrestatore contains data related to the supplier
-type CedentePrestatore struct {
-	DatiAnagrafici DatiAnagrafici
-	Address        Address
-}
-
-// CessionarioCommittente contains data related to the customer
-type CessionarioCommittente struct {
-	DatiAnagrafici DatiAnagrafici
-	Address        Address
+// Party contains data related to the party
+type Party struct {
+	DatiAnagrafici *DatiAnagrafici
+	Address        *Address
 }
 
 // DatiAnagrafici contains information related to an individual or company
@@ -28,7 +22,7 @@ type DatiAnagrafici struct {
 	IdFiscaleIVA *TaxID `xml:",omitempty"`
 	// CodiceFiscale is the Italian fiscal code, distinct from TaxID
 	CodiceFiscale string `xml:",omitempty"`
-	Anagrafica    Anagrafica
+	Anagrafica    *Anagrafica
 	// RegimeFiscale identifies the tax system to be applied
 	// Has the form RFXX where XX is numeric; required only for the supplier
 	RegimeFiscale string `xml:",omitempty"`
@@ -48,7 +42,7 @@ type Anagrafica struct {
 	CodEORI string `xml:",omitempty"`
 }
 
-func newCedentePrestatore(inv *bill.Invoice) (*CedentePrestatore, error) {
+func newCedentePrestatore(inv *bill.Invoice) (*Party, error) {
 	s := inv.Supplier
 
 	address, err := newAddress(s)
@@ -56,8 +50,8 @@ func newCedentePrestatore(inv *bill.Invoice) (*CedentePrestatore, error) {
 		return nil, err
 	}
 
-	return &CedentePrestatore{
-		DatiAnagrafici: DatiAnagrafici{
+	return &Party{
+		DatiAnagrafici: &DatiAnagrafici{
 			IdFiscaleIVA: &TaxID{
 				IdPaese:  s.TaxID.Country.String(),
 				IdCodice: s.TaxID.Code.String(),
@@ -65,11 +59,11 @@ func newCedentePrestatore(inv *bill.Invoice) (*CedentePrestatore, error) {
 			Anagrafica:    newAnagrafica(s),
 			RegimeFiscale: findCodeRegimeFiscale(inv),
 		},
-		Address: *address,
+		Address: address,
 	}, nil
 }
 
-func newCessionarioCommittente(inv *bill.Invoice) (*CessionarioCommittente, error) {
+func newCessionarioCommittente(inv *bill.Invoice) (*Party, error) {
 	c := inv.Customer
 
 	address, err := newAddress(c)
@@ -100,13 +94,13 @@ func newCessionarioCommittente(inv *bill.Invoice) (*CessionarioCommittente, erro
 		}
 	}
 
-	return &CessionarioCommittente{
-		DatiAnagrafici: *da,
-		Address:        *address,
+	return &Party{
+		DatiAnagrafici: da,
+		Address:        address,
 	}, nil
 }
 
-func newAnagrafica(party *org.Party) Anagrafica {
+func newAnagrafica(party *org.Party) *Anagrafica {
 	a := Anagrafica{
 		Denominazione: party.Name,
 	}
@@ -119,5 +113,5 @@ func newAnagrafica(party *org.Party) Anagrafica {
 		a.Titolo = name.Prefix
 	}
 
-	return a
+	return &a
 }
