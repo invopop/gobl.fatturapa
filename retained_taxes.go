@@ -12,8 +12,8 @@ type DatiRitenuta struct {
 	CausalePagamento string
 }
 
-func extractRetainedTaxes(inv *bill.Invoice) []DatiRitenuta {
-	var dr []DatiRitenuta
+func extractRetainedTaxes(inv *bill.Invoice) []*DatiRitenuta {
+	var dr []*DatiRitenuta
 	var retCats []cbc.Code
 
 	// First we need to find all the retained tax categoriesfrom Totals
@@ -36,7 +36,7 @@ func extractRetainedTaxes(inv *bill.Invoice) []DatiRitenuta {
 			rate := tax.Percent.String()
 			codeCP := findCodeCausalePagamento(line, tax.Category)
 
-			dr = append(dr, DatiRitenuta{
+			dr = append(dr, &DatiRitenuta{
 				TipoRitenuta:     codeTR,
 				ImportoRitenuta:  amount,
 				AliquotaRitenuta: rate,

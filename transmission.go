@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
@@ -30,13 +31,13 @@ type DatiTrasmissione struct {
 	CodiceDestinatario  string
 }
 
-func newDatiTrasmissione(inv *bill.Invoice, c *Client, uuid string) DatiTrasmissione {
-	return DatiTrasmissione{
+func (c *Client) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *DatiTrasmissione {
+	return &DatiTrasmissione{
 		IdTrasmittente: TaxID{
-			IdPaese:  c.CountryCode,
-			IdCodice: c.TaxID,
+			IdPaese:  c.Transmitter.CountryCode,
+			IdCodice: c.Transmitter.TaxID,
 		},
-		ProgressivoInvio:    uuid[:8],
+		ProgressivoInvio:    env.Head.UUID.String()[:8],
 		FormatoTrasmissione: formatoTransmissione(inv.Customer),
 		CodiceDestinatario:  codiceDestinatario(inv.Customer),
 	}

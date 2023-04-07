@@ -22,7 +22,6 @@ const (
 	NamespaceFatturaPA = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
 	NamespaceDSig      = "http://www.w3.org/2000/09/xmldsig#"
 	NamespaceXSI       = "http://www.w3.org/2001/XMLSchema-instance"
-	Versione           = "FPA12"
 	SchemaLocation     = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd"
 )
 
@@ -70,7 +69,8 @@ func (c *Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
 	// Make sure we're dealing with raw data
 	invoice = invoice.RemoveIncludedTaxes(2)
 
-	header, err := newFatturaElettronicaHeader(invoice, c, env.Head.UUID.String())
+	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
+	header, err := newFatturaElettronicaHeader(invoice, datiTrasmissione)
 	if err != nil {
 		return nil, err
 	}
@@ -91,6 +91,10 @@ func (c *Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
 		SchemaLocation:           SchemaLocation,
 		FatturaElettronicaHeader: header,
 		FatturaElettronicaBody:   []*FatturaElettronicaBody{body},
+	}
+
+	if c.Config.Certificate != nil {
+		d.sign(c.Config)
 	}
 
 	return d, nil
