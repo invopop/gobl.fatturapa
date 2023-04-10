@@ -3,6 +3,8 @@ package fatturapa
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/regimes/it"
+	"github.com/invopop/gobl/tax"
 )
 
 type DatiRitenuta struct {
@@ -56,4 +58,37 @@ func includesCode(codes []cbc.Code, code cbc.Code) bool {
 	}
 
 	return false
+}
+
+func findCodeTipoRitenuta(tc cbc.Code) string {
+	taxCategory := regime.Category(tc)
+
+	return taxCategory.Meta[it.KeyFatturaPATipoRitenuta]
+}
+
+func findCodeCausalePagamento(line *bill.Line, tc cbc.Code) string {
+	taxCategory := regime.Category(tc)
+	var lineTaxes []tax.Combo
+
+	for _, lt := range line.Taxes {
+		if lt.Category == tc {
+			lineTaxes = append(lineTaxes, *lt)
+		}
+	}
+
+	for _, lt := range lineTaxes {
+		if len(lt.Tags) == 0 {
+			continue
+		}
+
+		for _, tag := range taxCategory.Tags {
+			for _, t := range lt.Tags {
+				if tag.Key == t {
+					return tag.Meta[it.KeyFatturaPACausalePagamento]
+				}
+			}
+		}
+	}
+
+	return ""
 }

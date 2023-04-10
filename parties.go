@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/it"
 )
 
 const (
@@ -114,4 +115,10 @@ func newAnagrafica(party *org.Party) *Anagrafica {
 	}
 
 	return &a
+}
+
+func findCodeRegimeFiscale(inv *bill.Invoice) string {
+	ss := inv.ScenarioSummary()
+
+	return ss.Meta[it.KeyFatturaPARegimeFiscale]
 }
