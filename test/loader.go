@@ -15,7 +15,7 @@ import (
 
 var signingKey = dsig.NewES256Key()
 
-// LoadGOBL loads a GoBL test file into structs
+// LoadGOBL loads a GOBL test file (JSON) into a fatturapa document.
 func LoadGOBL(name string, client *fatturapa.Client) (*fatturapa.Document, error) {
 	envelopeReader, _ := os.Open(GetDataPath() + name)
 

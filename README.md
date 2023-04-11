@@ -124,6 +124,7 @@ Sample data sources are contained in the `/test/data` directory. YAML and JSON (
 The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
 
 - FatturaPA allows multiple invoices within the document, but this library only supports a single invoice per transmission.
+- Only a subset of payment methods (ModalitaPagamento) are supported. See `payments.go` for the list of supported codes.
 
 Some of the optional elements currently not supported include:
 - `Allegati` (attachments)
