@@ -24,7 +24,7 @@
 				"country": "IT",
 				"code": "12345678903"
 			},
-			"name": "MªF. Services",
+			"name": "Rossi Digital Services",
 			"people": [
 				{
 					"name": {
@@ -158,6 +158,31 @@
 				"reason": "10th year anniversary charge"
 			}
 		],
+		"payment": {
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "IT60X0542811101000000123456",
+						"bic": "BCITITMM",
+						"name": "BANCA POPOLARE DI MILANO"
+					}
+				]
+			},
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2023-03-02",
+						"amount": "500.00"
+					},
+					{
+						"date": "2023-04-02",
+						"amount": "544.40"
+					}
+				]
+			}
+		},
 		"totals": {
 			"sum": "1720.00",
 			"discount": "860.00",

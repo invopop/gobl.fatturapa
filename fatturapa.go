@@ -2,11 +2,9 @@ package fatturapa
 
 import (
 	"bytes"
-	"encoding/json"
 	"encoding/xml"
 	"errors"
 	"fmt"
-	"io"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
@@ -27,8 +25,7 @@ const (
 
 // Document is a pseudo-model for containing the XML document being created.
 type Document struct {
-	env     *gobl.Envelope `xml:"-"` // Envelope to convert.
-	invoice *bill.Invoice  `xml:"-"` // Invoice contained in envelope.
+	env *gobl.Envelope `xml:"-"` // Envelope to convert.
 
 	XMLName        xml.Name `xml:"p:FatturaElettronica"`
 	FPANamespace   string   `xml:"xmlns:p,attr"`
@@ -41,21 +38,6 @@ type Document struct {
 	FatturaElettronicaBody   []*FatturaElettronicaBody
 
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
-}
-
-// LoadGOBL will build a FatturaPA Document from the source buffer
-func (c *Client) LoadGOBL(src io.Reader) (*Document, error) {
-	buf := new(bytes.Buffer)
-	if _, err := buf.ReadFrom(src); err != nil {
-		return nil, err
-	}
-
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(buf.Bytes(), env); err != nil {
-		return nil, err
-	}
-
-	return c.NewInvoice(env)
 }
 
 // NewInvoice expects the base envelope and provides a new Document
@@ -83,7 +65,6 @@ func (c *Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
 	// Basic document headers
 	d := &Document{
 		env:                      env,
-		invoice:                  invoice,
 		FPANamespace:             NamespaceFatturaPA,
 		DSigNamespace:            NamespaceDSig,
 		XSINamespace:             NamespaceXSI,

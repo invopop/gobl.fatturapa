@@ -1,6 +1,11 @@
 package fatturapa
 
 import (
+	"bytes"
+	"encoding/json"
+	"io"
+
+	"github.com/invopop/gobl"
 	"github.com/invopop/xmldsig"
 )
 
@@ -46,4 +51,19 @@ func NewClient(transmitter *Transmitter, opts ...Option) *Client {
 	}
 
 	return c
+}
+
+// LoadGOBL will build a FatturaPA Document from the source buffer
+func (c *Client) LoadGOBL(src io.Reader) (*Document, error) {
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(src); err != nil {
+		return nil, err
+	}
+
+	env := new(gobl.Envelope)
+	if err := json.Unmarshal(buf.Bytes(), env); err != nil {
+		return nil, err
+	}
+
+	return c.NewInvoice(env)
 }

@@ -146,6 +146,11 @@
 				"reason": "10th year anniversary charge"
 			}
 		],
+		"payment": {
+			"instructions": {
+				"key": "card"
+			}
+		},
 		"totals": {
 			"sum": "1720.00",
 			"discount": "860.00",

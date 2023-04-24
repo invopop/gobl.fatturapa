@@ -3,6 +3,7 @@ package fatturapa
 import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/regimes/it"
 )
 
 const (
@@ -46,17 +47,6 @@ type ScontoMaggiorazione struct {
 	Importo     string
 }
 
-type DatiPagamento struct {
-	CondizioniPagamento string
-	DettaglioPagamento  []*DettaglioPagamento
-}
-
-type DettaglioPagamento struct {
-	ModalitaPagamento     string
-	DataScadenzaPagamento string `xml:",omitempty"`
-	ImportoPagamento      string
-}
-
 func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, error) {
 	return &FatturaElettronicaBody{
 		DatiGenerali: &DatiGenerali{
@@ -71,17 +61,7 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, erro
 			},
 		},
 		DatiBeniServizi: newDatiBeniServizi(inv),
-		// GOBL does not yet support Italian codes for payment methods.
-		//
-		// DatiPagamento: DatiPagamento{
-		// 	CondizioniPagamento: determinePaymentConditions(inv.Payment),
-		// 	DettaglioPagamento: []DettaglioPagamento{
-		// 		{
-		// 			ModalitaPagamento: "MP05", // TODO
-		// 			ImportoPagamento:  inv.Totals.Due.String(),
-		// 		},
-		// 	},
-		// },
+		DatiPagamento:   newDatiPagamento(inv),
 	}, nil
 }
 
@@ -120,15 +100,8 @@ func extractPriceAdjustments(inv *bill.Invoice) []*ScontoMaggiorazione {
 	return scontiMaggiorazioni
 }
 
-// func determinePaymentConditions(payment *bill.Payment) string {
-// 	switch {
-// 	case payment.Terms == nil:
-// 		return CondizioniPagamentoFull
-// 	case len(payment.Terms.DueDates) > 1:
-// 		return CondizioniPagamentoInstallments
-// 	case payment.Terms.Key == pay.TermKeyAdvance:
-// 		return CondizioniPagamentoAdvance
-// 	default:
-// 		return CondizioniPagamentoFull
-// 	}
-// }
+func findCodeTipoDocumento(inv *bill.Invoice) string {
+	ss := inv.ScenarioSummary()
+
+	return ss.Meta[it.KeyFatturaPATipoDocumento]
+}
