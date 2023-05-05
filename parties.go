@@ -15,7 +15,7 @@ const (
 // Party contains data related to the party
 type Party struct {
 	DatiAnagrafici *DatiAnagrafici
-	Address        *Address
+	Sede           *Address
 }
 
 // DatiAnagrafici contains information related to an individual or company
@@ -60,7 +60,7 @@ func newCedentePrestatore(inv *bill.Invoice) (*Party, error) {
 			Anagrafica:    newAnagrafica(s),
 			RegimeFiscale: findCodeRegimeFiscale(inv),
 		},
-		Address: address,
+		Sede: address,
 	}, nil
 }
 
@@ -97,7 +97,7 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Party, error) {
 
 	return &Party{
 		DatiAnagrafici: da,
-		Address:        address,
+		Sede:           address,
 	}, nil
 }
 
