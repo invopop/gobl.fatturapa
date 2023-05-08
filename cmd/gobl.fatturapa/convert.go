@@ -2,12 +2,10 @@ package main
 
 import (
 	"fmt"
-	"log"
-	"os"
 
 	fatturapa "github.com/invopop/gobl.fatturapa"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/xmldsig"
-	"github.com/joho/godotenv"
 	"github.com/spf13/cobra"
 )
 
@@ -15,6 +13,7 @@ type convertOpts struct {
 	*rootOpts
 	cert          string
 	password      string
+	transmitter   string
 	withTimestamp bool
 }
 
@@ -31,6 +30,7 @@ func (c *convertOpts) cmd() *cobra.Command {
 	f := cmd.Flags()
 	f.StringVarP(&c.cert, "cert", "c", "", "Certificate for signing in pkcs12 format")
 	f.StringVarP(&c.password, "password", "p", "", "Password of the certificate")
+	f.StringVarP(&c.transmitter, "transmitter", "T", "", "Tax ID of the transmitter. Must be prefixed by the country code")
 	f.BoolVarP(&c.withTimestamp, "with-timestamp", "t", false, "Add timestamp to the output file")
 
 	return cmd
@@ -74,28 +74,25 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 }
 
 func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	countryCode := os.Getenv("TRANSMITTER_COUNTRY_CODE")
-	taxID := os.Getenv("TRANSMITTER_TAX_ID")
-
-	if countryCode == "" {
-		return nil, fmt.Errorf("TRANSMITTER_COUNTRY_CODE not set in .env file")
-	}
-
-	if taxID == "" {
-		return nil, fmt.Errorf("TRANSMITTER_TAX_ID not set in .env file")
-	}
-
-	transmitter := fatturapa.Transmitter{
-		CountryCode: countryCode,
-		TaxID:       taxID,
-	}
-
 	var opts []fatturapa.Option
+
+	if c.transmitter != "" {
+		countryCode := c.transmitter[:2]
+		taxID := c.transmitter[2:]
+
+		code := l10n.CountryCode(countryCode)
+		err := code.Validate()
+		if err != nil {
+			return nil, fmt.Errorf("tax ID must be prefixed by a valid country code")
+		}
+
+		transmitter := fatturapa.Transmitter{
+			CountryCode: countryCode,
+			TaxID:       taxID,
+		}
+
+		opts = append(opts, fatturapa.WithTransmissionData(&transmitter))
+	}
 
 	if c.cert != "" {
 		cert, err := loadCertificate(c.cert, c.password)
@@ -111,7 +108,6 @@ func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
 	}
 
 	return fatturapa.NewConverter(
-		&transmitter,
 		opts...,
 	), nil
 }

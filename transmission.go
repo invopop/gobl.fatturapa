@@ -32,10 +32,14 @@ type DatiTrasmissione struct {
 }
 
 func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *DatiTrasmissione {
+	if c.Config.Transmitter == nil {
+		return nil
+	}
+
 	return &DatiTrasmissione{
 		IdTrasmittente: TaxID{
-			IdPaese:  c.Transmitter.CountryCode,
-			IdCodice: c.Transmitter.TaxID,
+			IdPaese:  c.Config.Transmitter.CountryCode,
+			IdCodice: c.Config.Transmitter.TaxID,
 		},
 		ProgressivoInvio:    env.Head.UUID.String()[:8],
 		FormatoTrasmissione: formatoTransmissione(inv.Customer),

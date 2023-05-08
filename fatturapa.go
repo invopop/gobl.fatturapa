@@ -40,9 +40,9 @@ type Document struct {
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
 }
 
-// NewInvoice expects the base envelope and provides a new Document
+// ConvertFromGOBL expects the base envelope and provides a new Document
 // containing the XML version.
-func (c *Converter) NewInvoice(env *gobl.Envelope) (*Document, error) {
+func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	invoice, ok := env.Extract().(*bill.Invoice)
 	if !ok {
 		return nil, errors.New("expected an invoice")
@@ -52,6 +52,7 @@ func (c *Converter) NewInvoice(env *gobl.Envelope) (*Document, error) {
 	invoice = invoice.RemoveIncludedTaxes(2)
 
 	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
+
 	header, err := newFatturaElettronicaHeader(invoice, datiTrasmissione)
 	if err != nil {
 		return nil, err
@@ -68,7 +69,7 @@ func (c *Converter) NewInvoice(env *gobl.Envelope) (*Document, error) {
 		FPANamespace:             NamespaceFatturaPA,
 		DSigNamespace:            NamespaceDSig,
 		XSINamespace:             NamespaceXSI,
-		Versione:                 header.DatiTrasmissione.FormatoTrasmissione,
+		Versione:                 formatoTransmissione(invoice.Customer),
 		SchemaLocation:           SchemaLocation,
 		FatturaElettronicaHeader: header,
 		FatturaElettronicaBody:   []*FatturaElettronicaBody{body},
