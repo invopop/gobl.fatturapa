@@ -12,8 +12,7 @@ import (
 // COnverter contains information related to the entity using this library
 // to submit invoices to SDI.
 type Converter struct {
-	Transmitter *Transmitter
-	Config      *Config
+	Config *Config
 }
 
 type Transmitter struct {
@@ -24,9 +23,16 @@ type Transmitter struct {
 type Config struct {
 	Certificate   *xmldsig.Certificate
 	WithTimestamp bool
+	Transmitter   *Transmitter
 }
 
 type Option func(*Converter)
+
+func WithTransmissionData(transmitter *Transmitter) Option {
+	return func(c *Converter) {
+		c.Config.Transmitter = transmitter
+	}
+}
 
 // WithCertificate will ensure the XML document is signed with the given certificate
 func WithCertificate(cert *xmldsig.Certificate) Option {
@@ -42,10 +48,9 @@ func WithTimestamp() Option {
 	}
 }
 
-func NewConverter(transmitter *Transmitter, opts ...Option) *Converter {
+func NewConverter(opts ...Option) *Converter {
 	c := new(Converter)
 	c.Config = new(Config)
-	c.Transmitter = transmitter
 	for _, opt := range opts {
 		opt(c)
 	}

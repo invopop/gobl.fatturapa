@@ -52,6 +52,7 @@ func (c *Converter) Convert(env *gobl.Envelope) (*Document, error) {
 	invoice = invoice.RemoveIncludedTaxes(2)
 
 	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
+
 	header, err := newFatturaElettronicaHeader(invoice, datiTrasmissione)
 	if err != nil {
 		return nil, err
@@ -68,7 +69,7 @@ func (c *Converter) Convert(env *gobl.Envelope) (*Document, error) {
 		FPANamespace:             NamespaceFatturaPA,
 		DSigNamespace:            NamespaceDSig,
 		XSINamespace:             NamespaceXSI,
-		Versione:                 header.DatiTrasmissione.FormatoTrasmissione,
+		Versione:                 formatoTransmissione(invoice.Customer),
 		SchemaLocation:           SchemaLocation,
 		FatturaElettronicaHeader: header,
 		FatturaElettronicaBody:   []*FatturaElettronicaBody{body},

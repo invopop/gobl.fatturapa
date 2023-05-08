@@ -19,11 +19,13 @@ func TestConverter() *fatturapa.Converter {
 		panic(err)
 	}
 
+	transmitter := &fatturapa.Transmitter{
+		CountryCode: "IT",
+		TaxID:       "01234567890",
+	}
+
 	converter := fatturapa.NewConverter(
-		&fatturapa.Transmitter{
-			CountryCode: "IT",
-			TaxID:       "01234567890",
-		},
+		fatturapa.WithTransmissionData(transmitter),
 		fatturapa.WithCertificate(cert),
 	)
 

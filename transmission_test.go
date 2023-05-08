@@ -16,10 +16,21 @@ func TestTransmissionData(t *testing.T) {
 
 		dt := doc.FatturaElettronicaHeader.DatiTrasmissione
 
-		assert.Equal(t, converter.Transmitter.CountryCode, dt.IdTrasmittente.IdPaese)
-		assert.Equal(t, converter.Transmitter.TaxID, dt.IdTrasmittente.IdCodice)
+		assert.Equal(t, converter.Config.Transmitter.CountryCode, dt.IdTrasmittente.IdPaese)
+		assert.Equal(t, converter.Config.Transmitter.TaxID, dt.IdTrasmittente.IdCodice)
 		assert.Equal(t, "679a2f25", dt.ProgressivoInvio)
 		assert.Equal(t, "FPR12", dt.FormatoTrasmissione)
 		assert.Equal(t, "ABCDEF1", dt.CodiceDestinatario)
+	})
+
+	t.Run("should skip transmission info if transmitter is not present", func(t *testing.T) {
+		converter := test.TestConverter()
+
+		converter.Config.Transmitter = nil
+
+		doc, err := test.LoadGOBL("invoice-simple.json", converter)
+		require.NoError(t, err)
+
+		assert.Nil(t, doc.FatturaElettronicaHeader.DatiTrasmissione)
 	})
 }
