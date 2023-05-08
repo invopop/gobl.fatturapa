@@ -9,9 +9,9 @@ import (
 	"github.com/invopop/xmldsig"
 )
 
-// Client contains information related to the entity using this library
+// COnverter contains information related to the entity using this library
 // to submit invoices to SDI.
-type Client struct {
+type Converter struct {
 	Transmitter *Transmitter
 	Config      *Config
 }
@@ -26,24 +26,24 @@ type Config struct {
 	WithTimestamp bool
 }
 
-type Option func(*Client)
+type Option func(*Converter)
 
 // WithCertificate will ensure the XML document is signed with the given certificate
 func WithCertificate(cert *xmldsig.Certificate) Option {
-	return func(c *Client) {
+	return func(c *Converter) {
 		c.Config.Certificate = cert
 	}
 }
 
 // WithTimestamp will ensure the XML document is timestamped
 func WithTimestamp() Option {
-	return func(c *Client) {
+	return func(c *Converter) {
 		c.Config.WithTimestamp = true
 	}
 }
 
-func NewClient(transmitter *Transmitter, opts ...Option) *Client {
-	c := new(Client)
+func NewConverter(transmitter *Transmitter, opts ...Option) *Converter {
+	c := new(Converter)
 	c.Config = new(Config)
 	c.Transmitter = transmitter
 	for _, opt := range opts {
@@ -54,7 +54,7 @@ func NewClient(transmitter *Transmitter, opts ...Option) *Client {
 }
 
 // LoadGOBL will build a FatturaPA Document from the source buffer
-func (c *Client) LoadGOBL(src io.Reader) (*Document, error) {
+func (c *Converter) LoadGOBL(src io.Reader) (*Document, error) {
 	buf := new(bytes.Buffer)
 	if _, err := buf.ReadFrom(src); err != nil {
 		return nil, err

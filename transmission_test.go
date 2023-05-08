@@ -10,14 +10,14 @@ import (
 
 func TestTransmissionData(t *testing.T) {
 	t.Run("should contain transmitting subject info", func(t *testing.T) {
-		client := test.TestClient()
-		doc, err := test.LoadGOBL("invoice-simple.json", client)
+		converter := test.TestConverter()
+		doc, err := test.LoadGOBL("invoice-simple.json", converter)
 		require.NoError(t, err)
 
 		dt := doc.FatturaElettronicaHeader.DatiTrasmissione
 
-		assert.Equal(t, client.Transmitter.CountryCode, dt.IdTrasmittente.IdPaese)
-		assert.Equal(t, client.Transmitter.TaxID, dt.IdTrasmittente.IdCodice)
+		assert.Equal(t, converter.Transmitter.CountryCode, dt.IdTrasmittente.IdPaese)
+		assert.Equal(t, converter.Transmitter.TaxID, dt.IdTrasmittente.IdCodice)
 		assert.Equal(t, "679a2f25", dt.ProgressivoInvio)
 		assert.Equal(t, "FPR12", dt.FormatoTrasmissione)
 		assert.Equal(t, "ABCDEF1", dt.CodiceDestinatario)

@@ -12,14 +12,14 @@ const (
 	certificatePassword = "invopop"
 )
 
-func TestClient() *fatturapa.Client {
+func TestConverter() *fatturapa.Converter {
 	cert, err := loadCertificate()
 
 	if err != nil {
 		panic(err)
 	}
 
-	client := fatturapa.NewClient(
+	converter := fatturapa.NewConverter(
 		&fatturapa.Transmitter{
 			CountryCode: "IT",
 			TaxID:       "01234567890",
@@ -27,7 +27,7 @@ func TestClient() *fatturapa.Client {
 		fatturapa.WithCertificate(cert),
 	)
 
-	return client
+	return converter
 }
 
 // LoadCertificate will return the standard test certificate

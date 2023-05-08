@@ -51,12 +51,12 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer out.Close() // nolint:errcheck
 
-	client, err := loadClientFromConfig(c)
+	converter, err := loadConverterFromConfig(c)
 	if err != nil {
 		return err
 	}
 
-	doc, err := client.LoadGOBL(input)
+	doc, err := converter.LoadGOBL(input)
 	if err != nil {
 		return err
 	}
@@ -73,7 +73,7 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func loadClientFromConfig(c *convertOpts) (*fatturapa.Client, error) {
+func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
 	err := godotenv.Load()
 	if err != nil {
 		log.Fatal("Error loading .env file")
@@ -110,7 +110,7 @@ func loadClientFromConfig(c *convertOpts) (*fatturapa.Client, error) {
 		opts = append(opts, fatturapa.WithTimestamp())
 	}
 
-	return fatturapa.NewClient(
+	return fatturapa.NewConverter(
 		&transmitter,
 		opts...,
 	), nil

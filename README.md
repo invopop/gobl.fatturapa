@@ -21,9 +21,9 @@ transmitter := fatturapa.Transmitter{
     TaxID:       taxID,       // Valid tax ID of transmitter
 }
 
-client := fatturapa.NewClient(transmitter)
+converter := fatturapa.NewConverter(transmitter)
 
-doc, err := client.NewInvoice(env)
+doc, err := converter.NewInvoice(env)
 if err != nil {
     panic(err)
 }
@@ -57,13 +57,13 @@ if err != nil {
     panic(err)
 }
 
-client := fatturapa.NewClient(
+converter := fatturapa.NewConverter(
 	&transmitter,
 	fatturapa.WithCertificate(cert),
 	fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
 )
 
-doc, err := client.NewInvoice(env)
+doc, err := converter.NewInvoice(env)
 if err != nil {
     panic(err)
 }

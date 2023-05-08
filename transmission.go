@@ -31,7 +31,7 @@ type DatiTrasmissione struct {
 	CodiceDestinatario  string
 }
 
-func (c *Client) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *DatiTrasmissione {
+func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *DatiTrasmissione {
 	return &DatiTrasmissione{
 		IdTrasmittente: TaxID{
 			IdPaese:  c.Transmitter.CountryCode,

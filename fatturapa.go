@@ -42,7 +42,7 @@ type Document struct {
 
 // NewInvoice expects the base envelope and provides a new Document
 // containing the XML version.
-func (c *Client) NewInvoice(env *gobl.Envelope) (*Document, error) {
+func (c *Converter) NewInvoice(env *gobl.Envelope) (*Document, error) {
 	invoice, ok := env.Extract().(*bill.Invoice)
 	if !ok {
 		return nil, errors.New("expected an invoice")
