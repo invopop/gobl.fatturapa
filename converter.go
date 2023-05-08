@@ -70,5 +70,5 @@ func (c *Converter) LoadGOBL(src io.Reader) (*Document, error) {
 		return nil, err
 	}
 
-	return c.Convert(env)
+	return c.ConvertFromGOBL(env)
 }

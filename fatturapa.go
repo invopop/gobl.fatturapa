@@ -40,9 +40,9 @@ type Document struct {
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
 }
 
-// Convert expects the base envelope and provides a new Document
+// ConvertFromGOBL expects the base envelope and provides a new Document
 // containing the XML version.
-func (c *Converter) Convert(env *gobl.Envelope) (*Document, error) {
+func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	invoice, ok := env.Extract().(*bill.Invoice)
 	if !ok {
 		return nil, errors.New("expected an invoice")

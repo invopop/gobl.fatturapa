@@ -16,7 +16,7 @@ There are a couple of entry points to build a new Fatturapa document. If you alr
 ```golang
 converter := fatturapa.NewConverter()
 
-doc, err := converter.Convert(env)
+doc, err := converter.ConvertFromGOBL(env)
 if err != nil {
     panic(err)
 }
@@ -55,7 +55,7 @@ converter := fatturapa.NewConverter(
 	fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
 )
 
-doc, err := converter.Convert(env)
+doc, err := converter.ConvertFromGOBL(env)
 if err != nil {
     panic(err)
 }
