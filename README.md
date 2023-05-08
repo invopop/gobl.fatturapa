@@ -23,7 +23,7 @@ transmitter := fatturapa.Transmitter{
 
 converter := fatturapa.NewConverter(transmitter)
 
-doc, err := converter.NewInvoice(env)
+doc, err := converter.Convert(env)
 if err != nil {
     panic(err)
 }
@@ -63,7 +63,7 @@ converter := fatturapa.NewConverter(
 	fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
 )
 
-doc, err := converter.NewInvoice(env)
+doc, err := converter.Convert(env)
 if err != nil {
     panic(err)
 }

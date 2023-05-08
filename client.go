@@ -65,5 +65,5 @@ func (c *Converter) LoadGOBL(src io.Reader) (*Document, error) {
 		return nil, err
 	}
 
-	return c.NewInvoice(env)
+	return c.Convert(env)
 }
