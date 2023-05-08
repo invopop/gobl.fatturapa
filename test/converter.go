@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	certificateFile     = "test2.p12"
+	certificateFile     = "test.p12"
 	certificatePassword = "invopop"
 )
 

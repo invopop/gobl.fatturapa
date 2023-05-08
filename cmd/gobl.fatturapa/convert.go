@@ -13,7 +13,7 @@ type convertOpts struct {
 	*rootOpts
 	cert          string
 	password      string
-	taxID         string
+	transmitter   string
 	withTimestamp bool
 }
 
@@ -30,7 +30,7 @@ func (c *convertOpts) cmd() *cobra.Command {
 	f := cmd.Flags()
 	f.StringVarP(&c.cert, "cert", "c", "", "Certificate for signing in pkcs12 format")
 	f.StringVarP(&c.password, "password", "p", "", "Password of the certificate")
-	f.StringVarP(&c.taxID, "tax-id", "x", "", "Tax ID of the transmitter. Must be prefixed by the country code")
+	f.StringVarP(&c.transmitter, "transmitter", "T", "", "Tax ID of the transmitter. Must be prefixed by the country code")
 	f.BoolVarP(&c.withTimestamp, "with-timestamp", "t", false, "Add timestamp to the output file")
 
 	return cmd
@@ -76,9 +76,9 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
 	var opts []fatturapa.Option
 
-	if c.taxID != "" {
-		countryCode := c.taxID[:2]
-		taxID := c.taxID[2:]
+	if c.transmitter != "" {
+		countryCode := c.transmitter[:2]
+		taxID := c.transmitter[2:]
 
 		code := l10n.CountryCode(countryCode)
 		err := code.Validate()

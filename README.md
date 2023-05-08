@@ -14,14 +14,7 @@ TODO: copyright, license, build statuses
 There are a couple of entry points to build a new Fatturapa document. If you already have a GOBL Envelope available in Go, you could convert and output to a data file like this:
 
 ```golang
-// FatturaPA requires data of the transmitter (the entity who sends the invoice
-// to the SDI) to be included in the document.
-transmitter := fatturapa.Transmitter{
-    CountryCode: countryCode, // ISO 3166-1 alpha-2
-    TaxID:       taxID,       // Valid tax ID of transmitter
-}
-
-converter := fatturapa.NewConverter(transmitter)
+converter := fatturapa.NewConverter()
 
 doc, err := converter.Convert(env)
 if err != nil {
@@ -48,7 +41,7 @@ if err != nil {
 // do something with doc
 ```
 
-FatturaPA XML for B2G transaction requires the document to be signed. Use a certificate to sign the document as follows:
+See the following example for signing the XML with a certificate:
 
 ```golang
 // import from github.com/invopop/xmldsig
@@ -58,7 +51,6 @@ if err != nil {
 }
 
 converter := fatturapa.NewConverter(
-	&transmitter,
 	fatturapa.WithCertificate(cert),
 	fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
 )
@@ -69,11 +61,23 @@ if err != nil {
 }
 ```
 
+If you want to include the `DatiTrasmissione` (transmission data) in the XML, you can use the `WithTransmissionData` option. This will include the fiscal data of the entity integrating with the SDI (Italy's e-invoice system) and `ProgressivoInvio` (transmission number) in the XML. This field must be present when the invoice reaches the Italian system, but if you are working with a third party service to send the XML, it would be on their side to include this data.
+
+```golang
+transmitter := fatturapa.Transmitter{
+    CountryCode: countryCode, // ISO 3166-1 alpha-2
+    TaxID:       taxID,       // Valid tax ID of transmitter
+}
+
+converter := fatturapa.NewConverter(
+    fatturapa.WithTransmissionData(transmitter),
+    // other options
+)
+```
+
 ### CLI
 
 The command line interface can be useful for situations when you're using a language other than Golang in your application.
-
-In order to include the transmitter data, copy `.env.example` to `.env` and update the values to configure the application.
 
 ```bash
 # install example
@@ -88,13 +92,19 @@ Simply provide the input GOBL JSON file and output to a file or another applicat
 If you have a digital certificate, run with:
 
 ```bash
-./gobl.fatturapa convert -c cert.p12 -p password input.json > output.xml
+./gobl.fatturapa convert -c cert.p12 -p password input.json output.xml
+```
+
+To include the transmitter information, add the `-T` flag and provide the *country code* and the *tax ID*:
+
+```bash
+./gobl.fatturapa -T ES12345678 input.json > output.xml
 ```
 
 The command also supports pipes:
 
 ```bash
-cat input.json > ./gobl.fatturapa > output.xml
+cat input.json > ./gobl.fatturapa output.xml
 ```
 
 ## Notes
