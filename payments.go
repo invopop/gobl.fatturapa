@@ -14,6 +14,7 @@ var paymentMethods = map[cbc.Key]string{
 	pay.MethodKeyCard:           "MP08",
 	pay.MethodKeyDirectDebit:    "MP09",
 	pay.MethodKeyDebitTransfer:  "MP09",
+	pay.MethodKeyVoucher:        "MP15",
 }
 
 type DatiPagamento struct {
