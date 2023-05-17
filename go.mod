@@ -4,9 +4,8 @@ go 1.19
 
 require (
 	github.com/ghodss/yaml v1.0.0
-	github.com/invopop/gobl v0.42.0
+	github.com/invopop/gobl v0.42.8
 	github.com/invopop/xmldsig v0.7.0
-	github.com/joho/godotenv v1.5.1
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.2
@@ -14,7 +13,7 @@ require (
 )
 
 require (
-	cloud.google.com/go v0.110.0 // indirect
+	cloud.google.com/go v0.110.2 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2 // indirect
 	github.com/beevik/etree v1.1.0 // indirect
@@ -29,8 +28,8 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693 // indirect
-	golang.org/x/crypto v0.8.0 // indirect
-	golang.org/x/sys v0.7.0 // indirect
+	golang.org/x/crypto v0.9.0 // indirect
+	golang.org/x/sys v0.8.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	software.sslmate.com/src/go-pkcs12 v0.2.0 // indirect

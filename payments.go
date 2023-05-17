@@ -74,7 +74,7 @@ func determinePaymentConditions(payment *bill.Payment) string {
 		return CondizioniPagamentoFull
 	case len(payment.Terms.DueDates) > 1:
 		return CondizioniPagamentoInstallments
-	case payment.Terms.Key == pay.TermKeyAdvance:
+	case payment.Terms.Key == pay.TermKeyAdvanced:
 		return CondizioniPagamentoAdvance
 	default:
 		return CondizioniPagamentoFull
