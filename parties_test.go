@@ -24,6 +24,10 @@ func TestPartiesSupplier(t *testing.T) {
 		assert.Equal(t, "ROMA", s.Sede.Comune)
 		assert.Equal(t, "RM", s.Sede.Provincia)
 		assert.Equal(t, "IT", s.Sede.Nazione)
+		assert.Equal(t, "RM", s.IscrizioneREA.Ufficio)
+		assert.Equal(t, "123456", s.IscrizioneREA.NumeroREA)
+		assert.Equal(t, "50000.00", s.IscrizioneREA.CapitaleSociale)
+		assert.Equal(t, "LN", s.IscrizioneREA.StatoLiquidazione)
 	})
 }
 

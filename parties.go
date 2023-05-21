@@ -9,11 +9,19 @@ import (
 )
 
 const (
-	RegimeFiscaleDefault = "RF01"
+	RegimeFiscaleDefault     = "RF01"
+	StatoLiquidazioneDefault = "LN"
 )
 
-// Party contains data related to the party
-type Party struct {
+// Supplier is the party that issues the invoice
+type Supplier struct {
+	DatiAnagrafici *DatiAnagrafici
+	Sede           *Address
+	IscrizioneREA  *IscrizioneREA `xml:",omitempty"`
+}
+
+// Customer is the party that receives the invoice
+type Customer struct {
 	DatiAnagrafici *DatiAnagrafici
 	Sede           *Address
 }
@@ -43,7 +51,20 @@ type Anagrafica struct {
 	CodEORI string `xml:",omitempty"`
 }
 
-func newCedentePrestatore(inv *bill.Invoice) (*Party, error) {
+// IscrizioneREA contains information related to the company registration details (REA)
+type IscrizioneREA struct {
+	// Initials of the province where the company's Registry Office is located
+	Ufficio string
+	// Company's REA registration number
+	NumeroREA string
+	// Company's share capital
+	CapitaleSociale string `xml:",omitempty"`
+	// Indication of whether the Company is in liquidation or not.
+	// Possible values: LS (in liquidation), LN (not in liquidation)
+	StatoLiquidazione string
+}
+
+func newCedentePrestatore(inv *bill.Invoice) (*Supplier, error) {
 	s := inv.Supplier
 
 	address, err := newAddress(s)
@@ -51,7 +72,7 @@ func newCedentePrestatore(inv *bill.Invoice) (*Party, error) {
 		return nil, err
 	}
 
-	return &Party{
+	return &Supplier{
 		DatiAnagrafici: &DatiAnagrafici{
 			IdFiscaleIVA: &TaxID{
 				IdPaese:  s.TaxID.Country.String(),
@@ -60,11 +81,12 @@ func newCedentePrestatore(inv *bill.Invoice) (*Party, error) {
 			Anagrafica:    newAnagrafica(s),
 			RegimeFiscale: findCodeRegimeFiscale(inv),
 		},
-		Sede: address,
+		Sede:          address,
+		IscrizioneREA: newIscrizioneREA(s),
 	}, nil
 }
 
-func newCessionarioCommittente(inv *bill.Invoice) (*Party, error) {
+func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 	c := inv.Customer
 
 	address, err := newAddress(c)
@@ -95,7 +117,7 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Party, error) {
 		}
 	}
 
-	return &Party{
+	return &Customer{
 		DatiAnagrafici: da,
 		Sede:           address,
 	}, nil
@@ -121,4 +143,26 @@ func findCodeRegimeFiscale(inv *bill.Invoice) string {
 	ss := inv.ScenarioSummary()
 
 	return ss.Meta[it.KeyFatturaPARegimeFiscale]
+}
+
+func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
+	if supplier.Registration == nil {
+		return nil
+	}
+
+	capital := supplier.Registration.Capital
+	var capitalFormatted string
+
+	if capital == nil {
+		capitalFormatted = ""
+	} else {
+		capitalFormatted = capital.Rescale(2).String()
+	}
+
+	return &IscrizioneREA{
+		Ufficio:           supplier.Registration.Office,
+		NumeroREA:         supplier.Registration.Entry,
+		CapitaleSociale:   capitalFormatted,
+		StatoLiquidazione: StatoLiquidazioneDefault,
+	}
 }

@@ -43,6 +43,12 @@
 					"country": "IT"
 				}
 			],
+			"registration": {
+				"capital": "50000.00",
+				"currency": "EUR",
+				"entry": "123456",
+				"office": "RM"
+			},
 			"emails": [
 				{
 					"addr": "billing@example.com"
