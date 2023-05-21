@@ -120,5 +120,11 @@ func newAnagrafica(party *org.Party) *Anagrafica {
 func findCodeRegimeFiscale(inv *bill.Invoice) string {
 	ss := inv.ScenarioSummary()
 
-	return ss.Meta[it.KeyFatturaPARegimeFiscale]
+	regimeFiscale := ss.Meta[it.KeyFatturaPARegimeFiscale]
+
+	if regimeFiscale != "" {
+		return regimeFiscale
+	}
+
+	return RegimeFiscaleDefault
 }
