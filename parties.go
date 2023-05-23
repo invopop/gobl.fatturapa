@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
@@ -12,9 +11,10 @@ import (
 )
 
 const (
-	statoLiquidazioneDefault = "LN"
-	regimeFiscaleDefault     = "RF01"
-	euCitizenTaxCodeDefault  = "0000000"
+	statoLiquidazioneDefault   = "LN"
+	regimeFiscaleDefault       = "RF01"
+	euCitizenTaxCodeDefault    = "0000000"
+	nonEUCitizenTaxCodeDefault = "99999999999"
 )
 
 // Supplier is the party that issues the invoice
@@ -108,10 +108,12 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 				"must be present under Invoice.Customer.TaxID")
 	}
 
-	if c.TaxID.Country == l10n.IT && isCodiceFiscale(c.TaxID.Code) {
+	if isCodiceFiscale(c.TaxID) {
 		da.CodiceFiscale = c.TaxID.Code.String()
 	} else if isEUCountry(c.TaxID.Country) {
-		da.IdFiscaleIVA = euCustomerFiscaleIVA(c.TaxID)
+		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, euCitizenTaxCodeDefault)
+	} else {
+		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
 	}
 
 	return &Customer{
@@ -148,11 +150,11 @@ func findCodeRegimeFiscale(inv *bill.Invoice) string {
 	return regimeFiscaleDefault
 }
 
-func euCustomerFiscaleIVA(taxID *tax.Identity) *TaxID {
+func customerFiscaleIVA(taxID *tax.Identity, fallBack string) *TaxID {
 	idCodice := taxID.Code.String()
 
 	if idCodice == "" {
-		idCodice = euCitizenTaxCodeDefault
+		idCodice = fallBack
 	}
 
 	return &TaxID{
@@ -183,6 +185,10 @@ func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
 	}
 }
 
-func isCodiceFiscale(code cbc.Code) bool {
-	return len(code.String()) == 16
+func isCodiceFiscale(taxID *tax.Identity) bool {
+	if taxID.Country != l10n.IT {
+		return false
+	}
+
+	return len(taxID.Code.String()) == 16
 }
