@@ -3,7 +3,6 @@ module github.com/invopop/gobl.fatturapa
 go 1.19
 
 require (
-	github.com/ghodss/yaml v1.0.0
 	github.com/invopop/gobl v0.42.9-0.20230523095618-7ab3d324aa7f
 	github.com/invopop/xmldsig v0.7.0
 	github.com/magefile/mage v1.14.0
@@ -30,7 +29,6 @@ require (
 	github.com/square/go-jose/v3 v3.0.0-20200630053402-0a67ce9b0693 // indirect
 	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/sys v0.8.0 // indirect
-	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	software.sslmate.com/src/go-pkcs12 v0.2.0 // indirect
 )
