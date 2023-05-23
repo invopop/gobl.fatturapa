@@ -1,9 +1,9 @@
 package fatturapa
 
 import (
-	"errors"
-
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 )
@@ -98,22 +98,16 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 		Anagrafica: newAnagrafica(c),
 	}
 
-	// Apply TaxID or fiscal code. At least one of them is required.
-	// FatturaPA only evaluates TaxID if both are present
 	if c.TaxID != nil {
-		da.IdFiscaleIVA = &TaxID{
-			IdPaese:  c.TaxID.Country.String(),
-			IdCodice: c.TaxID.Code.String(),
-		}
-	} else {
-		for _, id := range c.Identities {
-			if id.Type == "CF" {
-				da.CodiceFiscale = id.Code.String()
+		if c.TaxID.Country == l10n.IT {
+			if isCodiceFiscale(c.TaxID.Code) {
+				da.CodiceFiscale = c.TaxID.Code.String()
+			} else {
+				da.IdFiscaleIVA = &TaxID{
+					IdPaese:  c.TaxID.Country.String(),
+					IdCodice: c.TaxID.Code.String(),
+				}
 			}
-		}
-
-		if da.CodiceFiscale == "" {
-			return nil, errors.New("customer has no TaxID or fiscal code")
 		}
 	}
 
@@ -171,4 +165,8 @@ func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
 		CapitaleSociale:   capitalFormatted,
 		StatoLiquidazione: StatoLiquidazioneDefault,
 	}
+}
+
+func isCodiceFiscale(code cbc.Code) bool {
+	return len(code.String()) == 16
 }

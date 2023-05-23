@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl.fatturapa/test"
+	"github.com/invopop/gobl/bill"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -11,7 +12,7 @@ import (
 func TestPartiesSupplier(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
-		doc, err := test.ConvertFromGOBL(env, test.NewConverter())
+		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
 		s := doc.FatturaElettronicaHeader.CedentePrestatore
@@ -35,13 +36,14 @@ func TestPartiesSupplier(t *testing.T) {
 func TestPartiesCustomer(t *testing.T) {
 	t.Run("should contain the customer party info", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
-		doc, err := test.ConvertFromGOBL(env, test.NewConverter())
+		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente
 
 		assert.Equal(t, "IT", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
-		assert.Equal(t, "RSSGNC73A02F205X", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "09876543210", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "", c.DatiAnagrafici.CodiceFiscale)
 		assert.Equal(t, "MARIO", c.DatiAnagrafici.Anagrafica.Nome)
 		assert.Equal(t, "LEONI", c.DatiAnagrafici.Anagrafica.Cognome)
 		assert.Equal(t, "Dott.", c.DatiAnagrafici.Anagrafica.Titolo)
@@ -51,4 +53,27 @@ func TestPartiesCustomer(t *testing.T) {
 		assert.Equal(t, "FI", c.Sede.Provincia)
 		assert.Equal(t, "IT", c.Sede.Nazione)
 	})
+
+	t.Run("should contain the customer party info with codice fiscale", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) *bill.Invoice {
+			inv.Customer.TaxID.Code = "RSSGNC73A02F205X"
+			return inv
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		c := doc.FatturaElettronicaHeader.CessionarioCommittente
+
+		assert.Nil(t, c.DatiAnagrafici.IdFiscaleIVA)
+		assert.Equal(t, "RSSGNC73A02F205X", c.DatiAnagrafici.CodiceFiscale)
+	})
 }
+
+// test codice fiscale: RSSGNC73A02F205X
+// test italian missing tax id
+// test EU citizen with tax id
+// test EU citizen without tax id
+// test non-eu citizen with tax id
+// test non-eu citizen without tax id
