@@ -1,7 +1,7 @@
 package fatturapa
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
@@ -102,10 +102,12 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 		Anagrafica: newAnagrafica(c),
 	}
 
-	if c.TaxID == nil || c.TaxID.Country == "" {
-		return nil, fmt.Errorf(
-			"missing customer TaxID. at least the country code " +
-				"must be present under Invoice.Customer.TaxID")
+	if c.TaxID == nil {
+		return nil, errors.New("missing customer TaxID")
+	}
+
+	if c.TaxID.Country == "" {
+		return nil, errors.New("missing customer TaxID Country Code")
 	}
 
 	if isCodiceFiscale(c.TaxID) {

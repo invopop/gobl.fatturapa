@@ -133,11 +133,14 @@ func TestPartiesCustomer(t *testing.T) {
 		assert.Equal(t, "JP", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
 		assert.Equal(t, "99999999999", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 	})
-}
 
-// [x] test codice fiscale: RSSGNC73A02F205X
-// [ ] test italian missing tax id
-// [x] test EU citizen with tax id
-// [x] test EU citizen without tax id
-// [ ] test non-eu citizen with tax id
-// [ ] test non-eu citizen without tax id
+	t.Run("should return error for missing tax ID Country", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.TaxID.Country = ""
+		})
+
+		_, err := test.ConvertFromGOBL(env)
+		require.Error(t, err)
+	})
+}
