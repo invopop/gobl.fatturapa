@@ -19,8 +19,6 @@ const (
 	certificatePassword = "invopop"
 )
 
-type modifyInvoice func(*bill.Invoice) *bill.Invoice
-
 // TestConverter returns a fatturapa.Converter with the test certificate and
 // transmitter data.
 func NewConverter() *fatturapa.Converter {
@@ -114,13 +112,13 @@ func GetDataPath() string {
 }
 
 // ModifyInvoice takes a GOBL envelope and modifies the invoice
-func ModifyInvoice(env *gobl.Envelope, modifyFunc modifyInvoice) {
+func ModifyInvoice(env *gobl.Envelope, modifyFunc func(*bill.Invoice)) {
 	inv, ok := env.Extract().(*bill.Invoice)
 	if !ok {
 		panic("error extracting invoice")
 	}
 
-	inv = modifyFunc(inv)
+	modifyFunc(inv)
 
 	doc, err := gobl.NewDocument(inv)
 	if err != nil {

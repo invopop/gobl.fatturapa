@@ -1,16 +1,20 @@
 package fatturapa
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
-	RegimeFiscaleDefault     = "RF01"
-	StatoLiquidazioneDefault = "LN"
+	statoLiquidazioneDefault = "LN"
+	regimeFiscaleDefault     = "RF01"
+	euCitizenTaxCodeDefault  = "0000000"
 )
 
 // Supplier is the party that issues the invoice
@@ -98,17 +102,16 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 		Anagrafica: newAnagrafica(c),
 	}
 
-	if c.TaxID != nil {
-		if c.TaxID.Country == l10n.IT {
-			if isCodiceFiscale(c.TaxID.Code) {
-				da.CodiceFiscale = c.TaxID.Code.String()
-			} else {
-				da.IdFiscaleIVA = &TaxID{
-					IdPaese:  c.TaxID.Country.String(),
-					IdCodice: c.TaxID.Code.String(),
-				}
-			}
-		}
+	if c.TaxID == nil || c.TaxID.Country == "" {
+		return nil, fmt.Errorf(
+			"missing customer TaxID. at least the country code " +
+				"must be present under Invoice.Customer.TaxID")
+	}
+
+	if c.TaxID.Country == l10n.IT && isCodiceFiscale(c.TaxID.Code) {
+		da.CodiceFiscale = c.TaxID.Code.String()
+	} else if isEUCountry(c.TaxID.Country) {
+		da.IdFiscaleIVA = euCustomerFiscaleIVA(c.TaxID)
 	}
 
 	return &Customer{
@@ -142,7 +145,20 @@ func findCodeRegimeFiscale(inv *bill.Invoice) string {
 		return regimeFiscale
 	}
 
-	return RegimeFiscaleDefault
+	return regimeFiscaleDefault
+}
+
+func euCustomerFiscaleIVA(taxID *tax.Identity) *TaxID {
+	idCodice := taxID.Code.String()
+
+	if idCodice == "" {
+		idCodice = euCitizenTaxCodeDefault
+	}
+
+	return &TaxID{
+		IdPaese:  taxID.Country.String(),
+		IdCodice: idCodice,
+	}
 }
 
 func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
@@ -163,7 +179,7 @@ func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
 		Ufficio:           supplier.Registration.Office,
 		NumeroREA:         supplier.Registration.Entry,
 		CapitaleSociale:   capitalFormatted,
-		StatoLiquidazione: StatoLiquidazioneDefault,
+		StatoLiquidazione: statoLiquidazioneDefault,
 	}
 }
 
