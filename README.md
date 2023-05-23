@@ -113,21 +113,13 @@ cat input.json > ./gobl.fatturapa output.xml
 
 ## Integration Tests
 
-There are some integration and XML generation tests available in the `/test` path. To execute them, there are two [Magefile](https://magefile.org/) commands.
-
-The first will convert YAML source data into GOBL JSON documents:
+There are some integration and XML generation tests available in the `/test` path. to generate the FatturaPA XML documents from the GOBL sources, use the digital certificates that are available in the `/test/certificates` path:
 
 ```
-mage -v convertFromYAML
+mage -v TestConversion
 ```
 
-The second will generate the FatturaPA XML documents from the GOBL sources, using the digital certificates that are available in the `/test/certificates` path:
-
-```
-mage -v convertToXML
-```
-
-Sample data sources are contained in the `/test/data` directory. YAML and JSON (for tests) documents are stored in the Git repository, but the XML must be generated using the above commands.
+Sample data sources are contained in the `/test/data` directory. JSON (for tests) documents are stored in the Git repository, but the XML must be generated using the above commands.
 
 ## Current Conversion Limitations
 

@@ -10,8 +10,9 @@ import (
 
 func TestTransmissionData(t *testing.T) {
 	t.Run("should contain transmitting subject info", func(t *testing.T) {
-		converter := test.TestConverter()
-		doc, err := test.LoadGOBL("invoice-simple.json", converter)
+		converter := test.NewConverter()
+		env := test.LoadTestFile("invoice-simple.json")
+		doc, err := test.ConvertFromGOBL(env, converter)
 		require.NoError(t, err)
 
 		dt := doc.FatturaElettronicaHeader.DatiTrasmissione
@@ -24,11 +25,11 @@ func TestTransmissionData(t *testing.T) {
 	})
 
 	t.Run("should skip transmitter info and only include codice destinatario if transmitter is not present", func(t *testing.T) {
-		converter := test.TestConverter()
-
+		converter := test.NewConverter()
 		converter.Config.Transmitter = nil
 
-		doc, err := test.LoadGOBL("invoice-simple.json", converter)
+		env := test.LoadTestFile("invoice-simple.json")
+		doc, err := test.ConvertFromGOBL(env, converter)
 		require.NoError(t, err)
 
 		dt := doc.FatturaElettronicaHeader.DatiTrasmissione

@@ -10,7 +10,8 @@ import (
 
 func TestPartiesSupplier(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-simple.json", test.TestConverter())
+		env := test.LoadTestFile("invoice-simple.json")
+		doc, err := test.ConvertFromGOBL(env, test.NewConverter())
 		require.NoError(t, err)
 
 		s := doc.FatturaElettronicaHeader.CedentePrestatore
@@ -33,7 +34,8 @@ func TestPartiesSupplier(t *testing.T) {
 
 func TestPartiesCustomer(t *testing.T) {
 	t.Run("should contain the customer party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-simple.json", test.TestConverter())
+		env := test.LoadTestFile("invoice-simple.json")
+		doc, err := test.ConvertFromGOBL(env, test.NewConverter())
 		require.NoError(t, err)
 
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente

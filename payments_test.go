@@ -10,7 +10,8 @@ import (
 
 func TestPaymentsSimple(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-simple.json", test.TestConverter())
+		env := test.LoadTestFile("invoice-simple.json")
+		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
 		dp := doc.FatturaElettronicaBody[0].DatiPagamento
@@ -25,7 +26,8 @@ func TestPaymentsSimple(t *testing.T) {
 
 func TestPaymentsMultipleDueDates(t *testing.T) {
 	t.Run("should contain the customer party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-irpef.json", test.TestConverter())
+		env := test.LoadTestFile("invoice-irpef.json")
+		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
 		dp := doc.FatturaElettronicaBody[0].DatiPagamento

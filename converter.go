@@ -58,10 +58,9 @@ func NewConverter(opts ...Option) *Converter {
 	return c
 }
 
-// LoadGOBL will build a FatturaPA Document from the source buffer
-func (c *Converter) LoadGOBL(src io.Reader) (*Document, error) {
+func UnmarshalGOBL(reader io.Reader) (*gobl.Envelope, error) {
 	buf := new(bytes.Buffer)
-	if _, err := buf.ReadFrom(src); err != nil {
+	if _, err := buf.ReadFrom(reader); err != nil {
 		return nil, err
 	}
 
@@ -70,5 +69,5 @@ func (c *Converter) LoadGOBL(src io.Reader) (*Document, error) {
 		return nil, err
 	}
 
-	return c.ConvertFromGOBL(env)
+	return env, nil
 }

@@ -37,8 +37,6 @@ func (c *convertOpts) cmd() *cobra.Command {
 }
 
 func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
-	// ctx := commandContext(cmd)
-
 	input, err := openInput(cmd, args)
 	if err != nil {
 		return err
@@ -56,7 +54,12 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	doc, err := converter.LoadGOBL(input)
+	env, err := fatturapa.UnmarshalGOBL(input)
+	if err != nil {
+		return err
+	}
+
+	doc, err := converter.ConvertFromGOBL(env)
 	if err != nil {
 		return err
 	}
