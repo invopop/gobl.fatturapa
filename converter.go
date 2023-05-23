@@ -28,7 +28,7 @@ type Config struct {
 
 type Option func(*Converter)
 
-func WithTransmissionData(transmitter *Transmitter) Option {
+func WithTransmitterData(transmitter *Transmitter) Option {
 	return func(c *Converter) {
 		c.Config.Transmitter = transmitter
 	}

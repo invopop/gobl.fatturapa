@@ -61,7 +61,7 @@ if err != nil {
 }
 ```
 
-If you want to include the fiscal data of the entity integrating with the SDI (Italy's e-invoice system) and `ProgressivoInvio` (transmission number) in the XML, you can use the `WithTransmissionData` option. This option must be used if you are integrating diredctly with the SDI, but if you are working with a third party service to send the XML, it would be on their side to include this data.
+If you want to include the fiscal data of the entity integrating with the SDI (Italy's e-invoice system) and `ProgressivoInvio` (transmission number) in the XML, you can use the `WithTransmitterData` option. This option must be used if you are integrating diredctly with the SDI, but if you are working with a third party service to send the XML, it would be on their side to include this data.
 
 ```golang
 transmitter := fatturapa.Transmitter{
@@ -70,7 +70,7 @@ transmitter := fatturapa.Transmitter{
 }
 
 converter := fatturapa.NewConverter(
-    fatturapa.WithTransmissionData(transmitter),
+    fatturapa.WithTransmitterData(transmitter),
     // other options
 )
 ```

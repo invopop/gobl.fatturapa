@@ -25,7 +25,7 @@ func TestConverter() *fatturapa.Converter {
 	}
 
 	converter := fatturapa.NewConverter(
-		fatturapa.WithTransmissionData(transmitter),
+		fatturapa.WithTransmitterData(transmitter),
 		fatturapa.WithCertificate(cert),
 	)
 
