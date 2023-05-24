@@ -23,7 +23,7 @@ func TestTransmissionData(t *testing.T) {
 		assert.Equal(t, "ABCDEF1", dt.CodiceDestinatario)
 	})
 
-	t.Run("should skip transmission info if transmitter is not present", func(t *testing.T) {
+	t.Run("should skip transmitter info and only include codice destinatario if transmitter is not present", func(t *testing.T) {
 		converter := test.TestConverter()
 
 		converter.Config.Transmitter = nil
@@ -31,6 +31,12 @@ func TestTransmissionData(t *testing.T) {
 		doc, err := test.LoadGOBL("invoice-simple.json", converter)
 		require.NoError(t, err)
 
-		assert.Nil(t, doc.FatturaElettronicaHeader.DatiTrasmissione)
+		dt := doc.FatturaElettronicaHeader.DatiTrasmissione
+
+		assert.Equal(t, "ABCDEF1", dt.CodiceDestinatario)
+		assert.Equal(t, "", dt.IdTrasmittente.IdPaese)
+		assert.Equal(t, "", dt.IdTrasmittente.IdCodice)
+		assert.Equal(t, "", dt.ProgressivoInvio)
+		assert.Equal(t, "", dt.FormatoTrasmissione)
 	})
 }

@@ -91,7 +91,7 @@ func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
 			TaxID:       taxID,
 		}
 
-		opts = append(opts, fatturapa.WithTransmissionData(&transmitter))
+		opts = append(opts, fatturapa.WithTransmitterData(&transmitter))
 	}
 
 	if c.cert != "" {

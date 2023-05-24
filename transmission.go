@@ -25,15 +25,17 @@ const InboxKeyCodiceDestinatario = "codice-destinatario"
 
 // Data related to the transmitting subject
 type DatiTrasmissione struct {
-	IdTrasmittente      TaxID
-	ProgressivoInvio    string
-	FormatoTrasmissione string
+	IdTrasmittente      TaxID  `xml:",omitempty"`
+	ProgressivoInvio    string `xml:",omitempty"`
+	FormatoTrasmissione string `xml:",omitempty"`
 	CodiceDestinatario  string
 }
 
 func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *DatiTrasmissione {
 	if c.Config.Transmitter == nil {
-		return nil
+		return &DatiTrasmissione{
+			CodiceDestinatario: codiceDestinatario(inv.Customer),
+		}
 	}
 
 	return &DatiTrasmissione{
