@@ -48,7 +48,7 @@ func newDettaglioLinee(inv *bill.Invoice) []*DettaglioLinee {
 
 		for _, tax := range line.Taxes {
 			if tax.Category == common.TaxCategoryVAT {
-				vatRate = tax.Percent.String()
+				vatRate = formatPercentage(tax.Percent)
 				break
 			}
 		}
@@ -56,9 +56,9 @@ func newDettaglioLinee(inv *bill.Invoice) []*DettaglioLinee {
 		dl = append(dl, &DettaglioLinee{
 			NumeroLinea:         strconv.Itoa(line.Index),
 			Descrizione:         line.Item.Name,
-			Quantita:            line.Quantity.String(),
-			PrezzoUnitario:      line.Item.Price.String(),
-			PrezzoTotale:        line.Sum.String(),
+			Quantita:            formatAmount(&line.Quantity),
+			PrezzoUnitario:      formatAmount(&line.Item.Price),
+			PrezzoTotale:        formatAmount(&line.Sum),
 			AliquotaIVA:         vatRate,
 			Natura:              findCodeNaturaZeroVat(line),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
@@ -80,9 +80,9 @@ func newDatiRiepilogo(inv *bill.Invoice) []*DatiRiepilogo {
 
 	for _, rate := range vatRates {
 		dr = append(dr, &DatiRiepilogo{
-			AliquotaIVA:       rate.Percent.String(),
-			ImponibileImporto: rate.Base.String(),
-			Imposta:           rate.Amount.String(),
+			AliquotaIVA:       formatPercentage(&rate.Percent),
+			ImponibileImporto: formatAmount(&rate.Base),
+			Imposta:           formatAmount(&rate.Amount),
 		})
 	}
 
@@ -95,16 +95,16 @@ func extractLinePriceAdjustments(line *bill.Line) []*ScontoMaggiorazione {
 	for _, discount := range line.Discounts {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeDiscount,
-			Percentuale: discount.Percent.String(),
-			Importo:     discount.Amount.String(),
+			Percentuale: formatPercentage(discount.Percent),
+			Importo:     formatAmount(&discount.Amount),
 		})
 	}
 
 	for _, charge := range line.Charges {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeCharge,
-			Percentuale: charge.Percent.String(),
-			Importo:     charge.Amount.String(),
+			Percentuale: formatPercentage(charge.Percent),
+			Importo:     formatAmount(&charge.Amount),
 		})
 	}
 

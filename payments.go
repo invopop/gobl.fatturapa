@@ -51,7 +51,7 @@ func newDettalgioPagamento(inv *bill.Invoice) []*DettaglioPagamento {
 			dp = append(dp, &DettaglioPagamento{
 				ModalitaPagamento:     paymentMethod,
 				DataScadenzaPagamento: dueDate.Date.String(), // ISO 8601 YYYY-MM-DD format
-				ImportoPagamento:      dueDate.Amount.String(),
+				ImportoPagamento:      formatAmount(&dueDate.Amount),
 			})
 		}
 	}
@@ -61,7 +61,7 @@ func newDettalgioPagamento(inv *bill.Invoice) []*DettaglioPagamento {
 	if len(dp) == 0 {
 		dp = append(dp, &DettaglioPagamento{
 			ModalitaPagamento: paymentMethod,
-			ImportoPagamento:  inv.Totals.Payable.String(),
+			ImportoPagamento:  formatAmount(&inv.Totals.Payable),
 		})
 	}
 

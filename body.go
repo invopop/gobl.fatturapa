@@ -84,16 +84,16 @@ func extractPriceAdjustments(inv *bill.Invoice) []*ScontoMaggiorazione {
 	for _, discount := range inv.Discounts {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeDiscount,
-			Percentuale: discount.Percent.String(),
-			Importo:     discount.Amount.String(),
+			Percentuale: formatPercentage(discount.Percent),
+			Importo:     formatAmount(&discount.Amount),
 		})
 	}
 
 	for _, charge := range inv.Charges {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeCharge,
-			Percentuale: charge.Percent.String(),
-			Importo:     charge.Amount.String(),
+			Percentuale: formatPercentage(charge.Percent),
+			Importo:     formatAmount(&charge.Amount),
 		})
 	}
 
