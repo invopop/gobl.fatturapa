@@ -58,7 +58,7 @@
 		"customer": {
 			"tax_id": {
 				"country": "IT",
-				"code": "RSSGNC73A02F205X"
+				"code": "09876543210"
 			},
 			"name": "MARIO LEONI",
 			"people": [
@@ -132,7 +132,9 @@
 						"cat": "VAT",
 						"rate": "zero",
 						"percent": "0.0%",
-						"tags": ["not-subject-other"]
+						"tags": [
+							"not-subject-other"
+						]
 					}
 				],
 				"total": "100.00"

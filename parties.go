@@ -4,13 +4,17 @@ import (
 	"errors"
 
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
-	RegimeFiscaleDefault     = "RF01"
-	StatoLiquidazioneDefault = "LN"
+	statoLiquidazioneDefault   = "LN"
+	regimeFiscaleDefault       = "RF01"
+	euCitizenTaxCodeDefault    = "0000000"
+	nonEUCitizenTaxCodeDefault = "99999999999"
 )
 
 // Supplier is the party that issues the invoice
@@ -98,23 +102,20 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 		Anagrafica: newAnagrafica(c),
 	}
 
-	// Apply TaxID or fiscal code. At least one of them is required.
-	// FatturaPA only evaluates TaxID if both are present
-	if c.TaxID != nil {
-		da.IdFiscaleIVA = &TaxID{
-			IdPaese:  c.TaxID.Country.String(),
-			IdCodice: c.TaxID.Code.String(),
-		}
-	} else {
-		for _, id := range c.Identities {
-			if id.Type == "CF" {
-				da.CodiceFiscale = id.Code.String()
-			}
-		}
+	if c.TaxID == nil {
+		return nil, errors.New("missing customer TaxID")
+	}
 
-		if da.CodiceFiscale == "" {
-			return nil, errors.New("customer has no TaxID or fiscal code")
-		}
+	if c.TaxID.Country == "" {
+		return nil, errors.New("missing customer TaxID Country Code")
+	}
+
+	if isCodiceFiscale(c.TaxID) {
+		da.CodiceFiscale = c.TaxID.Code.String()
+	} else if isEUCountry(c.TaxID.Country) {
+		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, euCitizenTaxCodeDefault)
+	} else {
+		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
 	}
 
 	return &Customer{
@@ -148,7 +149,20 @@ func findCodeRegimeFiscale(inv *bill.Invoice) string {
 		return regimeFiscale
 	}
 
-	return RegimeFiscaleDefault
+	return regimeFiscaleDefault
+}
+
+func customerFiscaleIVA(taxID *tax.Identity, fallBack string) *TaxID {
+	idCodice := taxID.Code.String()
+
+	if idCodice == "" {
+		idCodice = fallBack
+	}
+
+	return &TaxID{
+		IdPaese:  taxID.Country.String(),
+		IdCodice: idCodice,
+	}
 }
 
 func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
@@ -169,6 +183,14 @@ func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
 		Ufficio:           supplier.Registration.Office,
 		NumeroREA:         supplier.Registration.Entry,
 		CapitaleSociale:   capitalFormatted,
-		StatoLiquidazione: StatoLiquidazioneDefault,
+		StatoLiquidazione: statoLiquidazioneDefault,
 	}
+}
+
+func isCodiceFiscale(taxID *tax.Identity) bool {
+	if taxID.Country != l10n.IT {
+		return false
+	}
+
+	return len(taxID.Code.String()) == 16
 }

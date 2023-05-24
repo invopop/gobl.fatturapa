@@ -4,13 +4,16 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl.fatturapa/test"
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/l10n"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestPartiesSupplier(t *testing.T) {
-	t.Run("should contain the supplier party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-simple.json", test.TestConverter())
+	t.Run("should contain the supplier info", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
 		s := doc.FatturaElettronicaHeader.CedentePrestatore
@@ -32,14 +35,16 @@ func TestPartiesSupplier(t *testing.T) {
 }
 
 func TestPartiesCustomer(t *testing.T) {
-	t.Run("should contain the customer party info", func(t *testing.T) {
-		doc, err := test.LoadGOBL("invoice-simple.json", test.TestConverter())
+	t.Run("should contain the customer info", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente
 
 		assert.Equal(t, "IT", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
-		assert.Equal(t, "RSSGNC73A02F205X", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "09876543210", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "", c.DatiAnagrafici.CodiceFiscale)
 		assert.Equal(t, "MARIO", c.DatiAnagrafici.Anagrafica.Nome)
 		assert.Equal(t, "LEONI", c.DatiAnagrafici.Anagrafica.Cognome)
 		assert.Equal(t, "Dott.", c.DatiAnagrafici.Anagrafica.Titolo)
@@ -48,5 +53,94 @@ func TestPartiesCustomer(t *testing.T) {
 		assert.Equal(t, "FIRENZE", c.Sede.Comune)
 		assert.Equal(t, "FI", c.Sede.Provincia)
 		assert.Equal(t, "IT", c.Sede.Nazione)
+	})
+
+	t.Run("should contain customer info with codice fiscale", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.TaxID.Code = "RSSGNC73A02F205X"
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		c := doc.FatturaElettronicaHeader.CessionarioCommittente
+
+		assert.Nil(t, c.DatiAnagrafici.IdFiscaleIVA)
+		assert.Equal(t, "RSSGNC73A02F205X", c.DatiAnagrafici.CodiceFiscale)
+	})
+
+	t.Run("should contain customer info for EU citizen with Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.TaxID.Code = "81237984062783472"
+			inv.Customer.TaxID.Country = l10n.AT
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		c := doc.FatturaElettronicaHeader.CessionarioCommittente
+
+		assert.Equal(t, "AT", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
+		assert.Equal(t, "81237984062783472", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+	})
+
+	t.Run("should contain customer info for EU citizen with no Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.TaxID.Code = ""
+			inv.Customer.TaxID.Country = l10n.SE
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		c := doc.FatturaElettronicaHeader.CessionarioCommittente
+
+		assert.Equal(t, "SE", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
+		assert.Equal(t, "0000000", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+	})
+
+	t.Run("should contain customer info for non-EU citizen with Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.TaxID.Code = "09823876432"
+			inv.Customer.TaxID.Country = l10n.GB
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		c := doc.FatturaElettronicaHeader.CessionarioCommittente
+
+		assert.Equal(t, "GB", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
+		assert.Equal(t, "09823876432", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+	})
+
+	t.Run("should contain customer info for non-EU citizen with no Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.TaxID.Code = ""
+			inv.Customer.TaxID.Country = l10n.JP
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		c := doc.FatturaElettronicaHeader.CessionarioCommittente
+
+		assert.Equal(t, "JP", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
+		assert.Equal(t, "99999999999", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+	})
+
+	t.Run("should return error for missing tax ID Country", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.TaxID.Country = ""
+		})
+
+		_, err := test.ConvertFromGOBL(env)
+		require.Error(t, err)
 	})
 }
