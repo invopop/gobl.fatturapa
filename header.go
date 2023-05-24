@@ -8,8 +8,8 @@ import (
 // in the document.
 type FatturaElettronicaHeader struct {
 	DatiTrasmissione       *DatiTrasmissione `xml:",omitempty"`
-	CedentePrestatore      *Party            `xml:",omitempty"`
-	CessionarioCommittente *Party            `xml:",omitempty"`
+	CedentePrestatore      *Supplier         `xml:",omitempty"`
+	CessionarioCommittente *Customer         `xml:",omitempty"`
 }
 
 func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *DatiTrasmissione) (*FatturaElettronicaHeader, error) {
