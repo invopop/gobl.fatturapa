@@ -1,3 +1,5 @@
+// Package test provides tools for testing the library both manually as well as
+// helpers for writing test code.
 package test
 
 import (
@@ -19,7 +21,7 @@ const (
 	certificatePassword = "invopop"
 )
 
-// TestConverter returns a fatturapa.Converter with the test certificate and
+// NewConverter returns a fatturapa.Converter with the test certificate and
 // transmitter data.
 func NewConverter() *fatturapa.Converter {
 	cert, err := loadCertificate()
@@ -60,7 +62,7 @@ func ConvertFromGOBL(env *gobl.Envelope, converter ...*fatturapa.Converter) (*fa
 
 // TestConversion takes the .json invoices generated previously and converts them
 // into XML fatturapa documents.
-func TestConversion() error {
+func TestConversion() error { // nolint:revive
 	var files []string
 	err := filepath.Walk(GetDataPath(), func(path string, info os.FileInfo, err error) error {
 		if filepath.Ext(path) == ".json" {
@@ -128,6 +130,7 @@ func ModifyInvoice(env *gobl.Envelope, modifyFunc func(*bill.Invoice)) {
 	env.Document = doc
 }
 
+// LoadTestFile loads a test file from the test/data folder as a GOBL envelope
 func LoadTestFile(file string) *gobl.Envelope {
 	f, err := os.Open(GetDataPath() + file)
 	if err != nil {

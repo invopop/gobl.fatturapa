@@ -7,8 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-type rootOpts struct {
-}
+type rootOpts struct{}
 
 func root() *rootOpts {
 	return &rootOpts{}

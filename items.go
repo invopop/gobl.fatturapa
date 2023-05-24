@@ -10,12 +10,14 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-type DatiBeniServizi struct {
-	DettaglioLinee []*DettaglioLinee
-	DatiRiepilogo  []*DatiRiepilogo
+// datiBeniServizi contains all data related to the goods and services sold.
+type datiBeniServizi struct {
+	DettaglioLinee []*dettaglioLinee
+	DatiRiepilogo  []*datiRiepilogo
 }
 
-type DettaglioLinee struct {
+// dettaglioLinee contains line data such as description, quantity, price, etc.
+type dettaglioLinee struct {
 	NumeroLinea         string
 	Descrizione         string
 	Quantita            string
@@ -23,25 +25,26 @@ type DettaglioLinee struct {
 	PrezzoTotale        string
 	AliquotaIVA         string
 	Natura              string                 `xml:",omitempty"`
-	ScontoMaggiorazione []*ScontoMaggiorazione `xml:",omitempty"`
+	ScontoMaggiorazione []*scontoMaggiorazione `xml:",omitempty"`
 }
 
-type DatiRiepilogo struct {
+// datiRiepilogo contains summary data such as total amount, total VAT, etc.
+type datiRiepilogo struct {
 	AliquotaIVA       string
 	ImponibileImporto string
 	Imposta           string
 	EsigibilitaIVA    string `xml:",omitempty"`
 }
 
-func newDatiBeniServizi(inv *bill.Invoice) *DatiBeniServizi {
-	return &DatiBeniServizi{
+func newDatiBeniServizi(inv *bill.Invoice) *datiBeniServizi {
+	return &datiBeniServizi{
 		DettaglioLinee: newDettaglioLinee(inv),
 		DatiRiepilogo:  newDatiRiepilogo(inv),
 	}
 }
 
-func newDettaglioLinee(inv *bill.Invoice) []*DettaglioLinee {
-	var dl []*DettaglioLinee
+func newDettaglioLinee(inv *bill.Invoice) []*dettaglioLinee {
+	var dl []*dettaglioLinee
 
 	for _, line := range inv.Lines {
 		vatRate := ""
@@ -53,7 +56,7 @@ func newDettaglioLinee(inv *bill.Invoice) []*DettaglioLinee {
 			}
 		}
 
-		dl = append(dl, &DettaglioLinee{
+		dl = append(dl, &dettaglioLinee{
 			NumeroLinea:         strconv.Itoa(line.Index),
 			Descrizione:         line.Item.Name,
 			Quantita:            formatAmount(&line.Quantity),
@@ -68,8 +71,8 @@ func newDettaglioLinee(inv *bill.Invoice) []*DettaglioLinee {
 	return dl
 }
 
-func newDatiRiepilogo(inv *bill.Invoice) []*DatiRiepilogo {
-	var dr []*DatiRiepilogo
+func newDatiRiepilogo(inv *bill.Invoice) []*datiRiepilogo {
+	var dr []*datiRiepilogo
 	var vatRates []*tax.RateTotal
 
 	for _, cat := range inv.Totals.Taxes.Categories {
@@ -79,7 +82,7 @@ func newDatiRiepilogo(inv *bill.Invoice) []*DatiRiepilogo {
 	}
 
 	for _, rate := range vatRates {
-		dr = append(dr, &DatiRiepilogo{
+		dr = append(dr, &datiRiepilogo{
 			AliquotaIVA:       formatPercentage(&rate.Percent),
 			ImponibileImporto: formatAmount(&rate.Base),
 			Imposta:           formatAmount(&rate.Amount),
@@ -89,20 +92,20 @@ func newDatiRiepilogo(inv *bill.Invoice) []*DatiRiepilogo {
 	return dr
 }
 
-func extractLinePriceAdjustments(line *bill.Line) []*ScontoMaggiorazione {
-	var scontiMaggiorazioni []*ScontoMaggiorazione
+func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
+	var scontiMaggiorazioni []*scontoMaggiorazione
 
 	for _, discount := range line.Discounts {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
-			Tipo:        ScontoMaggiorazioneTypeDiscount,
+		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
+			Tipo:        scontoMaggiorazioneTypeDiscount,
 			Percentuale: formatPercentage(discount.Percent),
 			Importo:     formatAmount(&discount.Amount),
 		})
 	}
 
 	for _, charge := range line.Charges {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
-			Tipo:        ScontoMaggiorazioneTypeCharge,
+		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
+			Tipo:        scontoMaggiorazioneTypeCharge,
 			Percentuale: formatPercentage(charge.Percent),
 			Importo:     formatAmount(&charge.Amount),
 		})

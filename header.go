@@ -4,15 +4,15 @@ import (
 	"github.com/invopop/gobl/bill"
 )
 
-// FatturaElettronicaHeader contains all data related to the parties involved
+// fatturaElettronicaHeader contains all data related to the parties involved
 // in the document.
-type FatturaElettronicaHeader struct {
-	DatiTrasmissione       *DatiTrasmissione `xml:",omitempty"`
-	CedentePrestatore      *Supplier         `xml:",omitempty"`
-	CessionarioCommittente *Customer         `xml:",omitempty"`
+type fatturaElettronicaHeader struct {
+	DatiTrasmissione       *datiTrasmissione `xml:",omitempty"`
+	CedentePrestatore      *supplier         `xml:",omitempty"`
+	CessionarioCommittente *customer         `xml:",omitempty"`
 }
 
-func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *DatiTrasmissione) (*FatturaElettronicaHeader, error) {
+func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *datiTrasmissione) (*fatturaElettronicaHeader, error) {
 	supplier, err := newCedentePrestatore(inv)
 	if err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *DatiTrasmi
 		return nil, err
 	}
 
-	return &FatturaElettronicaHeader{
+	return &fatturaElettronicaHeader{
 		DatiTrasmissione:       datiTrasmissione,
 		CedentePrestatore:      supplier,
 		CessionarioCommittente: customer,

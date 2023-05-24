@@ -16,30 +16,32 @@ var paymentMethods = map[cbc.Key]string{
 	pay.MethodKeyDebitTransfer:  "MP09",
 }
 
-type DatiPagamento struct {
+// datiPagamento contains all data related to the payment of the document.
+type datiPagamento struct {
 	CondizioniPagamento string
-	DettaglioPagamento  []*DettaglioPagamento
+	DettaglioPagamento  []*dettaglioPagamento
 }
 
-type DettaglioPagamento struct {
+// dettaglioPagamento contains data related to a single payment.
+type dettaglioPagamento struct {
 	ModalitaPagamento     string
 	DataScadenzaPagamento string `xml:",omitempty"`
 	ImportoPagamento      string
 }
 
-func newDatiPagamento(inv *bill.Invoice) *DatiPagamento {
+func newDatiPagamento(inv *bill.Invoice) *datiPagamento {
 	if inv.Payment == nil {
 		return nil
 	}
 
-	return &DatiPagamento{
+	return &datiPagamento{
 		CondizioniPagamento: determinePaymentConditions(inv.Payment),
 		DettaglioPagamento:  newDettalgioPagamento(inv),
 	}
 }
 
-func newDettalgioPagamento(inv *bill.Invoice) []*DettaglioPagamento {
-	var dp []*DettaglioPagamento
+func newDettalgioPagamento(inv *bill.Invoice) []*dettaglioPagamento {
+	var dp []*dettaglioPagamento
 	payment := inv.Payment
 
 	paymentMethod := paymentMethods[payment.Instructions.Key]
@@ -48,7 +50,7 @@ func newDettalgioPagamento(inv *bill.Invoice) []*DettaglioPagamento {
 	// DettaglioPagamento for each one.
 	if terms := payment.Terms; terms != nil {
 		for _, dueDate := range payment.Terms.DueDates {
-			dp = append(dp, &DettaglioPagamento{
+			dp = append(dp, &dettaglioPagamento{
 				ModalitaPagamento:     paymentMethod,
 				DataScadenzaPagamento: dueDate.Date.String(), // ISO 8601 YYYY-MM-DD format
 				ImportoPagamento:      formatAmount(&dueDate.Amount),
@@ -59,7 +61,7 @@ func newDettalgioPagamento(inv *bill.Invoice) []*DettaglioPagamento {
 	// If there are no due dates, then a single DettaglioPagamento is created
 	// with the total payable amount.
 	if len(dp) == 0 {
-		dp = append(dp, &DettaglioPagamento{
+		dp = append(dp, &dettaglioPagamento{
 			ModalitaPagamento: paymentMethod,
 			ImportoPagamento:  formatAmount(&inv.Totals.Payable),
 		})
@@ -71,12 +73,12 @@ func newDettalgioPagamento(inv *bill.Invoice) []*DettaglioPagamento {
 func determinePaymentConditions(payment *bill.Payment) string {
 	switch {
 	case payment.Terms == nil:
-		return CondizioniPagamentoFull
+		return condizioniPagamentoFull
 	case len(payment.Terms.DueDates) > 1:
-		return CondizioniPagamentoInstallments
+		return condizioniPagamentoInstallments
 	case payment.Terms.Key == pay.TermKeyAdvanced:
-		return CondizioniPagamentoAdvance
+		return condizioniPagamentoAdvance
 	default:
-		return CondizioniPagamentoFull
+		return condizioniPagamentoFull
 	}
 }

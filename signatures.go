@@ -6,12 +6,10 @@ import (
 	"github.com/invopop/xmldsig"
 )
 
-var (
-	xadesConfig = &xmldsig.XAdESConfig{
-		Role:        xmldsig.XAdESThirdParty,
-		Description: "Fattura PA",
-	}
-)
+var xadesConfig = &xmldsig.XAdESConfig{
+	Role:        xmldsig.XAdESThirdParty,
+	Description: "Fattura PA",
+}
 
 func (d *Document) sign(config *Config) error {
 	data, err := d.canonical()

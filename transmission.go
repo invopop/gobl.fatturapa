@@ -9,37 +9,37 @@ import (
 )
 
 const (
-	FormatoTrasmissioneFPA12 = "FPA12"
-	FormatoTrasmissioneFPR12 = "FPR12"
+	formatoTrasmissioneFPA12 = "FPA12"
+	formatoTrasmissioneFPR12 = "FPR12"
 )
 
 // Invoices sent to Italian individuals or businesses can use 0000000 as the
 // codice destinatario when it is not indicated explicitly.
 // When the recipient is foreign, XXXXXXX is used.
 const (
-	DefaultCodiceDestinatarioItalianBusiness = "0000000"
-	DefaultCodiceDestinatarioForeignBusiness = "XXXXXXX"
+	defaultCodiceDestinatarioItalianBusiness = "0000000"
+	defaultCodiceDestinatarioForeignBusiness = "XXXXXXX"
 )
 
-const InboxKeyCodiceDestinatario = "codice-destinatario"
+const inboxKeyCodiceDestinatario = "codice-destinatario"
 
-// Data related to the transmitting subject
-type DatiTrasmissione struct {
-	IdTrasmittente      TaxID  `xml:",omitempty"`
+// Data related to the transmission of the invoice
+type datiTrasmissione struct {
+	IdTrasmittente      taxID  `xml:",omitempty"` // nolint:revive
 	ProgressivoInvio    string `xml:",omitempty"`
 	FormatoTrasmissione string `xml:",omitempty"`
 	CodiceDestinatario  string
 }
 
-func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *DatiTrasmissione {
+func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *datiTrasmissione {
 	if c.Config.Transmitter == nil {
-		return &DatiTrasmissione{
+		return &datiTrasmissione{
 			CodiceDestinatario: codiceDestinatario(inv.Customer),
 		}
 	}
 
-	return &DatiTrasmissione{
-		IdTrasmittente: TaxID{
+	return &datiTrasmissione{
+		IdTrasmittente: taxID{
 			IdPaese:  c.Config.Transmitter.CountryCode,
 			IdCodice: c.Config.Transmitter.TaxID,
 		},
@@ -50,25 +50,25 @@ func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *
 }
 
 func formatoTransmissione(cus *org.Party) string {
-	taxId := cus.TaxID
+	taxID := cus.TaxID
 
-	if taxId.Country == l10n.IT && taxId.Type == it.TaxIdentityTypeGovernment {
-		return FormatoTrasmissioneFPA12
+	if taxID.Country == l10n.IT && taxID.Type == it.TaxIdentityTypeGovernment {
+		return formatoTrasmissioneFPA12
 	}
 
-	return FormatoTrasmissioneFPR12
+	return formatoTrasmissioneFPR12
 }
 
 func codiceDestinatario(cus *org.Party) string {
 	if cus.TaxID.Country != l10n.IT {
-		return DefaultCodiceDestinatarioForeignBusiness
+		return defaultCodiceDestinatarioForeignBusiness
 	}
 
 	for _, inbox := range cus.Inboxes {
-		if inbox.Key == InboxKeyCodiceDestinatario {
+		if inbox.Key == inboxKeyCodiceDestinatario {
 			return inbox.Code
 		}
 	}
 
-	return DefaultCodiceDestinatarioItalianBusiness
+	return defaultCodiceDestinatarioItalianBusiness
 }

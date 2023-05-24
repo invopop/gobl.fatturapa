@@ -7,50 +7,52 @@ import (
 )
 
 const (
-	ScontoMaggiorazioneTypeDiscount = "SC" // sconto
-	ScontoMaggiorazioneTypeCharge   = "MG" // maggiorazione
+	scontoMaggiorazioneTypeDiscount = "SC" // sconto
+	scontoMaggiorazioneTypeCharge   = "MG" // maggiorazione
 )
 
 const (
-	CondizioniPagamentoInstallments = "TP01" // pagamenti in rate
-	CondizioniPagamentoFull         = "TP02" // pagamento completo
-	CondizioniPagamentoAdvance      = "TP03" // anticipo
+	condizioniPagamentoInstallments = "TP01" // pagamenti in rate
+	condizioniPagamentoFull         = "TP02" // pagamento completo
+	condizioniPagamentoAdvance      = "TP03" // anticipo
 )
 
-// FatturaElettronicaBody contains all invoice data apart from the parties
+// fatturaElettronicaBody contains all invoice data apart from the parties
 // involved, which are contained in FatturaElettronicaHeader.
-type FatturaElettronicaBody struct {
-	DatiGenerali    *DatiGenerali
-	DatiBeniServizi *DatiBeniServizi
-	DatiPagamento   *DatiPagamento `xml:",omitempty"`
+type fatturaElettronicaBody struct {
+	DatiGenerali    *datiGenerali
+	DatiBeniServizi *datiBeniServizi
+	DatiPagamento   *datiPagamento `xml:",omitempty"`
 }
 
-// DatiGenerali contains general data about the invoice such as retained taxes,
+// datiGenerali contains general data about the invoice such as retained taxes,
 // invoice number, invoice date, document type, etc.
-type DatiGenerali struct {
-	DatiGeneraliDocumento *DatiGeneraliDocumento
+type datiGenerali struct {
+	DatiGeneraliDocumento *datiGeneraliDocumento
 }
 
-type DatiGeneraliDocumento struct {
+type datiGeneraliDocumento struct {
 	TipoDocumento       string
 	Divisa              string
 	Data                string
 	Numero              string
 	Causale             []string
-	DatiRitenuta        []*DatiRitenuta
-	ScontoMaggiorazione []*ScontoMaggiorazione
+	DatiRitenuta        []*datiRitenuta
+	ScontoMaggiorazione []*scontoMaggiorazione
 }
 
-type ScontoMaggiorazione struct {
+// scontoMaggiorazione contains data about price adjustments like discounts and
+// charges.
+type scontoMaggiorazione struct {
 	Tipo        string
 	Percentuale string
 	Importo     string
 }
 
-func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, error) {
-	return &FatturaElettronicaBody{
-		DatiGenerali: &DatiGenerali{
-			DatiGeneraliDocumento: &DatiGeneraliDocumento{
+func newFatturaElettronicaBody(inv *bill.Invoice) *fatturaElettronicaBody {
+	return &fatturaElettronicaBody{
+		DatiGenerali: &datiGenerali{
+			DatiGeneraliDocumento: &datiGeneraliDocumento{
 				TipoDocumento:       findCodeTipoDocumento(inv),
 				Divisa:              string(inv.Currency),
 				Data:                inv.IssueDate.String(),
@@ -62,7 +64,7 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*FatturaElettronicaBody, erro
 		},
 		DatiBeniServizi: newDatiBeniServizi(inv),
 		DatiPagamento:   newDatiPagamento(inv),
-	}, nil
+	}
 }
 
 func extractInvoiceReasons(inv *bill.Invoice) []string {
@@ -78,20 +80,20 @@ func extractInvoiceReasons(inv *bill.Invoice) []string {
 	return reasons
 }
 
-func extractPriceAdjustments(inv *bill.Invoice) []*ScontoMaggiorazione {
-	var scontiMaggiorazioni []*ScontoMaggiorazione
+func extractPriceAdjustments(inv *bill.Invoice) []*scontoMaggiorazione {
+	var scontiMaggiorazioni []*scontoMaggiorazione
 
 	for _, discount := range inv.Discounts {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
-			Tipo:        ScontoMaggiorazioneTypeDiscount,
+		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
+			Tipo:        scontoMaggiorazioneTypeDiscount,
 			Percentuale: formatPercentage(discount.Percent),
 			Importo:     formatAmount(&discount.Amount),
 		})
 	}
 
 	for _, charge := range inv.Charges {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
-			Tipo:        ScontoMaggiorazioneTypeCharge,
+		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
+			Tipo:        scontoMaggiorazioneTypeCharge,
 			Percentuale: formatPercentage(charge.Percent),
 			Importo:     formatAmount(&charge.Amount),
 		})
