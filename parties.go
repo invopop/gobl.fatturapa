@@ -17,32 +17,30 @@ const (
 	nonEUCitizenTaxCodeDefault = "99999999999"
 )
 
-// Supplier is the party that issues the invoice
-type Supplier struct {
-	DatiAnagrafici *DatiAnagrafici
-	Sede           *Address
-	IscrizioneREA  *IscrizioneREA `xml:",omitempty"`
+type supplier struct {
+	DatiAnagrafici *datiAnagrafici
+	Sede           *address
+	IscrizioneREA  *iscrizioneREA `xml:",omitempty"`
 }
 
-// Customer is the party that receives the invoice
-type Customer struct {
-	DatiAnagrafici *DatiAnagrafici
-	Sede           *Address
+type customer struct {
+	DatiAnagrafici *datiAnagrafici
+	Sede           *address
 }
 
-// DatiAnagrafici contains information related to an individual or company
-type DatiAnagrafici struct {
-	IdFiscaleIVA *TaxID `xml:",omitempty"`
+// datiAnagrafici contains information related to an individual or company
+type datiAnagrafici struct {
+	IdFiscaleIVA *taxID `xml:",omitempty"` // nolint:revive
 	// CodiceFiscale is the Italian fiscal code, distinct from TaxID
 	CodiceFiscale string `xml:",omitempty"`
-	Anagrafica    *Anagrafica
+	Anagrafica    *anagrafica
 	// RegimeFiscale identifies the tax system to be applied
 	// Has the form RFXX where XX is numeric; required only for the supplier
 	RegimeFiscale string `xml:",omitempty"`
 }
 
-// Anagrafica contains further party information
-type Anagrafica struct {
+// anagrafica contains further party information
+type anagrafica struct {
 	// Name of the organization
 	Denominazione string
 	// Name of the person
@@ -55,8 +53,8 @@ type Anagrafica struct {
 	CodEORI string `xml:",omitempty"`
 }
 
-// IscrizioneREA contains information related to the company registration details (REA)
-type IscrizioneREA struct {
+// iscrizioneREA contains information related to the company registration details (REA)
+type iscrizioneREA struct {
 	// Initials of the province where the company's Registry Office is located
 	Ufficio string
 	// Company's REA registration number
@@ -68,7 +66,7 @@ type IscrizioneREA struct {
 	StatoLiquidazione string
 }
 
-func newCedentePrestatore(inv *bill.Invoice) (*Supplier, error) {
+func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 	s := inv.Supplier
 
 	address, err := newAddress(s)
@@ -76,9 +74,9 @@ func newCedentePrestatore(inv *bill.Invoice) (*Supplier, error) {
 		return nil, err
 	}
 
-	return &Supplier{
-		DatiAnagrafici: &DatiAnagrafici{
-			IdFiscaleIVA: &TaxID{
+	return &supplier{
+		DatiAnagrafici: &datiAnagrafici{
+			IdFiscaleIVA: &taxID{
 				IdPaese:  s.TaxID.Country.String(),
 				IdCodice: s.TaxID.Code.String(),
 			},
@@ -90,7 +88,7 @@ func newCedentePrestatore(inv *bill.Invoice) (*Supplier, error) {
 	}, nil
 }
 
-func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
+func newCessionarioCommittente(inv *bill.Invoice) (*customer, error) {
 	c := inv.Customer
 
 	address, err := newAddress(c)
@@ -98,7 +96,7 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 		return nil, err
 	}
 
-	da := &DatiAnagrafici{
+	da := &datiAnagrafici{
 		Anagrafica: newAnagrafica(c),
 	}
 
@@ -118,14 +116,14 @@ func newCessionarioCommittente(inv *bill.Invoice) (*Customer, error) {
 		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
 	}
 
-	return &Customer{
+	return &customer{
 		DatiAnagrafici: da,
 		Sede:           address,
 	}, nil
 }
 
-func newAnagrafica(party *org.Party) *Anagrafica {
-	a := Anagrafica{
+func newAnagrafica(party *org.Party) *anagrafica {
+	a := anagrafica{
 		Denominazione: party.Name,
 	}
 
@@ -152,20 +150,20 @@ func findCodeRegimeFiscale(inv *bill.Invoice) string {
 	return regimeFiscaleDefault
 }
 
-func customerFiscaleIVA(taxID *tax.Identity, fallBack string) *TaxID {
-	idCodice := taxID.Code.String()
+func customerFiscaleIVA(id *tax.Identity, fallBack string) *taxID {
+	idCodice := id.Code.String()
 
 	if idCodice == "" {
 		idCodice = fallBack
 	}
 
-	return &TaxID{
-		IdPaese:  taxID.Country.String(),
+	return &taxID{
+		IdPaese:  id.Country.String(),
 		IdCodice: idCodice,
 	}
 }
 
-func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
+func newIscrizioneREA(supplier *org.Party) *iscrizioneREA {
 	if supplier.Registration == nil {
 		return nil
 	}
@@ -179,7 +177,7 @@ func newIscrizioneREA(supplier *org.Party) *IscrizioneREA {
 		capitalFormatted = capital.Rescale(2).String()
 	}
 
-	return &IscrizioneREA{
+	return &iscrizioneREA{
 		Ufficio:           supplier.Registration.Office,
 		NumeroREA:         supplier.Registration.Entry,
 		CapitaleSociale:   capitalFormatted,

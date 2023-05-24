@@ -1,3 +1,4 @@
+// Package main implements the CLI as well as mage commands (toplevel mage.go)
 package main
 
 import (

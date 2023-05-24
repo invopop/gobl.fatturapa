@@ -7,15 +7,16 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-type DatiRitenuta struct {
+// datiRitenuta contains all data related to the retained taxes.
+type datiRitenuta struct {
 	TipoRitenuta     string
 	ImportoRitenuta  string
 	AliquotaRitenuta string
 	CausalePagamento string
 }
 
-func extractRetainedTaxes(inv *bill.Invoice) []*DatiRitenuta {
-	var dr []*DatiRitenuta
+func extractRetainedTaxes(inv *bill.Invoice) []*datiRitenuta {
+	var dr []*datiRitenuta
 	var retCats []cbc.Code
 
 	// First we need to find all the retained tax categoriesfrom Totals
@@ -38,7 +39,7 @@ func extractRetainedTaxes(inv *bill.Invoice) []*DatiRitenuta {
 			rate := formatPercentage(tax.Percent)
 			codeCP := findCodeCausalePagamento(line, tax.Category)
 
-			dr = append(dr, &DatiRitenuta{
+			dr = append(dr, &datiRitenuta{
 				TipoRitenuta:     codeTR,
 				ImportoRitenuta:  formatAmount(&amount),
 				AliquotaRitenuta: rate,

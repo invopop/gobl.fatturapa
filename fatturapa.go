@@ -1,3 +1,4 @@
+// Package fatturapa implements the conversion from GOBL to FatturaPA XML.
 package fatturapa
 
 import (
@@ -17,10 +18,10 @@ import (
 
 // Namespace used for FatturaPA. DSig stuff is handled in the signatures.
 const (
-	NamespaceFatturaPA = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
-	NamespaceDSig      = "http://www.w3.org/2000/09/xmldsig#"
-	NamespaceXSI       = "http://www.w3.org/2001/XMLSchema-instance"
-	SchemaLocation     = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd"
+	namespaceFatturaPA = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
+	namespaceDSig      = "http://www.w3.org/2000/09/xmldsig#"
+	namespaceXSI       = "http://www.w3.org/2001/XMLSchema-instance"
+	schemaLocation     = "http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd"
 )
 
 // Document is a pseudo-model for containing the XML document being created.
@@ -34,8 +35,8 @@ type Document struct {
 	Versione       string   `xml:"versione,attr"`
 	SchemaLocation string   `xml:"xsi:schemaLocation,attr"`
 
-	FatturaElettronicaHeader *FatturaElettronicaHeader
-	FatturaElettronicaBody   []*FatturaElettronicaBody
+	FatturaElettronicaHeader *fatturaElettronicaHeader
+	FatturaElettronicaBody   []*fatturaElettronicaBody
 
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
 }
@@ -58,25 +59,26 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 		return nil, err
 	}
 
-	body, err := newFatturaElettronicaBody(invoice)
-	if err != nil {
-		return nil, err
-	}
+	body := newFatturaElettronicaBody(invoice)
 
 	// Basic document headers
 	d := &Document{
 		env:                      env,
-		FPANamespace:             NamespaceFatturaPA,
-		DSigNamespace:            NamespaceDSig,
-		XSINamespace:             NamespaceXSI,
+		FPANamespace:             namespaceFatturaPA,
+		DSigNamespace:            namespaceDSig,
+		XSINamespace:             namespaceXSI,
 		Versione:                 formatoTransmissione(invoice.Customer),
-		SchemaLocation:           SchemaLocation,
+		SchemaLocation:           schemaLocation,
 		FatturaElettronicaHeader: header,
-		FatturaElettronicaBody:   []*FatturaElettronicaBody{body},
+		FatturaElettronicaBody:   []*fatturaElettronicaBody{body},
 	}
 
 	if c.Config.Certificate != nil {
-		d.sign(c.Config)
+		err = d.sign(c.Config)
+
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return d, nil

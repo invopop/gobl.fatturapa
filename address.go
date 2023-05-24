@@ -6,8 +6,7 @@ import (
 	"github.com/invopop/gobl/org"
 )
 
-// Address contains the address of the party
-type Address struct {
+type address struct {
 	Indirizzo    string
 	NumeroCivico string `xml:",omitempty"`
 	CAP          string
@@ -16,19 +15,19 @@ type Address struct {
 	Nazione      string
 }
 
-func newAddress(p *org.Party) (*Address, error) {
+func newAddress(p *org.Party) (*address, error) {
 	if len(p.Addresses) == 0 {
 		return nil, errors.New("party missing address")
 	}
 
-	address := p.Addresses[0]
+	addr := p.Addresses[0]
 
-	return &Address{
-		Indirizzo: addressLine(address),
-		CAP:       address.Code,
-		Comune:    address.Locality,
-		Provincia: address.Region,
-		Nazione:   address.Country.String(),
+	return &address{
+		Indirizzo: addressLine(addr),
+		CAP:       addr.Code,
+		Comune:    addr.Locality,
+		Provincia: addr.Region,
+		Nazione:   addr.Country.String(),
 	}, nil
 }
 
