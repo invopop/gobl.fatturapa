@@ -7,5 +7,5 @@ func formatPercentage(p *num.Percentage) string {
 		return ""
 	}
 
-	return p.Amount.Multiply(*num.NewAmount(100, 0)).Rescale(2).String()
+	return p.Rescale(4).StringWithoutSymbol()
 }
