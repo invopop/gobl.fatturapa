@@ -9,3 +9,11 @@ func formatPercentage(p *num.Percentage) string {
 
 	return p.Rescale(4).StringWithoutSymbol()
 }
+
+func formatAmount(a *num.Amount) string {
+	if a == nil {
+		return ""
+	}
+
+	return a.Rescale(2).String()
+}

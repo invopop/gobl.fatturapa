@@ -34,13 +34,13 @@ func extractRetainedTaxes(inv *bill.Invoice) []*DatiRitenuta {
 			}
 
 			codeTR := findCodeTipoRitenuta(tax.Category)
-			amount := tax.Percent.Multiply(line.Total).Rescale(2).String()
+			amount := tax.Percent.Multiply(line.Total)
 			rate := formatPercentage(tax.Percent)
 			codeCP := findCodeCausalePagamento(line, tax.Category)
 
 			dr = append(dr, &DatiRitenuta{
 				TipoRitenuta:     codeTR,
-				ImportoRitenuta:  amount,
+				ImportoRitenuta:  formatAmount(&amount),
 				AliquotaRitenuta: rate,
 				CausalePagamento: codeCP,
 			})

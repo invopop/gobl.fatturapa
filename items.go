@@ -56,9 +56,9 @@ func newDettaglioLinee(inv *bill.Invoice) []*DettaglioLinee {
 		dl = append(dl, &DettaglioLinee{
 			NumeroLinea:         strconv.Itoa(line.Index),
 			Descrizione:         line.Item.Name,
-			Quantita:            line.Quantity.Rescale(2).String(),
-			PrezzoUnitario:      line.Item.Price.String(),
-			PrezzoTotale:        line.Sum.String(),
+			Quantita:            formatAmount(&line.Quantity),
+			PrezzoUnitario:      formatAmount(&line.Item.Price),
+			PrezzoTotale:        formatAmount(&line.Sum),
 			AliquotaIVA:         vatRate,
 			Natura:              findCodeNaturaZeroVat(line),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
@@ -81,8 +81,8 @@ func newDatiRiepilogo(inv *bill.Invoice) []*DatiRiepilogo {
 	for _, rate := range vatRates {
 		dr = append(dr, &DatiRiepilogo{
 			AliquotaIVA:       formatPercentage(&rate.Percent),
-			ImponibileImporto: rate.Base.String(),
-			Imposta:           rate.Amount.String(),
+			ImponibileImporto: formatAmount(&rate.Base),
+			Imposta:           formatAmount(&rate.Amount),
 		})
 	}
 
@@ -96,7 +96,7 @@ func extractLinePriceAdjustments(line *bill.Line) []*ScontoMaggiorazione {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeDiscount,
 			Percentuale: formatPercentage(discount.Percent),
-			Importo:     discount.Amount.String(),
+			Importo:     formatAmount(&discount.Amount),
 		})
 	}
 
@@ -104,7 +104,7 @@ func extractLinePriceAdjustments(line *bill.Line) []*ScontoMaggiorazione {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &ScontoMaggiorazione{
 			Tipo:        ScontoMaggiorazioneTypeCharge,
 			Percentuale: formatPercentage(charge.Percent),
-			Importo:     charge.Amount.String(),
+			Importo:     formatAmount(&charge.Amount),
 		})
 	}
 
