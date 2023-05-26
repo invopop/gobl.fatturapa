@@ -31,10 +31,12 @@ type dettaglioLinee struct {
 
 // datiRiepilogo contains summary data such as total amount, total VAT, etc.
 type datiRiepilogo struct {
-	AliquotaIVA       string
-	ImponibileImporto string
-	Imposta           string
-	EsigibilitaIVA    string `xml:",omitempty"`
+	AliquotaIVA          string
+	Natura               string `xml:",omitempty"`
+	ImponibileImporto    string
+	Imposta              string
+	EsigibilitaIVA       string `xml:",omitempty"`
+	RiferimentoNormativo string `xml:",omitempty"`
 }
 
 func newDatiBeniServizi(inv *bill.Invoice) (*datiBeniServizi, error) {
