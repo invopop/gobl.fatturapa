@@ -9,7 +9,6 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-// datiRitenuta contains all data related to the retained taxes.
 type datiRitenuta struct {
 	TipoRitenuta     string
 	ImportoRitenuta  string
@@ -18,39 +17,53 @@ type datiRitenuta struct {
 }
 
 func extractRetainedTaxes(inv *bill.Invoice) ([]*datiRitenuta, error) {
+	catTotals := findRetainedCategories(inv.Totals)
 	var dr []*datiRitenuta
+
+	for _, catTotal := range catTotals {
+		for _, rateTotal := range catTotal.Rates {
+			drElem, err := newDatiRitenuta(catTotal, rateTotal)
+			if err != nil {
+				return nil, err
+			}
+			dr = append(dr, drElem)
+		}
+	}
+
+	return dr, nil
+}
+
+func findRetainedCategories(totals *bill.Totals) []*tax.CategoryTotal {
 	var catTotals []*tax.CategoryTotal
 
-	// First we need to find all the retained tax categories from Totals
-	for _, catTotal := range inv.Totals.Taxes.Categories {
+	for _, catTotal := range totals.Taxes.Categories {
 		if catTotal.Retained {
 			catTotals = append(catTotals, catTotal)
 		}
 	}
 
-	for _, catTotal := range catTotals {
-		for _, rateTotal := range catTotal.Rates {
-			rate := formatPercentage(rateTotal.Percent)
-			amount := formatAmount(&rateTotal.Amount)
-			codeTR, err := findCodeTipoRitenuta(catTotal.Code)
-			if err != nil {
-				return nil, err
-			}
-			codeCP, err := findCodeCausalePagamento(catTotal.Code, rateTotal.Key)
-			if err != nil {
-				return nil, err
-			}
+	return catTotals
+}
 
-			dr = append(dr, &datiRitenuta{
-				TipoRitenuta:     codeTR,
-				ImportoRitenuta:  amount,
-				AliquotaRitenuta: rate,
-				CausalePagamento: codeCP,
-			})
-		}
+func newDatiRitenuta(catTotal *tax.CategoryTotal, rateTotal *tax.RateTotal) (*datiRitenuta, error) {
+	rate := formatPercentage(rateTotal.Percent)
+	amount := formatAmount(&rateTotal.Amount)
+
+	codeTR, err := findCodeTipoRitenuta(catTotal.Code)
+	if err != nil {
+		return nil, err
+	}
+	codeCP, err := findCodeCausalePagamento(catTotal.Code, rateTotal.Key)
+	if err != nil {
+		return nil, err
 	}
 
-	return dr, nil
+	return &datiRitenuta{
+		TipoRitenuta:     codeTR,
+		ImportoRitenuta:  amount,
+		AliquotaRitenuta: rate,
+		CausalePagamento: codeCP,
+	}, nil
 }
 
 func findCodeTipoRitenuta(cat cbc.Code) (string, error) {
