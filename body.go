@@ -60,6 +60,11 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 		return nil, err
 	}
 
+	dr, err := extractRetainedTaxes(inv)
+	if err != nil {
+		return nil, err
+	}
+
 	return &fatturaElettronicaBody{
 		DatiGenerali: &datiGenerali{
 			DatiGeneraliDocumento: &datiGeneraliDocumento{
@@ -68,7 +73,7 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 				Data:                inv.IssueDate.String(),
 				Numero:              inv.Code,
 				Causale:             extractInvoiceReasons(inv),
-				DatiRitenuta:        extractRetainedTaxes(inv),
+				DatiRitenuta:        dr,
 				ScontoMaggiorazione: extractPriceAdjustments(inv),
 			},
 		},

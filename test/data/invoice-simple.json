@@ -122,7 +122,7 @@
 				"i": 2,
 				"quantity": "1",
 				"item": {
-					"name": "Truffle Gathering",
+					"name": "Special Untaxed Work",
 					"price": "100.00",
 					"unit": "h"
 				},
@@ -130,11 +130,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "zero",
 						"percent": "0.0%",
-						"tags": [
-							"not-subject-other"
-						]
+						"rate": "not-subject+other"
 					}
 				],
 				"total": "100.00"
@@ -176,7 +173,7 @@
 								"amount": "356.40"
 							},
 							{
-								"key": "zero",
+								"key": "not-subject+other",
 								"base": "100.00",
 								"percent": "0.0%",
 								"amount": "0.00"

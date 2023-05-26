@@ -136,12 +136,12 @@ func findCodeNatura(line *bill.Line) (string, error) {
 
 	rate := findRate(taxCategoryVat.Rates, taxRate)
 	if rate == nil {
-		return "", fmt.Errorf("natura code required for VAT rate of zero (line number: %d)", line.Index)
+		return "", fmt.Errorf("natura code not found for VAT rate of zero (line number: %d)", line.Index)
 	}
 
 	code := rate.Codes[it.KeyFatturaPANatura]
 	if code == "" {
-		return "", fmt.Errorf("natura code required for VAT rate of zero (line number: %d)", line.Index)
+		return "", fmt.Errorf("natura code not found for VAT rate of zero (line number: %d)", line.Index)
 	}
 
 	return code.String(), nil
