@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/invopop/gobl/bill"
@@ -22,10 +23,10 @@ type dettaglioLinee struct {
 	Descrizione         string
 	Quantita            string
 	PrezzoUnitario      string
+	ScontoMaggiorazione []*scontoMaggiorazione `xml:",omitempty"`
 	PrezzoTotale        string
 	AliquotaIVA         string
-	Natura              string                 `xml:",omitempty"`
-	ScontoMaggiorazione []*scontoMaggiorazione `xml:",omitempty"`
+	Natura              string `xml:",omitempty"`
 }
 
 // datiRiepilogo contains summary data such as total amount, total VAT, etc.
@@ -36,14 +37,19 @@ type datiRiepilogo struct {
 	EsigibilitaIVA    string `xml:",omitempty"`
 }
 
-func newDatiBeniServizi(inv *bill.Invoice) *datiBeniServizi {
-	return &datiBeniServizi{
-		DettaglioLinee: newDettaglioLinee(inv),
-		DatiRiepilogo:  newDatiRiepilogo(inv),
+func newDatiBeniServizi(inv *bill.Invoice) (*datiBeniServizi, error) {
+	dl, err := newDettaglioLinee(inv)
+	if err != nil {
+		return nil, err
 	}
+
+	return &datiBeniServizi{
+		DettaglioLinee: dl,
+		DatiRiepilogo:  newDatiRiepilogo(inv),
+	}, nil
 }
 
-func newDettaglioLinee(inv *bill.Invoice) []*dettaglioLinee {
+func newDettaglioLinee(inv *bill.Invoice) ([]*dettaglioLinee, error) {
 	var dl []*dettaglioLinee
 
 	for _, line := range inv.Lines {
@@ -56,6 +62,11 @@ func newDettaglioLinee(inv *bill.Invoice) []*dettaglioLinee {
 			}
 		}
 
+		codeNatura, err := findCodeNatura(line)
+		if err != nil {
+			return nil, err
+		}
+
 		dl = append(dl, &dettaglioLinee{
 			NumeroLinea:         strconv.Itoa(line.Index),
 			Descrizione:         line.Item.Name,
@@ -63,12 +74,12 @@ func newDettaglioLinee(inv *bill.Invoice) []*dettaglioLinee {
 			PrezzoUnitario:      formatAmount(&line.Item.Price),
 			PrezzoTotale:        formatAmount(&line.Sum),
 			AliquotaIVA:         vatRate,
-			Natura:              findCodeNaturaZeroVat(line),
+			Natura:              codeNatura,
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
 		})
 	}
 
-	return dl
+	return dl, nil
 }
 
 func newDatiRiepilogo(inv *bill.Invoice) []*datiRiepilogo {
@@ -83,7 +94,7 @@ func newDatiRiepilogo(inv *bill.Invoice) []*datiRiepilogo {
 
 	for _, rate := range vatRates {
 		dr = append(dr, &datiRiepilogo{
-			AliquotaIVA:       formatPercentage(&rate.Percent),
+			AliquotaIVA:       formatPercentage(rate.Percent),
 			ImponibileImporto: formatAmount(&rate.Base),
 			Imposta:           formatAmount(&rate.Amount),
 		})
@@ -114,31 +125,52 @@ func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
 	return scontiMaggiorazioni
 }
 
-func findCodeNaturaZeroVat(line *bill.Line) string {
-	var tagKeys []cbc.Key
+func findCodeNatura(line *bill.Line) (string, error) {
+	taxRate := extractZeroVatTaxRate(line)
 
-	for _, tax := range line.Taxes {
-		if tax.Category == common.TaxCategoryVAT {
-			tagKeys = tax.Tags
-		}
-	}
-
-	if len(tagKeys) == 0 {
-		return ""
+	if taxRate == "" {
+		return "", nil
 	}
 
 	taxCategoryVat := regime.Category(common.TaxCategoryVAT)
 
-	if taxCategoryVat == nil {
+	rate := findRate(taxCategoryVat.Rates, taxRate)
+	if rate == nil {
+		return "", fmt.Errorf("natura code required for VAT rate of zero (line number: %d)", line.Index)
+	}
+
+	code := rate.Codes[it.KeyFatturaPANatura]
+	if code == "" {
+		return "", fmt.Errorf("natura code required for VAT rate of zero (line number: %d)", line.Index)
+	}
+
+	return code.String(), nil
+}
+
+func findRate(rates []*tax.Rate, taxRateKey cbc.Key) *tax.Rate {
+	for _, rate := range rates {
+		if rate.Key == taxRateKey {
+			return rate
+		}
+	}
+	return nil
+}
+
+func extractZeroVatTaxRate(line *bill.Line) cbc.Key {
+	var combo *tax.Combo
+
+	for _, tax := range line.Taxes {
+		if tax.Category == common.TaxCategoryVAT {
+			combo = tax
+		}
+	}
+
+	if combo == nil {
 		return ""
 	}
 
-	tagKey := tagKeys[0]
-
-	for _, tag := range taxCategoryVat.Tags {
-		if tag.Key == tagKey {
-			return tag.Meta[it.KeyFatturaPANatura]
-		}
+	if combo.Percent == nil || combo.Percent.IsZero() {
+		return combo.Rate
 	}
 
 	return ""
