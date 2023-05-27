@@ -3,7 +3,7 @@ module github.com/invopop/gobl.fatturapa
 go 1.19
 
 require (
-	github.com/invopop/gobl v0.42.9-0.20230523095618-7ab3d324aa7f
+	github.com/invopop/gobl v0.50.2
 	github.com/invopop/xmldsig v0.7.0
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.7.0

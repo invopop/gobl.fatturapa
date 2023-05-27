@@ -59,7 +59,10 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 		return nil, err
 	}
 
-	body := newFatturaElettronicaBody(invoice)
+	body, err := newFatturaElettronicaBody(invoice)
+	if err != nil {
+		return nil, err
+	}
 
 	// Basic document headers
 	d := &Document{

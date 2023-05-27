@@ -49,7 +49,22 @@ type scontoMaggiorazione struct {
 	Importo     string
 }
 
-func newFatturaElettronicaBody(inv *bill.Invoice) *fatturaElettronicaBody {
+func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, error) {
+	dbs, err := newDatiBeniServizi(inv)
+	if err != nil {
+		return nil, err
+	}
+
+	dp, err := newDatiPagamento(inv)
+	if err != nil {
+		return nil, err
+	}
+
+	dr, err := extractRetainedTaxes(inv)
+	if err != nil {
+		return nil, err
+	}
+
 	return &fatturaElettronicaBody{
 		DatiGenerali: &datiGenerali{
 			DatiGeneraliDocumento: &datiGeneraliDocumento{
@@ -58,13 +73,13 @@ func newFatturaElettronicaBody(inv *bill.Invoice) *fatturaElettronicaBody {
 				Data:                inv.IssueDate.String(),
 				Numero:              inv.Code,
 				Causale:             extractInvoiceReasons(inv),
-				DatiRitenuta:        extractRetainedTaxes(inv),
+				DatiRitenuta:        dr,
 				ScontoMaggiorazione: extractPriceAdjustments(inv),
 			},
 		},
-		DatiBeniServizi: newDatiBeniServizi(inv),
-		DatiPagamento:   newDatiPagamento(inv),
-	}
+		DatiBeniServizi: dbs,
+		DatiPagamento:   dp,
+	}, nil
 }
 
 func extractInvoiceReasons(inv *bill.Invoice) []string {

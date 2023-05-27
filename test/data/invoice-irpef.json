@@ -11,8 +11,8 @@
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"series": "SAMPLE",
 		"code": "001",
-		"currency": "EUR",
 		"type": "standard",
+		"currency": "EUR",
 		"tax": {
 			"tags": [
 				"freelance"
@@ -58,10 +58,16 @@
 			"people": [
 				{
 					"name": {
+						"prefix": "Dott.",
 						"given": "MARIO",
-						"surname": "LEONI",
-						"prefix": "Dott."
+						"surname": "LEONI"
 					}
+				}
+			],
+			"inboxes": [
+				{
+					"key": "codice-destinatario",
+					"code": "ABCDEF1"
 				}
 			],
 			"addresses": [
@@ -77,12 +83,6 @@
 			"emails": [
 				{
 					"addr": "leoni@mario.com"
-				}
-			],
-			"inboxes": [
-				{
-					"key": "codice-destinatario",
-					"code": "ABCDEF1"
 				}
 			]
 		},
@@ -111,9 +111,8 @@
 					},
 					{
 						"cat": "IRPEF",
-						"rate": "standard",
-						"percent": "20.0%",
-						"tags": ["self-employed-habitual"]
+						"rate": "self-employed-habitual",
+						"percent": "20.0%"
 					}
 				],
 				"total": "1620.00"
@@ -130,15 +129,12 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "zero",
-						"percent": "0.0%",
-						"tags": ["not-subject-other"]
+						"rate": "not-subject+other"
 					},
 					{
 						"cat": "IRPEF",
-						"rate": "standard",
-						"percent": "20.0%",
-						"tags": ["truffle-gathering"]
+						"rate": "truffle-gathering",
+						"percent": "50.0%"
 					}
 				],
 				"total": "100.00"
@@ -146,6 +142,8 @@
 		],
 		"discounts": [
 			{
+				"i": 1,
+				"base": "1720.00",
 				"percent": "50%",
 				"amount": "860.00",
 				"reason": "10th year anniversary discount"
@@ -153,22 +151,14 @@
 		],
 		"charges": [
 			{
+				"i": 1,
+				"base": "1720.00",
 				"percent": "10%",
 				"amount": "172.00",
 				"reason": "10th year anniversary charge"
 			}
 		],
 		"payment": {
-			"instructions": {
-				"key": "credit-transfer",
-				"credit_transfer": [
-					{
-						"iban": "IT60X0542811101000000123456",
-						"bic": "BCITITMM",
-						"name": "BANCA POPOLARE DI MILANO"
-					}
-				]
-			},
 			"terms": {
 				"key": "due-date",
 				"due_dates": [
@@ -179,6 +169,16 @@
 					{
 						"date": "2023-04-02",
 						"amount": "544.40"
+					}
+				]
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "IT60X0542811101000000123456",
+						"bic": "BCITITMM",
+						"name": "BANCA POPOLARE DI MILANO"
 					}
 				]
 			}
@@ -200,13 +200,11 @@
 								"amount": "356.40"
 							},
 							{
-								"key": "zero",
+								"key": "not-subject+other",
 								"base": "100.00",
-								"percent": "0.0%",
 								"amount": "0.00"
 							}
 						],
-						"base": "1720.00",
 						"amount": "356.40"
 					},
 					{
@@ -214,22 +212,26 @@
 						"retained": true,
 						"rates": [
 							{
-								"key": "standard",
-								"base": "1720.00",
+								"key": "self-employed-habitual",
+								"base": "1620.00",
 								"percent": "20.0%",
-								"amount": "344.00"
+								"amount": "324.00"
+							},
+							{
+								"key": "truffle-gathering",
+								"base": "100.00",
+								"percent": "50.0%",
+								"amount": "50.00"
 							}
 						],
-						"base": "1720.00",
-						"amount": "344.00"
+						"amount": "374.00"
 					}
 				],
-				"sum": "12.40"
+				"sum": "-17.60"
 			},
-			"tax": "12.40",
-			"total_with_tax": "1044.40",
-			"payable": "1044.40",
-			"due": "1044.40"
+			"tax": "-17.60",
+			"total_with_tax": "1014.40",
+			"payable": "1014.40"
 		}
 	},
 	"sigs": [
