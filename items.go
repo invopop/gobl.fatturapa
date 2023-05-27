@@ -6,6 +6,7 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -35,7 +36,6 @@ type datiRiepilogo struct {
 	Natura               string `xml:",omitempty"`
 	ImponibileImporto    string
 	Imposta              string
-	EsigibilitaIVA       string `xml:",omitempty"`
 	RiferimentoNormativo string `xml:",omitempty"`
 }
 
@@ -45,9 +45,14 @@ func newDatiBeniServizi(inv *bill.Invoice) (*datiBeniServizi, error) {
 		return nil, err
 	}
 
+	dr, err := newDatiRiepilogo(inv)
+	if err != nil {
+		return nil, err
+	}
+
 	return &datiBeniServizi{
 		DettaglioLinee: dl,
-		DatiRiepilogo:  newDatiRiepilogo(inv),
+		DatiRiepilogo:  dr,
 	}, nil
 }
 
@@ -64,7 +69,7 @@ func newDettaglioLinee(inv *bill.Invoice) ([]*dettaglioLinee, error) {
 			}
 		}
 
-		codeNatura, err := findCodeNatura(line)
+		codeNatura, err := findCodeNaturaLine(line)
 		if err != nil {
 			return nil, err
 		}
@@ -84,25 +89,33 @@ func newDettaglioLinee(inv *bill.Invoice) ([]*dettaglioLinee, error) {
 	return dl, nil
 }
 
-func newDatiRiepilogo(inv *bill.Invoice) []*datiRiepilogo {
+func newDatiRiepilogo(inv *bill.Invoice) ([]*datiRiepilogo, error) {
 	var dr []*datiRiepilogo
-	var vatRates []*tax.RateTotal
+	var vatRateTotals []*tax.RateTotal
 
 	for _, cat := range inv.Totals.Taxes.Categories {
 		if cat.Code == common.TaxCategoryVAT {
-			vatRates = cat.Rates
+			vatRateTotals = cat.Rates
+			break
 		}
 	}
 
-	for _, rate := range vatRates {
+	for _, rateTotal := range vatRateTotals {
+		codeNatura, err := findCodeNaturaSummary(rateTotal)
+		if err != nil {
+			return nil, err
+		}
+
 		dr = append(dr, &datiRiepilogo{
-			AliquotaIVA:       formatPercentage(rate.Percent),
-			ImponibileImporto: formatAmount(&rate.Base),
-			Imposta:           formatAmount(&rate.Amount),
+			AliquotaIVA:          formatPercentage(rateTotal.Percent),
+			Natura:               codeNatura,
+			ImponibileImporto:    formatAmount(&rateTotal.Base),
+			Imposta:              formatAmount(&rateTotal.Amount),
+			RiferimentoNormativo: findRiferimentoNormativo(rateTotal),
 		})
 	}
 
-	return dr
+	return dr, nil
 }
 
 func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
@@ -127,7 +140,7 @@ func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
 	return scontiMaggiorazioni
 }
 
-func findCodeNatura(line *bill.Line) (string, error) {
+func findCodeNaturaLine(line *bill.Line) (string, error) {
 	taxRate := extractZeroVatTaxRate(line)
 
 	if taxRate == "" {
@@ -176,4 +189,38 @@ func extractZeroVatTaxRate(line *bill.Line) cbc.Key {
 	}
 
 	return ""
+}
+
+func findCodeNaturaSummary(rateTotal *tax.RateTotal) (string, error) {
+	if !(rateTotal.Percent == nil || rateTotal.Percent.IsZero()) {
+		return "", nil
+	}
+	taxCategoryVat := regime.Category(common.TaxCategoryVAT)
+
+	rate := findRate(taxCategoryVat.Rates, rateTotal.Key)
+	if rate == nil {
+		return "", fmt.Errorf("natura code not found for VAT rate of zero ('%s')", rateTotal.Key)
+	}
+
+	code := rate.Codes[it.KeyFatturaPANatura]
+	if code == "" {
+		return "", fmt.Errorf("natura code not found for VAT rate of zero ('%s')", rateTotal.Key)
+	}
+
+	return code.String(), nil
+}
+
+func findRiferimentoNormativo(RateTotal *tax.RateTotal) string {
+	if !(RateTotal.Percent == nil || RateTotal.Percent.IsZero()) {
+		return ""
+	}
+
+	taxCategoryVat := regime.Category(common.TaxCategoryVAT)
+
+	rate := findRate(taxCategoryVat.Rates, RateTotal.Key)
+	if rate == nil {
+		return ""
+	}
+
+	return rate.Name[i18n.IT]
 }
