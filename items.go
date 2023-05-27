@@ -7,10 +7,13 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 )
+
+var taxCategoryVat = regime.Category(common.TaxCategoryVAT)
 
 // datiBeniServizi contains all data related to the goods and services sold.
 type datiBeniServizi struct {
@@ -30,7 +33,7 @@ type dettaglioLinee struct {
 	Natura              string `xml:",omitempty"`
 }
 
-// datiRiepilogo contains summary data such as total amount, total VAT, etc.
+// datiRiepilogo contains tax summary data such as tax rate, tax amount, etc.
 type datiRiepilogo struct {
 	AliquotaIVA          string
 	Natura               string `xml:",omitempty"`
@@ -40,12 +43,12 @@ type datiRiepilogo struct {
 }
 
 func newDatiBeniServizi(inv *bill.Invoice) (*datiBeniServizi, error) {
-	dl, err := newDettaglioLinee(inv)
+	dl, err := generateLineDetails(inv)
 	if err != nil {
 		return nil, err
 	}
 
-	dr, err := newDatiRiepilogo(inv)
+	dr, err := generateTaxSummary(inv)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +59,7 @@ func newDatiBeniServizi(inv *bill.Invoice) (*datiBeniServizi, error) {
 	}, nil
 }
 
-func newDettaglioLinee(inv *bill.Invoice) ([]*dettaglioLinee, error) {
+func generateLineDetails(inv *bill.Invoice) ([]*dettaglioLinee, error) {
 	var dl []*dettaglioLinee
 
 	for _, line := range inv.Lines {
@@ -89,7 +92,7 @@ func newDettaglioLinee(inv *bill.Invoice) ([]*dettaglioLinee, error) {
 	return dl, nil
 }
 
-func newDatiRiepilogo(inv *bill.Invoice) ([]*datiRiepilogo, error) {
+func generateTaxSummary(inv *bill.Invoice) ([]*datiRiepilogo, error) {
 	var dr []*datiRiepilogo
 	var vatRateTotals []*tax.RateTotal
 
@@ -141,25 +144,47 @@ func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
 }
 
 func findCodeNaturaLine(line *bill.Line) (string, error) {
-	taxRate := extractZeroVatTaxRate(line)
-
-	if taxRate == "" {
+	rateKey := findZeroVatTaxRate(line)
+	if rateKey == "" {
 		return "", nil
 	}
 
-	taxCategoryVat := regime.Category(common.TaxCategoryVAT)
+	return findCodeNatura(rateKey)
+}
 
-	rate := findRate(taxCategoryVat.Rates, taxRate)
+func findCodeNaturaSummary(rateTotal *tax.RateTotal) (string, error) {
+	if !isZeroRate(rateTotal.Percent) {
+		return "", nil
+	}
+
+	return findCodeNatura(rateTotal.Key)
+}
+
+func findCodeNatura(rateKey cbc.Key) (string, error) {
+	rate := findRate(taxCategoryVat.Rates, rateKey)
 	if rate == nil {
-		return "", fmt.Errorf("natura code not found for VAT rate of zero (line number: %d)", line.Index)
+		return "", fmt.Errorf("'Natura' code not found for VAT rate of zero with key '%s'", rateKey)
 	}
 
 	code := rate.Codes[it.KeyFatturaPANatura]
 	if code == "" {
-		return "", fmt.Errorf("natura code not found for VAT rate of zero (line number: %d)", line.Index)
+		return "", fmt.Errorf("'Natura' code not found for VAT rate of zero with key '%s'", rateKey)
 	}
 
 	return code.String(), nil
+}
+
+func findRiferimentoNormativo(rateTotal *tax.RateTotal) string {
+	if !isZeroRate(rateTotal.Percent) {
+		return ""
+	}
+
+	rate := findRate(taxCategoryVat.Rates, rateTotal.Key)
+	if rate == nil {
+		return ""
+	}
+
+	return rate.Name[i18n.IT]
 }
 
 func findRate(rates []*tax.Rate, taxRateKey cbc.Key) *tax.Rate {
@@ -171,56 +196,23 @@ func findRate(rates []*tax.Rate, taxRateKey cbc.Key) *tax.Rate {
 	return nil
 }
 
-func extractZeroVatTaxRate(line *bill.Line) cbc.Key {
+func findZeroVatTaxRate(line *bill.Line) cbc.Key {
 	var combo *tax.Combo
 
 	for _, tax := range line.Taxes {
 		if tax.Category == common.TaxCategoryVAT {
 			combo = tax
+			break
 		}
 	}
 
-	if combo == nil {
+	if combo == nil || !isZeroRate(combo.Percent) {
 		return ""
 	}
 
-	if combo.Percent == nil || combo.Percent.IsZero() {
-		return combo.Rate
-	}
-
-	return ""
+	return combo.Rate
 }
 
-func findCodeNaturaSummary(rateTotal *tax.RateTotal) (string, error) {
-	if !(rateTotal.Percent == nil || rateTotal.Percent.IsZero()) {
-		return "", nil
-	}
-	taxCategoryVat := regime.Category(common.TaxCategoryVAT)
-
-	rate := findRate(taxCategoryVat.Rates, rateTotal.Key)
-	if rate == nil {
-		return "", fmt.Errorf("natura code not found for VAT rate of zero ('%s')", rateTotal.Key)
-	}
-
-	code := rate.Codes[it.KeyFatturaPANatura]
-	if code == "" {
-		return "", fmt.Errorf("natura code not found for VAT rate of zero ('%s')", rateTotal.Key)
-	}
-
-	return code.String(), nil
-}
-
-func findRiferimentoNormativo(RateTotal *tax.RateTotal) string {
-	if !(RateTotal.Percent == nil || RateTotal.Percent.IsZero()) {
-		return ""
-	}
-
-	taxCategoryVat := regime.Category(common.TaxCategoryVAT)
-
-	rate := findRate(taxCategoryVat.Rates, RateTotal.Key)
-	if rate == nil {
-		return ""
-	}
-
-	return rate.Name[i18n.IT]
+func isZeroRate(percent *num.Percentage) bool {
+	return percent == nil || percent.IsZero()
 }
