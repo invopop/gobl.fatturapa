@@ -22,7 +22,7 @@ func extractRetainedTaxes(inv *bill.Invoice) ([]*datiRitenuta, error) {
 
 	for _, catTotal := range catTotals {
 		for _, rateTotal := range catTotal.Rates {
-			drElem, err := newDatiRitenuta(catTotal, rateTotal)
+			drElem, err := newDatiRitenuta(catTotal.Code, rateTotal)
 			if err != nil {
 				return nil, err
 			}
@@ -45,15 +45,15 @@ func findRetainedCategories(totals *bill.Totals) []*tax.CategoryTotal {
 	return catTotals
 }
 
-func newDatiRitenuta(catTotal *tax.CategoryTotal, rateTotal *tax.RateTotal) (*datiRitenuta, error) {
+func newDatiRitenuta(cat cbc.Code, rateTotal *tax.RateTotal) (*datiRitenuta, error) {
 	rate := formatPercentage(rateTotal.Percent)
 	amount := formatAmount(&rateTotal.Amount)
 
-	codeTR, err := findCodeTipoRitenuta(catTotal.Code)
+	codeTR, err := findCodeTipoRitenuta(cat)
 	if err != nil {
 		return nil, err
 	}
-	codeCP, err := findCodeCausalePagamento(catTotal.Code, rateTotal.Key)
+	codeCP, err := findCodeCausalePagamento(cat, rateTotal.Key)
 	if err != nil {
 		return nil, err
 	}

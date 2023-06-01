@@ -1,6 +1,8 @@
 package fatturapa
 
 import (
+	"fmt"
+
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/it"
@@ -16,6 +18,8 @@ const (
 	condizioniPagamentoFull         = "TP02" // pagamento completo
 	condizioniPagamentoAdvance      = "TP03" // anticipo
 )
+
+const stampDutyCode = "SI"
 
 // fatturaElettronicaBody contains all invoice data apart from the parties
 // involved, which are contained in FatturaElettronicaHeader.
@@ -36,9 +40,16 @@ type datiGeneraliDocumento struct {
 	Divisa              string
 	Data                string
 	Numero              string
-	Causale             []string
 	DatiRitenuta        []*datiRitenuta
+	DatiBollo           *datiBollo `xml:",omitempty"`
 	ScontoMaggiorazione []*scontoMaggiorazione
+	Causale             []string
+}
+
+// datiBollo contains data about the stamp duty
+type datiBollo struct {
+	BolloVirtuale string
+	ImportoBollo  string `xml:",omitempty"`
 }
 
 // scontoMaggiorazione contains data about price adjustments like discounts and
@@ -65,16 +76,22 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 		return nil, err
 	}
 
+	findCodeTipoDocumento, err := findCodeTipoDocumento(inv)
+	if err != nil {
+		return nil, err
+	}
+
 	return &fatturaElettronicaBody{
 		DatiGenerali: &datiGenerali{
 			DatiGeneraliDocumento: &datiGeneraliDocumento{
-				TipoDocumento:       findCodeTipoDocumento(inv),
+				TipoDocumento:       findCodeTipoDocumento,
 				Divisa:              string(inv.Currency),
 				Data:                inv.IssueDate.String(),
 				Numero:              inv.Code,
-				Causale:             extractInvoiceReasons(inv),
 				DatiRitenuta:        dr,
+				DatiBollo:           newDatiBollo(inv.Charges),
 				ScontoMaggiorazione: extractPriceAdjustments(inv),
+				Causale:             extractInvoiceReasons(inv),
 			},
 		},
 		DatiBeniServizi: dbs,
@@ -82,17 +99,28 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 	}, nil
 }
 
-func extractInvoiceReasons(inv *bill.Invoice) []string {
-	// find inv.Notes with NoteKey as cbc.NoteKeyReason
-	var reasons []string
+func findCodeTipoDocumento(inv *bill.Invoice) (string, error) {
+	ss := inv.ScenarioSummary()
 
-	for _, note := range inv.Notes {
-		if note.Key == cbc.NoteKeyReason {
-			reasons = append(reasons, note.Text)
+	code := ss.Codes[it.KeyFatturaPATipoDocumento]
+	if code == "" {
+		return "", fmt.Errorf("could not find TipoDocumento code")
+	}
+
+	return code.String(), nil
+}
+
+func newDatiBollo(charges []*bill.Charge) *datiBollo {
+	for _, charge := range charges {
+		if charge.Key == it.ChargeKeyStampDuty {
+			return &datiBollo{
+				BolloVirtuale: stampDutyCode,
+				ImportoBollo:  formatAmount(&charge.Amount),
+			}
 		}
 	}
 
-	return reasons
+	return nil
 }
 
 func extractPriceAdjustments(inv *bill.Invoice) []*scontoMaggiorazione {
@@ -117,8 +145,15 @@ func extractPriceAdjustments(inv *bill.Invoice) []*scontoMaggiorazione {
 	return scontiMaggiorazioni
 }
 
-func findCodeTipoDocumento(inv *bill.Invoice) string {
-	ss := inv.ScenarioSummary()
+func extractInvoiceReasons(inv *bill.Invoice) []string {
+	// find inv.Notes with NoteKey as cbc.NoteKeyReason
+	var reasons []string
 
-	return ss.Meta[it.KeyFatturaPATipoDocumento]
+	for _, note := range inv.Notes {
+		if note.Key == cbc.NoteKeyReason {
+			reasons = append(reasons, note.Text)
+		}
+	}
+
+	return reasons
 }

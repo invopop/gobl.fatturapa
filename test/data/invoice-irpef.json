@@ -156,6 +156,11 @@
 				"percent": "10%",
 				"amount": "172.00",
 				"reason": "10th year anniversary charge"
+			},
+			{
+				"i": 2,
+				"amount": "12.34",
+				"key": "stamp-duty"
 			}
 		],
 		"payment": {

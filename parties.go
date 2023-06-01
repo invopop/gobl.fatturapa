@@ -12,7 +12,6 @@ import (
 
 const (
 	statoLiquidazioneDefault   = "LN"
-	regimeFiscaleDefault       = "RF01"
 	euCitizenTaxCodeDefault    = "0000000"
 	nonEUCitizenTaxCodeDefault = "99999999999"
 )
@@ -74,6 +73,11 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 		return nil, err
 	}
 
+	rf, err := findCodeRegimeFiscale(inv)
+	if err != nil {
+		return nil, err
+	}
+
 	return &supplier{
 		DatiAnagrafici: &datiAnagrafici{
 			IdFiscaleIVA: &taxID{
@@ -81,7 +85,7 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 				IdCodice: s.TaxID.Code.String(),
 			},
 			Anagrafica:    newAnagrafica(s),
-			RegimeFiscale: findCodeRegimeFiscale(inv),
+			RegimeFiscale: rf,
 		},
 		Sede:          address,
 		IscrizioneREA: newIscrizioneREA(s),
@@ -138,16 +142,15 @@ func newAnagrafica(party *org.Party) *anagrafica {
 	return &a
 }
 
-func findCodeRegimeFiscale(inv *bill.Invoice) string {
+func findCodeRegimeFiscale(inv *bill.Invoice) (string, error) {
 	ss := inv.ScenarioSummary()
 
-	regimeFiscale := ss.Meta[it.KeyFatturaPARegimeFiscale]
-
-	if regimeFiscale != "" {
-		return regimeFiscale
+	regimeFiscale := ss.Codes[it.KeyFatturaPARegimeFiscale]
+	if regimeFiscale == "" {
+		return "", errors.New("could not find RegimeFiscale code for supplier")
 	}
 
-	return regimeFiscaleDefault
+	return regimeFiscale.String(), nil
 }
 
 func customerFiscaleIVA(id *tax.Identity, fallBack string) *taxID {
