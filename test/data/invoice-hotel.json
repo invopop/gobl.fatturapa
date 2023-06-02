@@ -74,8 +74,7 @@
         "taxes": [
           {
             "cat": "VAT",
-            "rate": "excluded",
-            "percent": "0.0%"
+            "rate": "excluded"
           }
         ],
         "total": "1.00"
@@ -98,6 +97,16 @@
         "total": "125.00"
       }
     ],
+    "payment": {
+      "advances": [
+        {
+          "date": "2023-05-01",
+          "key": "card",
+          "desc": "deposit",
+          "amount": "29.00"
+        }
+      ]
+    },
     "totals": {
       "sum": "126.00",
       "tax_included": "11.36",
@@ -119,7 +128,6 @@
                 "amount": "11.36"
               }
             ],
-            "base": "114.64",
             "amount": "11.36"
           }
         ],
@@ -127,7 +135,9 @@
       },
       "tax": "11.36",
       "total_with_tax": "126.00",
-      "payable": "126.00"
+      "payable": "126.00",
+      "advance": "29.00",
+      "due": "97.00"
     }
   },
   "sigs": [

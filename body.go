@@ -36,14 +36,15 @@ type datiGenerali struct {
 }
 
 type datiGeneraliDocumento struct {
-	TipoDocumento       string
-	Divisa              string
-	Data                string
-	Numero              string
-	DatiRitenuta        []*datiRitenuta
-	DatiBollo           *datiBollo `xml:",omitempty"`
-	ScontoMaggiorazione []*scontoMaggiorazione
-	Causale             []string
+	TipoDocumento          string
+	Divisa                 string
+	Data                   string
+	Numero                 string
+	DatiRitenuta           []*datiRitenuta
+	DatiBollo              *datiBollo `xml:",omitempty"`
+	ScontoMaggiorazione    []*scontoMaggiorazione
+	ImportoTotaleDocumento string `xml:",omitempty"`
+	Causale                []string
 }
 
 // datiBollo contains data about the stamp duty
@@ -71,31 +72,46 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 		return nil, err
 	}
 
-	dr, err := extractRetainedTaxes(inv)
-	if err != nil {
-		return nil, err
-	}
-
-	findCodeTipoDocumento, err := findCodeTipoDocumento(inv)
+	dg, err := newDatiGenerali(inv)
 	if err != nil {
 		return nil, err
 	}
 
 	return &fatturaElettronicaBody{
-		DatiGenerali: &datiGenerali{
-			DatiGeneraliDocumento: &datiGeneraliDocumento{
-				TipoDocumento:       findCodeTipoDocumento,
-				Divisa:              string(inv.Currency),
-				Data:                inv.IssueDate.String(),
-				Numero:              inv.Code,
-				DatiRitenuta:        dr,
-				DatiBollo:           newDatiBollo(inv.Charges),
-				ScontoMaggiorazione: extractPriceAdjustments(inv),
-				Causale:             extractInvoiceReasons(inv),
-			},
-		},
+		DatiGenerali:    dg,
 		DatiBeniServizi: dbs,
 		DatiPagamento:   dp,
+	}, nil
+}
+
+func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
+	dr, err := extractRetainedTaxes(inv)
+	if err != nil {
+		return nil, err
+	}
+
+	codeTipoDocumento, err := findCodeTipoDocumento(inv)
+	if err != nil {
+		return nil, err
+	}
+
+	documentTotal := inv.Totals.Due
+	if documentTotal == nil {
+		documentTotal = &inv.Totals.Payable
+	}
+
+	return &datiGenerali{
+		DatiGeneraliDocumento: &datiGeneraliDocumento{
+			TipoDocumento:          codeTipoDocumento,
+			Divisa:                 string(inv.Currency),
+			Data:                   inv.IssueDate.String(),
+			Numero:                 inv.Code,
+			DatiRitenuta:           dr,
+			DatiBollo:              newDatiBollo(inv.Charges),
+			ImportoTotaleDocumento: formatAmount(documentTotal),
+			ScontoMaggiorazione:    extractPriceAdjustments(inv),
+			Causale:                extractInvoiceReasons(inv),
+		},
 	}, nil
 }
 

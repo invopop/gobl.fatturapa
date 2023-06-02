@@ -24,7 +24,7 @@ type dettaglioPagamento struct {
 }
 
 func newDatiPagamento(inv *bill.Invoice) (*datiPagamento, error) {
-	if inv.Payment == nil {
+	if inv.Payment == nil || inv.Payment.Instructions == nil {
 		return nil, nil
 	}
 
