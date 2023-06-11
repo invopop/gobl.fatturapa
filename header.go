@@ -17,7 +17,6 @@ func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *datiTrasmi
 	if err != nil {
 		return nil, err
 	}
-
 	customer, err := newCessionarioCommittente(inv)
 	if err != nil {
 		return nil, err
