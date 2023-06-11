@@ -35,8 +35,7 @@ func TestTransmissionData(t *testing.T) {
 		dt := doc.FatturaElettronicaHeader.DatiTrasmissione
 
 		assert.Equal(t, "ABCDEF1", dt.CodiceDestinatario)
-		assert.Equal(t, "", dt.IdTrasmittente.IdPaese)
-		assert.Equal(t, "", dt.IdTrasmittente.IdCodice)
+		assert.Equal(t, nil, dt.IdTrasmittente)
 		assert.Equal(t, "", dt.ProgressivoInvio)
 		assert.Equal(t, "", dt.FormatoTrasmissione)
 	})
