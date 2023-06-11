@@ -25,7 +25,7 @@ const inboxKeyCodiceDestinatario = "codice-destinatario"
 
 // Data related to the transmission of the invoice
 type datiTrasmissione struct {
-	IdTrasmittente      taxID  `xml:",omitempty"` // nolint:revive
+	IdTrasmittente      *taxID `xml:",omitempty"` // nolint:revive
 	ProgressivoInvio    string `xml:",omitempty"`
 	FormatoTrasmissione string `xml:",omitempty"`
 	CodiceDestinatario  string
@@ -39,7 +39,7 @@ func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *
 	}
 
 	return &datiTrasmissione{
-		IdTrasmittente: taxID{
+		IdTrasmittente: &taxID{
 			IdPaese:  c.Config.Transmitter.CountryCode,
 			IdCodice: c.Config.Transmitter.TaxID,
 		},

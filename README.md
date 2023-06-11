@@ -1,4 +1,5 @@
 # gobl.fatturapa
+
 GOBL Conversion into FatturaPA in Italy
 
 # GOBL to FatturaPA Toolkit
@@ -80,7 +81,8 @@ converter := fatturapa.NewConverter(
 The command line interface can be useful for situations when you're using a language other than Golang in your application.
 
 ```bash
-# install example
+cd cmd/gobl.fatturapa
+go build
 ```
 
 Simply provide the input GOBL JSON file and output to a file or another application:
@@ -95,10 +97,10 @@ If you have a digital certificate, run with:
 ./gobl.fatturapa convert -c cert.p12 -p password input.json output.xml
 ```
 
-To include the transmitter information, add the `-T` flag and provide the *country code* and the *tax ID*:
+To include the transmitter information, add the `-T` flag and provide the _country code_ and the _tax ID_:
 
 ```bash
-./gobl.fatturapa -T ES12345678 input.json > output.xml
+./gobl.fatturapa convert -T ES12345678 input.json output.xml
 ```
 
 The command also supports pipes:
@@ -129,6 +131,7 @@ The FatturaPA XML schema is quite large and complex. This library is not complet
 - Only a subset of payment methods (ModalitaPagamento) are supported. See `payments.go` for the list of supported codes.
 
 Some of the optional elements currently not supported include:
+
 - `Allegati` (attachments)
 - `DatiOrdineAcquisto` (data related to purchase orders)
 - `DatiContratto` (data related to contracts)
