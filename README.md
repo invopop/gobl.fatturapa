@@ -52,8 +52,8 @@ if err != nil {
 }
 
 converter := fatturapa.NewConverter(
-	fatturapa.WithCertificate(cert),
-	fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
+    fatturapa.WithCertificate(cert),
+    fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
 )
 
 doc, err := converter.ConvertFromGOBL(env)
