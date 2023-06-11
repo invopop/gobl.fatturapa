@@ -52,7 +52,7 @@ if err != nil {
 }
 
 converter := fatturapa.NewConverter(
-	fatturapa.WithCertificate(cert),
+    fatturapa.WithCertificate(cert),
 	fatturapa.WithTimestamp(), // if you want to include a timestamp in the digital signature
 )
 
