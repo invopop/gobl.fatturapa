@@ -122,10 +122,10 @@
 				"quantity": "1",
 				"item": {
 					"name": "Truffle Gathering",
-					"price": "100.00",
+					"price": "100",
 					"unit": "h"
 				},
-				"sum": "100.00",
+				"sum": "100",
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -137,7 +137,7 @@
 						"percent": "50.0%"
 					}
 				],
-				"total": "100.00"
+				"total": "100"
 			}
 		],
 		"discounts": [
@@ -158,9 +158,9 @@
 				"reason": "10th year anniversary charge"
 			},
 			{
+				"key": "stamp-duty",
 				"i": 2,
-				"amount": "12.34",
-				"key": "stamp-duty"
+				"amount": "12.34"
 			}
 		],
 		"payment": {
@@ -191,8 +191,8 @@
 		"totals": {
 			"sum": "1720.00",
 			"discount": "860.00",
-			"charge": "172.00",
-			"total": "1032.00",
+			"charge": "184.34",
+			"total": "1044.34",
 			"taxes": {
 				"categories": [
 					{
@@ -235,8 +235,8 @@
 				"sum": "-17.60"
 			},
 			"tax": "-17.60",
-			"total_with_tax": "1014.40",
-			"payable": "1014.40"
+			"total_with_tax": "1026.74",
+			"payable": "1026.74"
 		}
 	},
 	"sigs": [

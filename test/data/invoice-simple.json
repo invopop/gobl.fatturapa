@@ -11,8 +11,8 @@
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"series": "SAMPLE",
 		"code": "001",
-		"currency": "EUR",
 		"type": "standard",
+		"currency": "EUR",
 		"tax": {
 			"tags": [
 				"freelance"
@@ -43,31 +43,37 @@
 					"country": "IT"
 				}
 			],
-			"registration": {
-				"capital": "50000.00",
-				"currency": "EUR",
-				"entry": "123456",
-				"office": "RM"
-			},
 			"emails": [
 				{
 					"addr": "billing@example.com"
 				}
-			]
+			],
+			"registration": {
+				"capital": "50000.00",
+				"currency": "EUR",
+				"office": "RM",
+				"entry": "123456"
+			}
 		},
 		"customer": {
 			"tax_id": {
 				"country": "IT",
-				"code": "09876543210"
+				"code": "09876543217"
 			},
 			"name": "MARIO LEONI",
 			"people": [
 				{
 					"name": {
+						"prefix": "Dott.",
 						"given": "MARIO",
-						"surname": "LEONI",
-						"prefix": "Dott."
+						"surname": "LEONI"
 					}
+				}
+			],
+			"inboxes": [
+				{
+					"key": "codice-destinatario",
+					"code": "ABCDEF1"
 				}
 			],
 			"addresses": [
@@ -83,12 +89,6 @@
 			"emails": [
 				{
 					"addr": "leoni@mario.com"
-				}
-			],
-			"inboxes": [
-				{
-					"key": "codice-destinatario",
-					"code": "ABCDEF1"
 				}
 			]
 		},
@@ -130,7 +130,6 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"percent": "0.0%",
 						"rate": "not-subject+other"
 					}
 				],
@@ -139,6 +138,8 @@
 		],
 		"discounts": [
 			{
+				"i": 1,
+				"base": "1720.00",
 				"percent": "50%",
 				"amount": "860.00",
 				"reason": "10th year anniversary discount"
@@ -146,6 +147,8 @@
 		],
 		"charges": [
 			{
+				"i": 1,
+				"base": "1720.00",
 				"percent": "10%",
 				"amount": "172.00",
 				"reason": "10th year anniversary charge"
@@ -175,11 +178,9 @@
 							{
 								"key": "not-subject+other",
 								"base": "100.00",
-								"percent": "0.0%",
 								"amount": "0.00"
 							}
 						],
-						"base": "1720.00",
 						"amount": "356.40"
 					}
 				],
@@ -187,8 +188,7 @@
 			},
 			"tax": "356.40",
 			"total_with_tax": "1388.40",
-			"payable": "1388.40",
-			"due": "1388.40"
+			"payable": "1388.40"
 		}
 	},
 	"sigs": [

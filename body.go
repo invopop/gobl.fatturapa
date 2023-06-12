@@ -95,11 +95,6 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 		return nil, err
 	}
 
-	documentTotal := inv.Totals.Due
-	if documentTotal == nil {
-		documentTotal = &inv.Totals.Payable
-	}
-
 	return &datiGenerali{
 		DatiGeneraliDocumento: &datiGeneraliDocumento{
 			TipoDocumento:          codeTipoDocumento,
@@ -108,7 +103,7 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 			Numero:                 inv.Code,
 			DatiRitenuta:           dr,
 			DatiBollo:              newDatiBollo(inv.Charges),
-			ImportoTotaleDocumento: formatAmount(documentTotal),
+			ImportoTotaleDocumento: formatAmount(&inv.Totals.Payable),
 			ScontoMaggiorazione:    extractPriceAdjustments(inv),
 			Causale:                extractInvoiceReasons(inv),
 		},

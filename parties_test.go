@@ -43,7 +43,7 @@ func TestPartiesCustomer(t *testing.T) {
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente
 
 		assert.Equal(t, "IT", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
-		assert.Equal(t, "09876543210", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "09876543217", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 		assert.Equal(t, "", c.DatiAnagrafici.CodiceFiscale)
 		assert.Equal(t, "MARIO", c.DatiAnagrafici.Anagrafica.Nome)
 		assert.Equal(t, "LEONI", c.DatiAnagrafici.Anagrafica.Cognome)
