@@ -36,15 +36,15 @@ func TestPartiesSupplier(t *testing.T) {
 
 func TestPartiesCustomer(t *testing.T) {
 	t.Run("should contain the customer info", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-simple.json")
+		env := test.LoadTestFile("invoice-irpef.json")
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente
 
-		assert.Equal(t, "IT", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
-		assert.Equal(t, "09876543217", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
-		assert.Equal(t, "", c.DatiAnagrafici.CodiceFiscale)
+		assert.Nil(t, c.DatiAnagrafici.IdFiscaleIVA)
+		assert.Equal(t, "MRALNE80E05H501C", c.DatiAnagrafici.CodiceFiscale)
+		assert.Equal(t, "", c.DatiAnagrafici.Anagrafica.Denominazione)
 		assert.Equal(t, "MARIO", c.DatiAnagrafici.Anagrafica.Nome)
 		assert.Equal(t, "LEONI", c.DatiAnagrafici.Anagrafica.Cognome)
 		assert.Equal(t, "Dott.", c.DatiAnagrafici.Anagrafica.Titolo)

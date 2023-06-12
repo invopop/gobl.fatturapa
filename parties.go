@@ -127,19 +127,19 @@ func newCessionarioCommittente(inv *bill.Invoice) (*customer, error) {
 }
 
 func newAnagrafica(party *org.Party) *anagrafica {
-	a := anagrafica{
-		Denominazione: party.Name,
-	}
-
-	if len(party.People) > 0 {
+	if len(party.People) > 0 && party.TaxID.Type == it.TaxIdentityTypeIndividual {
 		name := party.People[0].Name
 
-		a.Nome = name.Given
-		a.Cognome = name.Surname
-		a.Titolo = name.Prefix
+		return &anagrafica{
+			Nome:    name.Given,
+			Cognome: name.Surname,
+			Titolo:  name.Prefix,
+		}
 	}
 
-	return &a
+	return &anagrafica{
+		Denominazione: party.Name,
+	}
 }
 
 func findCodeRegimeFiscale(inv *bill.Invoice) (string, error) {

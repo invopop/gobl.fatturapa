@@ -52,7 +52,8 @@
 		"customer": {
 			"tax_id": {
 				"country": "IT",
-				"code": "12345678903"
+				"code": "MRALNE80E05H501C",
+				"type": "individual"
 			},
 			"name": "MARIO LEONI",
 			"people": [
