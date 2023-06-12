@@ -20,6 +20,7 @@ type supplier struct {
 	DatiAnagrafici *datiAnagrafici
 	Sede           *address
 	IscrizioneREA  *iscrizioneREA `xml:",omitempty"`
+	Contatti       *contatti      `xml:",omitempty"`
 }
 
 type customer struct {
@@ -65,6 +66,11 @@ type iscrizioneREA struct {
 	StatoLiquidazione string
 }
 
+type contatti struct {
+	Telefono string `xml:",omitempty"`
+	Email    string `xml:",omitempty"`
+}
+
 func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 	s := inv.Supplier
 
@@ -78,6 +84,8 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 		return nil, err
 	}
 
+	contatti := newContatti(s)
+
 	return &supplier{
 		DatiAnagrafici: &datiAnagrafici{
 			IdFiscaleIVA: &taxID{
@@ -89,6 +97,7 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 		},
 		Sede:          address,
 		IscrizioneREA: newIscrizioneREA(s),
+		Contatti:      contatti,
 	}, nil
 }
 
@@ -140,6 +149,20 @@ func newAnagrafica(party *org.Party) *anagrafica {
 	return &anagrafica{
 		Denominazione: party.Name,
 	}
+}
+
+func newContatti(party *org.Party) *contatti {
+	c := &contatti{}
+
+	if len(party.Emails) > 0 {
+		c.Email = party.Emails[0].Address
+	}
+
+	if len(party.Telephones) > 0 {
+		c.Telefono = party.Telephones[0].Number
+	}
+
+	return c
 }
 
 func findCodeRegimeFiscale(inv *bill.Invoice) (string, error) {

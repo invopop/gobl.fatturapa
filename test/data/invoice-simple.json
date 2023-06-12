@@ -48,6 +48,11 @@
 					"addr": "billing@example.com"
 				}
 			],
+			"telephones": [
+				{
+					"number": "999999999"
+				}
+			],
 			"registration": {
 				"capital": "50000.00",
 				"currency": "EUR",
