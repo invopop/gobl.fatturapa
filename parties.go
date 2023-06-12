@@ -41,7 +41,7 @@ type datiAnagrafici struct {
 // anagrafica contains further party information
 type anagrafica struct {
 	// Name of the organization
-	Denominazione string
+	Denominazione string `xml:",omitempty"`
 	// Name of the person
 	Nome string `xml:",omitempty"`
 	// Surname of the person
