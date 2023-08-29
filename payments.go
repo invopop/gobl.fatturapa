@@ -79,7 +79,7 @@ func findCodeModalitaPagamento(key cbc.Key) (string, error) {
 		return "", fmt.Errorf("ModalitaPagamento Code not found for payment method key '%s'", key)
 	}
 
-	code := keyDef.Codes[it.KeyFatturaPAModalitaPagamento]
+	code := keyDef.Map[it.KeyFatturaPAModalitaPagamento]
 	if code == "" {
 		return "", fmt.Errorf("ModalitaPagamento Code not found for payment method key '%s'", key)
 	}

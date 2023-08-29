@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "c8a118a700e4e7e4354a2b641e5994daed55669b7bc44dfeea5938cd5451e5a3"
+			"val": "cfac54ee8a2d2035db6cc58e676a99b7d8ef603cbdfc430d096bbc40e35123b7"
 		}
 	},
 	"doc": {
@@ -20,11 +20,11 @@
 		},
 		"issue_date": "2023-03-02",
 		"supplier": {
+			"name": "Rossi Digital Services",
 			"tax_id": {
 				"country": "IT",
 				"code": "12345678903"
 			},
-			"name": "Rossi Digital Services",
 			"people": [
 				{
 					"name": {
@@ -50,12 +50,12 @@
 			]
 		},
 		"customer": {
+			"name": "MARIO LEONI",
 			"tax_id": {
 				"country": "IT",
 				"type": "individual",
 				"code": "MRALNE80E05H501C"
 			},
-			"name": "MARIO LEONI",
 			"people": [
 				{
 					"name": {
@@ -123,14 +123,14 @@
 				"quantity": "1",
 				"item": {
 					"name": "Truffle Gathering",
-					"price": "100",
+					"price": "100.00",
 					"unit": "h"
 				},
-				"sum": "100",
+				"sum": "100.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "not-subject+other"
+						"rate": "not-subject"
 					},
 					{
 						"cat": "IRPEF",
@@ -138,7 +138,7 @@
 						"percent": "50.0%"
 					}
 				],
-				"total": "100"
+				"total": "100.00"
 			}
 		],
 		"discounts": [
@@ -206,7 +206,7 @@
 								"amount": "356.40"
 							},
 							{
-								"key": "not-subject+other",
+								"key": "not-subject",
 								"base": "100.00",
 								"amount": "0.00"
 							}
@@ -241,6 +241,6 @@
 		}
 	},
 	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImZmNzU5MTVmLWY2ZjgtNDU4Ny04OTBhLWNjZDhiODZiZjhmNSJ9.eyJ1dWlkIjoiNjc5YTJmMjUtNzQ4My0xMWVjLTk3MjItN2VhMmNiNDM2ZmY2IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM4YTExOGE3MDBlNGU3ZTQzNTRhMmI2NDFlNTk5NGRhZWQ1NTY2OWI3YmM0NGRmZWVhNTkzOGNkNTQ1MWU1YTMifX0.e9TPjYH6MP1DjwUlru4ordn-i60U1-4k67X7RjgGqD5YRhJO7jTm3qBTcXRfYEwhCht8dcj_Fr1p9ZpPNYFUEQ"
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImZmNzU5MTVmLWY2ZjgtNDU4Ny04OTBhLWNjZDhiODZiZjhmNSJ9.eyJ1dWlkIjoiNjc5YTJmMjUtNzQ4My0xMWVjLTk3MjItN2VhMmNiNDM2ZmY2IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImNmYWM1NGVlOGEyZDIwMzVkYjZjYzU4ZTY3NmE5OWI3ZDhlZjYwM2NiZGZjNDMwZDA5NmJiYzQwZTM1MTIzYjcifX0.5D9gFpYMHIT30Xx3gx3swy-8Y0waWUgRL3rRuGOb4RLhXfiUomgPugJ5zL049LWNYBHGwvCcqG9b9Rux9Q5dBw"
 	]
 }
