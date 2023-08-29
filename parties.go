@@ -79,11 +79,6 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 		return nil, err
 	}
 
-	rf, err := findCodeRegimeFiscale(inv)
-	if err != nil {
-		return nil, err
-	}
-
 	contatti := newContatti(s)
 
 	return &supplier{
@@ -93,7 +88,7 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 				IdCodice: s.TaxID.Code.String(),
 			},
 			Anagrafica:    newAnagrafica(s),
-			RegimeFiscale: rf,
+			RegimeFiscale: s.Ext[it.ExtKeySDIFiscalRegime].String(),
 		},
 		Sede:          address,
 		IscrizioneREA: newIscrizioneREA(s),
@@ -163,17 +158,6 @@ func newContatti(party *org.Party) *contatti {
 	}
 
 	return c
-}
-
-func findCodeRegimeFiscale(inv *bill.Invoice) (string, error) {
-	ss := inv.ScenarioSummary()
-
-	regimeFiscale := ss.Codes[it.KeyFatturaPARegimeFiscale]
-	if regimeFiscale == "" {
-		return "", errors.New("could not find RegimeFiscale code for supplier")
-	}
-
-	return regimeFiscale.String(), nil
 }
 
 func customerFiscaleIVA(id *tax.Identity, fallBack string) *taxID {

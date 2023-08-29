@@ -4,19 +4,19 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "6b11d0f68c974b79dc14f6f5957837f03e0ee6a9579a2fc1583125624b8560c2"
+			"val": "796bb9019577dcda5b03baa8916eb2e46d6ba975618d42203f39941e36bd338c"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
-		"type": "standard",
+		"issue_date": "2023-05-21",
 		"currency": "EUR",
 		"tax": {
 			"prices_include": "VAT"
 		},
-		"issue_date": "2023-05-21",
 		"supplier": {
 			"name": "Hotel California",
 			"tax_id": {
@@ -74,7 +74,10 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "excluded"
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-nature": "N1"
+						}
 					}
 				],
 				"total": "1.00"
@@ -117,7 +120,10 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "excluded",
+								"key": "exempt",
+								"ext": {
+									"it-sdi-nature": "N1"
+								},
 								"base": "1.00",
 								"amount": "0.00"
 							},
@@ -139,8 +145,5 @@
 			"advance": "29.00",
 			"due": "97.00"
 		}
-	},
-	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImZmNzU5MTVmLWY2ZjgtNDU4Ny04OTBhLWNjZDhiODZiZjhmNSJ9.eyJ1dWlkIjoiNjc5YTJmMjUtNzQ4My0xMWVjLTk3MjItN2VhMmNiNDM2ZmY2IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjZiMTFkMGY2OGM5NzRiNzlkYzE0ZjZmNTk1NzgzN2YwM2UwZWU2YTk1NzlhMmZjMTU4MzEyNTYyNGI4NTYwYzIifX0.0AFzvSGsoZPNYpn_nsnuf9XIpk-8rADHshYwaJnCbFZVva3xlI7r3_u-d-vQV-B9x8FuDWXJRRyXMbRLTYPoOA"
-	]
+	}
 }
