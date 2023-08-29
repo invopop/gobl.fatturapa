@@ -1,146 +1,146 @@
 {
-  "$schema": "https://gobl.org/draft-0/envelope",
-  "head": {
-    "uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
-    "dig": {
-      "alg": "sha256",
-      "val": "0395bc2567e308fca053bed0d53065e438a3271cd6f80982d337ea2c2d434d17"
-    }
-  },
-  "doc": {
-    "$schema": "https://gobl.org/draft-0/bill/invoice",
-    "series": "SAMPLE",
-    "code": "002",
-    "type": "standard",
-    "currency": "EUR",
-    "tax": {
-      "prices_include": "VAT"
-    },
-    "issue_date": "2023-05-21",
-    "supplier": {
-      "tax_id": {
-        "country": "IT",
-        "code": "12345678903"
-      },
-      "name": "Hotel California",
-      "addresses": [
-        {
-          "num": "102",
-          "street": "Via California",
-          "locality": "Palermo",
-          "region": "PA",
-          "code": "33213",
-          "country": "IT"
-        }
-      ],
-      "registration": {
-        "currency": "EUR",
-        "office": "RM",
-        "entry": "123456"
-      }
-    },
-    "customer": {
-      "tax_id": {
-        "country": "IT",
-        "code": "13029381004"
-      },
-      "name": "Mela S.r.l.",
-      "inboxes": [
-        {
-          "key": "codice-destinatario",
-          "code": "M5UXCR5"
-        }
-      ],
-      "addresses": [
-        {
-          "num": "23",
-          "street": "Via dei Mille",
-          "locality": "Firenze",
-          "region": "FI",
-          "code": "00100",
-          "country": "IT"
-        }
-      ]
-    },
-    "lines": [
-      {
-        "i": 1,
-        "quantity": "1",
-        "item": {
-          "name": "Tassa di Soggiorno",
-          "price": "1.00"
-        },
-        "sum": "1.00",
-        "taxes": [
-          {
-            "cat": "VAT",
-            "rate": "excluded"
-          }
-        ],
-        "total": "1.00"
-      },
-      {
-        "i": 2,
-        "quantity": "1",
-        "item": {
-          "name": "Camera Matrimoniale",
-          "price": "125.00"
-        },
-        "sum": "125.00",
-        "taxes": [
-          {
-            "cat": "VAT",
-            "rate": "intermediate",
-            "percent": "10.0%"
-          }
-        ],
-        "total": "125.00"
-      }
-    ],
-    "payment": {
-      "advances": [
-        {
-          "date": "2023-05-01",
-          "key": "card",
-          "desc": "deposit",
-          "amount": "29.00"
-        }
-      ]
-    },
-    "totals": {
-      "sum": "126.00",
-      "tax_included": "11.36",
-      "total": "114.64",
-      "taxes": {
-        "categories": [
-          {
-            "code": "VAT",
-            "rates": [
-              {
-                "key": "excluded",
-                "base": "1.00",
-                "amount": "0.00"
-              },
-              {
-                "key": "intermediate",
-                "base": "113.64",
-                "percent": "10.0%",
-                "amount": "11.36"
-              }
-            ],
-            "amount": "11.36"
-          }
-        ],
-        "sum": "11.36"
-      },
-      "tax": "11.36",
-      "total_with_tax": "126.00",
-      "payable": "126.00",
-      "advance": "29.00",
-      "due": "97.00"
-    }
-  },
-  "sigs": [
-    "eyJhbGciOiJFUzI1NiIsImtpZCI6IjNhZmMwMzU3LWQ0YjQtNDM3Ni1hNmI1LTg5ODViODI1NTllOCJ9.eyJ1dWlkIjoiNjc5YTJmMjUtNzQ4My0xMWVjLTk3MjItN2VhMmNiNDM2ZmY2IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6IjAzOTViYzI1NjdlMzA4ZmNhMDUzYmVkMGQ1MzA2NWU0MzhhMzI3MWNkNmY4MDk4MmQzMzdlYTJjMmQ0MzRkMTcifX0.F1nUZH1R9isgR2XP_4UP6vWDfUwc5kTTriwKyckqgP0x0TKQZrk4KR0M_zZ3GqXXvshWoXEinSJDNtDHBuW4kg"
-  ]
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
+		"dig": {
+			"alg": "sha256",
+			"val": "d36c74e19bf5f0097738cbf5970fb2054792e944b2c71c09af0bccb42d3db536"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"series": "SAMPLE",
+		"code": "002",
+		"type": "standard",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT"
+		},
+		"issue_date": "2023-05-21",
+		"supplier": {
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"name": "Hotel California",
+			"addresses": [
+				{
+					"num": "102",
+					"street": "Via California",
+					"locality": "Palermo",
+					"region": "PA",
+					"code": "33213",
+					"country": "IT"
+				}
+			],
+			"registration": {
+				"currency": "EUR",
+				"office": "RM",
+				"entry": "123456"
+			}
+		},
+		"customer": {
+			"tax_id": {
+				"country": "IT",
+				"code": "13029381004"
+			},
+			"name": "Mela S.r.l.",
+			"inboxes": [
+				{
+					"key": "codice-destinatario",
+					"code": "M5UXCR5"
+				}
+			],
+			"addresses": [
+				{
+					"num": "23",
+					"street": "Via dei Mille",
+					"locality": "Firenze",
+					"region": "FI",
+					"code": "00100",
+					"country": "IT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Tassa di Soggiorno",
+					"price": "1.00"
+				},
+				"sum": "1.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "excluded"
+					}
+				],
+				"total": "1.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Camera Matrimoniale",
+					"price": "125.00"
+				},
+				"sum": "125.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "intermediate",
+						"percent": "10.0%"
+					}
+				],
+				"total": "125.00"
+			}
+		],
+		"payment": {
+			"advances": [
+				{
+					"date": "2023-05-01",
+					"key": "card",
+					"desc": "deposit",
+					"amount": "29.00"
+				}
+			]
+		},
+		"totals": {
+			"sum": "126.00",
+			"tax_included": "11.36",
+			"total": "114.64",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "excluded",
+								"base": "1.00",
+								"amount": "0.00"
+							},
+							{
+								"key": "intermediate",
+								"base": "113.64",
+								"percent": "10.0%",
+								"amount": "11.36"
+							}
+						],
+						"amount": "11.36"
+					}
+				],
+				"sum": "11.36"
+			},
+			"tax": "11.36",
+			"total_with_tax": "126.00",
+			"payable": "126.00",
+			"advance": "29.00",
+			"due": "97.00"
+		}
+	},
+	"sigs": [
+		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImZmNzU5MTVmLWY2ZjgtNDU4Ny04OTBhLWNjZDhiODZiZjhmNSJ9.eyJ1dWlkIjoiNjc5YTJmMjUtNzQ4My0xMWVjLTk3MjItN2VhMmNiNDM2ZmY2IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImQzNmM3NGUxOWJmNWYwMDk3NzM4Y2JmNTk3MGZiMjA1NDc5MmU5NDRiMmM3MWMwOWFmMGJjY2I0MmQzZGI1MzYifX0.iivLe0zUAMqlRmN4AJYgUIDhGcyBzYDIBJyTUj0sHBK3axNJC0JDPVKznfPOzShVfO3ILsvbuXxzVo-1sButvQ"
+	]
 }
