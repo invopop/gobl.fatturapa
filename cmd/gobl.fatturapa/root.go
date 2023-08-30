@@ -15,7 +15,7 @@ func root() *rootOpts {
 
 func (o *rootOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:           "gobl.fatturapa",
+		Use:           name,
 		SilenceUsage:  true,
 		SilenceErrors: true,
 	}
