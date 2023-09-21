@@ -22,7 +22,8 @@ func TestPartiesSupplier(t *testing.T) {
 		assert.Equal(t, "12345678903", s.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 		assert.Equal(t, "MªF. Services", s.DatiAnagrafici.Anagrafica.Denominazione)
 		assert.Equal(t, "RF01", s.DatiAnagrafici.RegimeFiscale)
-		assert.Equal(t, "VIALE DELLA LIBERTÀ, 1", s.Sede.Indirizzo)
+		assert.Equal(t, "VIALE DELLA LIBERTÀ", s.Sede.Indirizzo)
+		assert.Equal(t, "1", s.Sede.NumeroCivico)
 		assert.Equal(t, "00100", s.Sede.CAP)
 		assert.Equal(t, "ROMA", s.Sede.Comune)
 		assert.Equal(t, "RM", s.Sede.Provincia)
@@ -48,7 +49,8 @@ func TestPartiesCustomer(t *testing.T) {
 		assert.Equal(t, "MARIO", c.DatiAnagrafici.Anagrafica.Nome)
 		assert.Equal(t, "LEONI", c.DatiAnagrafici.Anagrafica.Cognome)
 		assert.Equal(t, "Dott.", c.DatiAnagrafici.Anagrafica.Titolo)
-		assert.Equal(t, "VIALE DELI LAVORATORI, 32", c.Sede.Indirizzo)
+		assert.Equal(t, "VIALE DELI LAVORATORI", c.Sede.Indirizzo)
+		assert.Equal(t, "32", c.Sede.NumeroCivico)
 		assert.Equal(t, "50100", c.Sede.CAP)
 		assert.Equal(t, "FIRENZE", c.Sede.Comune)
 		assert.Equal(t, "FI", c.Sede.Provincia)
@@ -134,13 +136,13 @@ func TestPartiesCustomer(t *testing.T) {
 		assert.Equal(t, "99999999999", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 	})
 
-	t.Run("should return error for missing tax ID Country", func(t *testing.T) {
+	t.Run("should not fail if missing key data", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Customer.TaxID.Country = ""
 		})
 
 		_, err := test.ConvertFromGOBL(env)
-		require.Error(t, err)
+		require.NoError(t, err)
 	})
 }

@@ -1,9 +1,6 @@
 package fatturapa
 
 import (
-	"errors"
-
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
@@ -71,17 +68,8 @@ type contatti struct {
 	Email    string `xml:",omitempty"`
 }
 
-func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
-	s := inv.Supplier
-
-	address, err := newAddress(s)
-	if err != nil {
-		return nil, err
-	}
-
-	contatti := newContatti(s)
-
-	return &supplier{
+func newCedentePrestatore(s *org.Party) *supplier {
+	ns := &supplier{
 		DatiAnagrafici: &datiAnagrafici{
 			IdFiscaleIVA: &taxID{
 				IdPaese:  s.TaxID.Country.String(),
@@ -90,44 +78,41 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 			Anagrafica:    newAnagrafica(s),
 			RegimeFiscale: s.Ext[it.ExtKeySDIFiscalRegime].String(),
 		},
-		Sede:          address,
 		IscrizioneREA: newIscrizioneREA(s),
-		Contatti:      contatti,
-	}, nil
+		Contatti:      newContatti(s),
+	}
+
+	if len(s.Addresses) > 0 {
+		ns.Sede = newAddress(s.Addresses[0])
+	}
+
+	return ns
 }
 
-func newCessionarioCommittente(inv *bill.Invoice) (*customer, error) {
-	c := inv.Customer
+func newCessionarioCommittente(c *org.Party) *customer {
+	nc := new(customer)
 
-	address, err := newAddress(c)
-	if err != nil {
-		return nil, err
+	if len(c.Addresses) > 0 {
+		nc.Sede = newAddress(c.Addresses[0])
 	}
 
 	da := &datiAnagrafici{
 		Anagrafica: newAnagrafica(c),
 	}
 
-	if c.TaxID == nil {
-		return nil, errors.New("missing customer TaxID")
+	if c.TaxID != nil {
+		if isCodiceFiscale(c.TaxID) {
+			da.CodiceFiscale = c.TaxID.Code.String()
+		} else if isEUCountry(c.TaxID.Country) {
+			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, euCitizenTaxCodeDefault)
+		} else {
+			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
+		}
 	}
 
-	if c.TaxID.Country == "" {
-		return nil, errors.New("missing customer TaxID Country Code")
-	}
+	nc.DatiAnagrafici = da
 
-	if isCodiceFiscale(c.TaxID) {
-		da.CodiceFiscale = c.TaxID.Code.String()
-	} else if isEUCountry(c.TaxID.Country) {
-		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, euCitizenTaxCodeDefault)
-	} else {
-		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
-	}
-
-	return &customer{
-		DatiAnagrafici: da,
-		Sede:           address,
-	}, nil
+	return nc
 }
 
 func newAnagrafica(party *org.Party) *anagrafica {
