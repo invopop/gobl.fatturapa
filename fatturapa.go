@@ -50,7 +50,10 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	}
 
 	// Make sure we're dealing with raw data
-	invoice = invoice.RemoveIncludedTaxes(2)
+	invoice, err := invoice.RemoveIncludedTaxes()
+	if err != nil {
+		return nil, err
+	}
 
 	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
 

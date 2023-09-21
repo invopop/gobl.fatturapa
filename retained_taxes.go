@@ -53,53 +53,23 @@ func newDatiRitenuta(cat cbc.Code, rateTotal *tax.RateTotal) (*datiRitenuta, err
 	if err != nil {
 		return nil, err
 	}
-	codeCP, err := findCodeCausalePagamento(cat, rateTotal.Key)
-	if err != nil {
-		return nil, err
-	}
 
 	return &datiRitenuta{
 		TipoRitenuta:     codeTR,
 		ImportoRitenuta:  amount,
 		AliquotaRitenuta: rate,
-		CausalePagamento: codeCP,
+		CausalePagamento: rateTotal.Ext[it.ExtKeySDIRetainedTax].String(),
 	}, nil
 }
 
 func findCodeTipoRitenuta(cat cbc.Code) (string, error) {
 	taxCategory := regime.Category(cat)
 
-	code := taxCategory.Codes[it.KeyFatturaPATipoRitenuta]
+	code := taxCategory.Map[it.KeyFatturaPATipoRitenuta]
 
 	if code == "" {
 		return "", fmt.Errorf("could not find TipoRitenuta code for tax category %s", cat)
 	}
 
 	return code.String(), nil
-}
-
-func findCodeCausalePagamento(cat cbc.Code, rateKey cbc.Key) (string, error) {
-	taxCategory := regime.Category(cat)
-
-	for _, rate := range taxCategory.Rates {
-		if rate.Key == rateKey {
-			code := rate.Codes[it.KeyFatturaPACausalePagamento]
-
-			if code == "" {
-				return "", fmt.Errorf(
-					"could not find CausalePagamento code for tax category %s and rate %s",
-					cat,
-					rateKey,
-				)
-			}
-
-			return code.String(), nil
-		}
-	}
-
-	return "", fmt.Errorf(
-		"could not find CausalePagamento code for tax category %s and rate %s",
-		cat,
-		rateKey,
-	)
 }

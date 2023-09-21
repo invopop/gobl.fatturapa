@@ -4,27 +4,27 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "c8a118a700e4e7e4354a2b641e5994daed55669b7bc44dfeea5938cd5451e5a3"
+			"val": "943bb8169e975f7b5f03e9e28bc9d476b0a715321295d65d9c29c749de171897"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"type": "standard",
 		"series": "SAMPLE",
 		"code": "001",
-		"type": "standard",
+		"issue_date": "2023-03-02",
 		"currency": "EUR",
 		"tax": {
 			"tags": [
 				"freelance"
 			]
 		},
-		"issue_date": "2023-03-02",
 		"supplier": {
+			"name": "Rossi Digital Services",
 			"tax_id": {
 				"country": "IT",
 				"code": "12345678903"
 			},
-			"name": "Rossi Digital Services",
 			"people": [
 				{
 					"name": {
@@ -50,12 +50,12 @@
 			]
 		},
 		"customer": {
+			"name": "MARIO LEONI",
 			"tax_id": {
 				"country": "IT",
 				"type": "individual",
 				"code": "MRALNE80E05H501C"
 			},
-			"name": "MARIO LEONI",
 			"people": [
 				{
 					"name": {
@@ -112,8 +112,10 @@
 					},
 					{
 						"cat": "IRPEF",
-						"rate": "self-employed-habitual",
-						"percent": "20.0%"
+						"percent": "20.0%",
+						"ext": {
+							"it-sdi-retained-tax": "A"
+						}
 					}
 				],
 				"total": "1620.00"
@@ -123,22 +125,27 @@
 				"quantity": "1",
 				"item": {
 					"name": "Truffle Gathering",
-					"price": "100",
+					"price": "100.00",
 					"unit": "h"
 				},
-				"sum": "100",
+				"sum": "100.00",
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "not-subject+other"
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-nature": "N2.2"
+						}
 					},
 					{
 						"cat": "IRPEF",
-						"rate": "truffle-gathering",
-						"percent": "50.0%"
+						"percent": "50.0%",
+						"ext": {
+							"it-sdi-retained-tax": "J"
+						}
 					}
 				],
-				"total": "100"
+				"total": "100.00"
 			}
 		],
 		"discounts": [
@@ -206,7 +213,10 @@
 								"amount": "356.40"
 							},
 							{
-								"key": "not-subject+other",
+								"key": "exempt",
+								"ext": {
+									"it-sdi-nature": "N2.2"
+								},
 								"base": "100.00",
 								"amount": "0.00"
 							}
@@ -218,13 +228,17 @@
 						"retained": true,
 						"rates": [
 							{
-								"key": "self-employed-habitual",
+								"ext": {
+									"it-sdi-retained-tax": "A"
+								},
 								"base": "1620.00",
 								"percent": "20.0%",
 								"amount": "324.00"
 							},
 							{
-								"key": "truffle-gathering",
+								"ext": {
+									"it-sdi-retained-tax": "J"
+								},
 								"base": "100.00",
 								"percent": "50.0%",
 								"amount": "50.00"
@@ -239,8 +253,5 @@
 			"total_with_tax": "1026.74",
 			"payable": "1026.74"
 		}
-	},
-	"sigs": [
-		"eyJhbGciOiJFUzI1NiIsImtpZCI6ImZmNzU5MTVmLWY2ZjgtNDU4Ny04OTBhLWNjZDhiODZiZjhmNSJ9.eyJ1dWlkIjoiNjc5YTJmMjUtNzQ4My0xMWVjLTk3MjItN2VhMmNiNDM2ZmY2IiwiZGlnIjp7ImFsZyI6InNoYTI1NiIsInZhbCI6ImM4YTExOGE3MDBlNGU3ZTQzNTRhMmI2NDFlNTk5NGRhZWQ1NTY2OWI3YmM0NGRmZWVhNTkzOGNkNTQ1MWU1YTMifX0.e9TPjYH6MP1DjwUlru4ordn-i60U1-4k67X7RjgGqD5YRhJO7jTm3qBTcXRfYEwhCht8dcj_Fr1p9ZpPNYFUEQ"
-	]
+	}
 }

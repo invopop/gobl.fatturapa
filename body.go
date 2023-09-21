@@ -62,10 +62,7 @@ type scontoMaggiorazione struct {
 }
 
 func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, error) {
-	dbs, err := newDatiBeniServizi(inv)
-	if err != nil {
-		return nil, err
-	}
+	dbs := newDatiBeniServizi(inv)
 
 	dp, err := newDatiPagamento(inv)
 	if err != nil {

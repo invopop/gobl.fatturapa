@@ -794,6 +794,12 @@ github.com/inconshreveable/mousetrap v1.1.0 h1:wN+x4NVGpMsO7ErUn/mUI3vEoE6Jt13X2
 github.com/inconshreveable/mousetrap v1.1.0/go.mod h1:vpF70FUmC8bwa3OWnCshd2FqLfsEA9PFc4w1p2J65bw=
 github.com/invopop/gobl v0.50.2 h1:wQgx85xDE9wHdrtMjIctvlkpY2BKHUNs7qn9/cC9qMw=
 github.com/invopop/gobl v0.50.2/go.mod h1:X7EqVSEfeeIymdaOUrwkHu+OPPNATAHDQ8FPs2BvZFM=
+github.com/invopop/gobl v0.54.0 h1:4sejjcl+p6thFoFVmi1w+yHNpHV2gbM/k9flT8q9SYk=
+github.com/invopop/gobl v0.54.0/go.mod h1:/s8rsPX3RK5J/yGK41lzzzB+zXeC29rpIZBYjSjvYzM=
+github.com/invopop/gobl v0.54.1-0.20230828145858-ddfafb15835d h1:LoEAkw3y/Fa5GtiVV8bVkaej1XywpbROB55a3XU+Jf8=
+github.com/invopop/gobl v0.54.1-0.20230828145858-ddfafb15835d/go.mod h1:/s8rsPX3RK5J/yGK41lzzzB+zXeC29rpIZBYjSjvYzM=
+github.com/invopop/gobl v0.55.0 h1:NV62UR/W2f/mWwqhnlkjuBad/Zb64u50pDIQDBTeFnw=
+github.com/invopop/gobl v0.55.0/go.mod h1:/s8rsPX3RK5J/yGK41lzzzB+zXeC29rpIZBYjSjvYzM=
 github.com/invopop/jsonschema v0.7.0 h1:2vgQcBz1n256N+FpX3Jq7Y17AjYt46Ig3zIWyy770So=
 github.com/invopop/jsonschema v0.7.0/go.mod h1:O9uiLokuu0+MGFlyiaqtWxwqJm41/+8Nj0lD7A36YH0=
 github.com/invopop/validation v0.3.0 h1:o260kbjXzoBO/ypXDSSrCLL7SxEFUXBsX09YTE9AxZw=
