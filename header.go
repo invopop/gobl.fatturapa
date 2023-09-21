@@ -12,19 +12,13 @@ type fatturaElettronicaHeader struct {
 	CessionarioCommittente *customer         `xml:",omitempty"`
 }
 
-func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *datiTrasmissione) (*fatturaElettronicaHeader, error) {
-	supplier, err := newCedentePrestatore(inv.Supplier)
-	if err != nil {
-		return nil, err
-	}
-	customer, err := newCessionarioCommittente(inv.Customer)
-	if err != nil {
-		return nil, err
-	}
+func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *datiTrasmissione) *fatturaElettronicaHeader {
+	supplier := newCedentePrestatore(inv.Supplier)
+	customer := newCessionarioCommittente(inv.Customer)
 
 	return &fatturaElettronicaHeader{
 		DatiTrasmissione:       datiTrasmissione,
 		CedentePrestatore:      supplier,
 		CessionarioCommittente: customer,
-	}, nil
+	}
 }

@@ -136,13 +136,13 @@ func TestPartiesCustomer(t *testing.T) {
 		assert.Equal(t, "99999999999", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 	})
 
-	t.Run("should return error for missing tax ID Country", func(t *testing.T) {
+	t.Run("should not fail if missing key data", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Customer.TaxID.Country = ""
 		})
 
 		_, err := test.ConvertFromGOBL(env)
-		require.Error(t, err)
+		require.NoError(t, err)
 	})
 }

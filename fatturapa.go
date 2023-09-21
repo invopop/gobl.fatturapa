@@ -58,10 +58,7 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 
 	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
 
-	header, err := newFatturaElettronicaHeader(invoice, datiTrasmissione)
-	if err != nil {
-		return nil, err
-	}
+	header := newFatturaElettronicaHeader(invoice, datiTrasmissione)
 
 	body, err := newFatturaElettronicaBody(invoice)
 	if err != nil {

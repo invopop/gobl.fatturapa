@@ -1,8 +1,6 @@
 package fatturapa
 
 import (
-	"errors"
-
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
@@ -70,7 +68,7 @@ type contatti struct {
 	Email    string `xml:",omitempty"`
 }
 
-func newCedentePrestatore(s *org.Party) (*supplier, error) {
+func newCedentePrestatore(s *org.Party) *supplier {
 	ns := &supplier{
 		DatiAnagrafici: &datiAnagrafici{
 			IdFiscaleIVA: &taxID{
@@ -88,10 +86,10 @@ func newCedentePrestatore(s *org.Party) (*supplier, error) {
 		ns.Sede = newAddress(s.Addresses[0])
 	}
 
-	return ns, nil
+	return ns
 }
 
-func newCessionarioCommittente(c *org.Party) (*customer, error) {
+func newCessionarioCommittente(c *org.Party) *customer {
 	nc := new(customer)
 
 	if len(c.Addresses) > 0 {
@@ -102,25 +100,19 @@ func newCessionarioCommittente(c *org.Party) (*customer, error) {
 		Anagrafica: newAnagrafica(c),
 	}
 
-	if c.TaxID == nil {
-		return nil, errors.New("missing customer TaxID")
-	}
-
-	if c.TaxID.Country == "" {
-		return nil, errors.New("missing customer TaxID Country Code")
-	}
-
-	if isCodiceFiscale(c.TaxID) {
-		da.CodiceFiscale = c.TaxID.Code.String()
-	} else if isEUCountry(c.TaxID.Country) {
-		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, euCitizenTaxCodeDefault)
-	} else {
-		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
+	if c.TaxID != nil {
+		if isCodiceFiscale(c.TaxID) {
+			da.CodiceFiscale = c.TaxID.Code.String()
+		} else if isEUCountry(c.TaxID.Country) {
+			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, euCitizenTaxCodeDefault)
+		} else {
+			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
+		}
 	}
 
 	nc.DatiAnagrafici = da
 
-	return nc, nil
+	return nc
 }
 
 func newAnagrafica(party *org.Party) *anagrafica {
