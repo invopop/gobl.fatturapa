@@ -13,11 +13,11 @@ type fatturaElettronicaHeader struct {
 }
 
 func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *datiTrasmissione) (*fatturaElettronicaHeader, error) {
-	supplier, err := newCedentePrestatore(inv)
+	supplier, err := newCedentePrestatore(inv.Supplier)
 	if err != nil {
 		return nil, err
 	}
-	customer, err := newCessionarioCommittente(inv)
+	customer, err := newCessionarioCommittente(inv.Customer)
 	if err != nil {
 		return nil, err
 	}

@@ -13,6 +13,7 @@ import (
 	fatturapa "github.com/invopop/gobl.fatturapa"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
+	"github.com/invopop/gobl/schema"
 	"github.com/invopop/xmldsig"
 )
 
@@ -122,7 +123,7 @@ func ModifyInvoice(env *gobl.Envelope, modifyFunc func(*bill.Invoice)) {
 
 	modifyFunc(inv)
 
-	doc, err := gobl.NewDocument(inv)
+	doc, err := schema.NewObject(inv)
 	if err != nil {
 		panic(err)
 	}

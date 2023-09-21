@@ -3,7 +3,6 @@ package fatturapa
 import (
 	"errors"
 
-	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
@@ -71,17 +70,8 @@ type contatti struct {
 	Email    string `xml:",omitempty"`
 }
 
-func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
-	s := inv.Supplier
-
-	address, err := newAddress(s)
-	if err != nil {
-		return nil, err
-	}
-
-	contatti := newContatti(s)
-
-	return &supplier{
+func newCedentePrestatore(s *org.Party) (*supplier, error) {
+	ns := &supplier{
 		DatiAnagrafici: &datiAnagrafici{
 			IdFiscaleIVA: &taxID{
 				IdPaese:  s.TaxID.Country.String(),
@@ -90,18 +80,22 @@ func newCedentePrestatore(inv *bill.Invoice) (*supplier, error) {
 			Anagrafica:    newAnagrafica(s),
 			RegimeFiscale: s.Ext[it.ExtKeySDIFiscalRegime].String(),
 		},
-		Sede:          address,
 		IscrizioneREA: newIscrizioneREA(s),
-		Contatti:      contatti,
-	}, nil
+		Contatti:      newContatti(s),
+	}
+
+	if len(s.Addresses) > 0 {
+		ns.Sede = newAddress(s.Addresses[0])
+	}
+
+	return ns, nil
 }
 
-func newCessionarioCommittente(inv *bill.Invoice) (*customer, error) {
-	c := inv.Customer
+func newCessionarioCommittente(c *org.Party) (*customer, error) {
+	nc := new(customer)
 
-	address, err := newAddress(c)
-	if err != nil {
-		return nil, err
+	if len(c.Addresses) > 0 {
+		nc.Sede = newAddress(c.Addresses[0])
 	}
 
 	da := &datiAnagrafici{
@@ -124,10 +118,9 @@ func newCessionarioCommittente(inv *bill.Invoice) (*customer, error) {
 		da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
 	}
 
-	return &customer{
-		DatiAnagrafici: da,
-		Sede:           address,
-	}, nil
+	nc.DatiAnagrafici = da
+
+	return nc, nil
 }
 
 func newAnagrafica(party *org.Party) *anagrafica {
