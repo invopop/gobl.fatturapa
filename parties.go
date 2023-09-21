@@ -75,11 +75,16 @@ func newCedentePrestatore(s *org.Party) *supplier {
 				IdPaese:  s.TaxID.Country.String(),
 				IdCodice: s.TaxID.Code.String(),
 			},
-			Anagrafica:    newAnagrafica(s),
-			RegimeFiscale: s.Ext[it.ExtKeySDIFiscalRegime].String(),
+			Anagrafica: newAnagrafica(s),
 		},
 		IscrizioneREA: newIscrizioneREA(s),
 		Contatti:      newContatti(s),
+	}
+
+	if v, ok := s.Ext[it.ExtKeySDIFiscalRegime]; ok {
+		ns.DatiAnagrafici.RegimeFiscale = v.String()
+	} else {
+		ns.DatiAnagrafici.RegimeFiscale = "RF01"
 	}
 
 	if len(s.Addresses) > 0 {

@@ -33,6 +33,18 @@ func TestPartiesSupplier(t *testing.T) {
 		assert.Equal(t, "50000.00", s.IscrizioneREA.CapitaleSociale)
 		assert.Equal(t, "LN", s.IscrizioneREA.StatoLiquidazione)
 	})
+
+	t.Run("should set the supplier default regime fiscale", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json")
+		inv := env.Extract().(*bill.Invoice)
+		inv.Supplier.Ext = nil
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		s := doc.FatturaElettronicaHeader.CedentePrestatore
+
+		assert.Equal(t, "RF01", s.DatiAnagrafici.RegimeFiscale)
+	})
 }
 
 func TestPartiesCustomer(t *testing.T) {
