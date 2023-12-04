@@ -78,8 +78,8 @@
       ],
       "inboxes": [
         {
-          "key": "it-sdi-code",
-          "code": "ABCDEF1"
+          "key": "it-sdi-pec",
+          "code": "fooo@inbox.com"
         }
       ],
       "addresses": [

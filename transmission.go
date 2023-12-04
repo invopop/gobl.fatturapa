@@ -21,54 +21,69 @@ const (
 	defaultCodiceDestinatarioForeignBusiness = "XXXXXXX"
 )
 
-const inboxKeyCodiceDestinatario = "codice-destinatario"
-
 // Data related to the transmission of the invoice
 type datiTrasmissione struct {
 	IdTrasmittente      *taxID `xml:",omitempty"` // nolint:revive
 	ProgressivoInvio    string `xml:",omitempty"`
 	FormatoTrasmissione string `xml:",omitempty"`
 	CodiceDestinatario  string
+	PECDestinatario     string `xml:",omitempty"`
 }
 
 func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *datiTrasmissione {
-	if c.Config.Transmitter == nil {
-		return &datiTrasmissione{
-			CodiceDestinatario: codiceDestinatario(inv.Customer),
-		}
+	dt := &datiTrasmissione{
+		CodiceDestinatario: codiceDestinatario(inv.Customer),
+		PECDestinatario:    pecDestinatario(inv.Customer),
 	}
 
-	return &datiTrasmissione{
-		IdTrasmittente: &taxID{
+	// Do we need to add the transmitter info?
+	if c.Config.Transmitter != nil {
+		dt.IdTrasmittente = &taxID{
 			IdPaese:  c.Config.Transmitter.CountryCode,
 			IdCodice: c.Config.Transmitter.TaxID,
-		},
-		ProgressivoInvio:    env.Head.UUID.String()[:8],
-		FormatoTrasmissione: formatoTransmissione(inv.Customer),
-		CodiceDestinatario:  codiceDestinatario(inv.Customer),
+		}
+		dt.ProgressivoInvio = env.Head.UUID.String()[:8]
+		dt.FormatoTrasmissione = formatoTransmissione(inv.Customer)
 	}
+
+	return dt
 }
 
 func formatoTransmissione(cus *org.Party) string {
-	taxID := cus.TaxID
-
-	if taxID.Country == l10n.IT && taxID.Type == it.TaxIdentityTypeGovernment {
-		return formatoTrasmissioneFPA12
+	if cus != nil {
+		taxID := cus.TaxID
+		if taxID.Country == l10n.IT && taxID.Type == it.TaxIdentityTypeGovernment {
+			return formatoTrasmissioneFPA12
+		}
 	}
 
 	return formatoTrasmissioneFPR12
 }
 
 func codiceDestinatario(cus *org.Party) string {
-	if cus.TaxID.Country != l10n.IT {
-		return defaultCodiceDestinatarioForeignBusiness
-	}
-
-	for _, inbox := range cus.Inboxes {
-		if inbox.Key == inboxKeyCodiceDestinatario {
-			return inbox.Code
+	if cus != nil {
+		if cus.TaxID != nil && cus.TaxID.Country != l10n.IT {
+			return defaultCodiceDestinatarioForeignBusiness
+		}
+		for _, inbox := range cus.Inboxes {
+			if inbox.Key == it.KeyInboxSDICode {
+				return inbox.Code
+			}
 		}
 	}
 
+	// When this is returned, we'll assume there is a PEC.
+	// This is also valid for individuals.
 	return defaultCodiceDestinatarioItalianBusiness
+}
+
+func pecDestinatario(cus *org.Party) string {
+	if cus != nil {
+		for _, inbox := range cus.Inboxes {
+			if inbox.Key == it.KeyInboxSDIPEC {
+				return inbox.Code
+			}
+		}
+	}
+	return ""
 }

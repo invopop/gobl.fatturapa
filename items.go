@@ -5,7 +5,6 @@ import (
 
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/common"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 )
@@ -48,7 +47,7 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 	var dl []*dettaglioLinee
 
 	for _, line := range inv.Lines {
-		vatTax := line.Taxes.Get(common.TaxCategoryVAT)
+		vatTax := line.Taxes.Get(tax.CategoryVAT)
 
 		dl = append(dl, &dettaglioLinee{
 			NumeroLinea:         strconv.Itoa(line.Index),
@@ -70,7 +69,7 @@ func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
 	var vatRateTotals []*tax.RateTotal
 
 	for _, cat := range inv.Totals.Taxes.Categories {
-		if cat.Code == common.TaxCategoryVAT {
+		if cat.Code == tax.CategoryVAT {
 			vatRateTotals = cat.Rates
 			break
 		}
