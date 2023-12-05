@@ -27,11 +27,13 @@ You can find copies of the schema in the [schemas folder](./schema).
 - [Ordinary Schema V1.2.1 Spec Table View (EN)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Table-view-B2B-Ordinary-invoice.pdf) - by far the most comprehensible spec doc. Since the difference between 1.2.2 and 1.2.1 is minimal, this is perfectly usable.
 - [Ordinary Schema V1.2.2 PDF (IT)](https://www.fatturapa.gov.it/export/documenti/Specifiche_tecniche_del_formato_FatturaPA_v1.3.1.pdf) - most up-to-date but difficult
 - [XSD V1.2.2](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd)
+- [XSD V1 (FSM10) - simplified invoices](https://www.agenziaentrate.gov.it/portale/documents/20143/288192/ST+Fatturazione+elettronica+-+Schema+VFSM10_Schema_VFSM10.xsd/010f1b41-6683-1b31-ba36-c8bced659c06)
 
 ## Limitations
 
 The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
 
+- Simplified invoices are not currently supported (please get in touch if you need this).
 - FatturaPA allows multiple invoices within the document, but this library only supports a single invoice per transmission.
 - Only a subset of payment methods (ModalitaPagamento) are supported. See `payments.go` for the list of supported codes.
 
@@ -147,7 +149,7 @@ cat input.json > ./gobl.fatturapa output.xml
 
 ## Notes
 
-- In all cases Go structures have been written using the same naming from the XML style document. This means names are not repeated in tags and generally makes it a bit easier map the XML output to the internal structures.
+- In all cases Go structures have been written using the same naming from the XML style document. This means names are not repeated in tags and generally makes it a bit easier to map the XML output to the internal structures.
 
 ## Integration Tests
 
