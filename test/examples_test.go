@@ -4,8 +4,10 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl.fatturapa/test"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestExamples(t *testing.T) {
-	test.TestConversion()
+	err := test.TestConversion()
+	assert.NoError(t, err)
 }

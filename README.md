@@ -1,12 +1,49 @@
-# gobl.fatturapa
+# GOBL to FatturaPA Tools
 
-GOBL Conversion into FatturaPA in Italy
+Convert GOBL into the Italy's FatturaPA format.
 
-# GOBL to FatturaPA Toolkit
+Copyright [Invopop Ltd.](https://invopop.com) 2023. Released publicly under the [Apache License Version 2.0](LICENSE). For commercial licenses please contact the [dev team at invopop](mailto:dev@invopop.com). In order to accept contributions to this library we will require transferring copyrights to Invopop Ltd.
 
-Convert GOBL documents into the Italy's FatturaPA format.
+[![Lint](https://github.com/invopop/gobl.factturapa/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl.fatturapa/actions/workflows/lint.yaml)
+[![Test Go](https://github.com/invopop/gobl.fatturapa/actions/workflows/test.yaml/badge.svg)](https://github.com/invopop/gobl.fatturapa/actions/workflows/test.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/invopop/gobl.fatturapa)](https://goreportcard.com/report/github.com/invopop/gobl.fatturapa)
+[![GoDoc](https://godoc.org/github.com/invopop/gobl.fatturapa?status.svg)](https://godoc.org/github.com/invopop/gobl.fatturapa)
+![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl.fatturapa)
 
-TODO: copyright, license, build statuses
+## Introduction
+
+FatturaPA defines two versions of invoices:
+
+- Ordinary invoices, `FatturaElettronica` types `FPA12` and `FPR12` defined in the v1.2 schema, usable for all sales.
+- Simplified invoices, `FatturaElettronicaSemplificata` type `FSM10` defined in the v1.0 schema, with a reduced set of requirements but can only be used for sales of less then €400, as of writing. **Currently not supported!**
+
+Unlike other tax regimes, Italy requires simplified invoices to include the customer's tax ID. For "cash register" style receipts locally called "Scrotinos", another format and API is used for this.
+
+## Sources
+
+You can find copies of the schema in the [schemas folder](./schema).
+
+- [Historical Documentation](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
+- [Ordinary Schema V1.2.1 Spec Table View (EN)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Table-view-B2B-Ordinary-invoice.pdf) - by far the most comprehensible spec doc. Since the difference between 1.2.2 and 1.2.1 is minimal, this is perfectly usable.
+- [Ordinary Schema V1.2.2 PDF (IT)](https://www.fatturapa.gov.it/export/documenti/Specifiche_tecniche_del_formato_FatturaPA_v1.3.1.pdf) - most up-to-date but difficult
+- [XSD V1.2.2](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd)
+
+## Limitations
+
+The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
+
+- FatturaPA allows multiple invoices within the document, but this library only supports a single invoice per transmission.
+- Only a subset of payment methods (ModalitaPagamento) are supported. See `payments.go` for the list of supported codes.
+
+Some of the optional elements currently not supported include:
+
+- `Allegati` (attachments)
+- `DatiOrdineAcquisto` (data related to purchase orders)
+- `DatiContratto` (data related to contracts)
+- `DatiConvenzione` (data related to conventions)
+- `DatiRicezione` (data related to receipts)
+- `DatiFattureCollegate` (data related to linked invoices)
+- `DatiBollo` (data related to duty stamps)
 
 ## Usage
 
@@ -78,29 +115,28 @@ converter := fatturapa.NewConverter(
 
 ### CLI
 
-The command line interface can be useful for situations when you're using a language other than Golang in your application.
+The command line interface can be useful for situations when you're using a language other than Golang in your application. Install with:
 
 ```bash
-cd cmd/gobl.fatturapa
-go build
+go install github.com/invopop/gobl.fatturapa
 ```
 
 Simply provide the input GOBL JSON file and output to a file or another application:
 
 ```bash
-./gobl.fatturapa convert input.json output.xml
+gobl.fatturapa convert input.json output.xml
 ```
 
 If you have a digital certificate, run with:
 
 ```bash
-./gobl.fatturapa convert -c cert.p12 -p password input.json output.xml
+gobl.fatturapa convert -c cert.p12 -p password input.json output.xml
 ```
 
 To include the transmitter information, add the `-T` flag and provide the _country code_ and the _tax ID_:
 
 ```bash
-./gobl.fatturapa convert -T ES12345678 input.json output.xml
+gobl.fatturapa convert -T ES12345678 input.json output.xml
 ```
 
 The command also supports pipes:
@@ -122,20 +158,3 @@ mage -v TestConversion
 ```
 
 Sample data sources are contained in the `/test/data` directory. JSON (for tests) documents are stored in the Git repository, but the XML must be generated using the above commands.
-
-## Current Conversion Limitations
-
-The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
-
-- FatturaPA allows multiple invoices within the document, but this library only supports a single invoice per transmission.
-- Only a subset of payment methods (ModalitaPagamento) are supported. See `payments.go` for the list of supported codes.
-
-Some of the optional elements currently not supported include:
-
-- `Allegati` (attachments)
-- `DatiOrdineAcquisto` (data related to purchase orders)
-- `DatiContratto` (data related to contracts)
-- `DatiConvenzione` (data related to conventions)
-- `DatiRicezione` (data related to receipts)
-- `DatiFattureCollegate` (data related to linked invoices)
-- `DatiBollo` (data related to duty stamps)

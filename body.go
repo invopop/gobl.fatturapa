@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/invopop/gobl/bill"
@@ -90,6 +91,11 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 	codeTipoDocumento, err := findCodeTipoDocumento(inv)
 	if err != nil {
 		return nil, err
+	}
+
+	switch codeTipoDocumento {
+	case "TD07", "TD08", "TD09":
+		return nil, errors.New("simplified invoices are not currently supported")
 	}
 
 	return &datiGenerali{
