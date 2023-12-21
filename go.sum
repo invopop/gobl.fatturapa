@@ -813,6 +813,8 @@ github.com/invopop/xmldsig v0.7.0 h1:cnUE5SOW4TanHKCnF5Va/PfsdK0LgEoRE/+P6It5LuY
 github.com/invopop/xmldsig v0.7.0/go.mod h1:dc3+2BYNw0vzauyZiOobTltp1t3BbvWSq7ae/F2gdk0=
 github.com/invopop/xmldsig v0.7.1-0.20231221154955-3d68b955b468 h1:H0F5t7WahV7Lb8SgaO5tedZztlceDTPDsU4AAlKpvjs=
 github.com/invopop/xmldsig v0.7.1-0.20231221154955-3d68b955b468/go.mod h1:dc3+2BYNw0vzauyZiOobTltp1t3BbvWSq7ae/F2gdk0=
+github.com/invopop/xmldsig v0.8.0 h1:W/yRh/HcMSlZrkaVtIeycxmBLssXIfy437yNCvx4gD4=
+github.com/invopop/xmldsig v0.8.0/go.mod h1:dc3+2BYNw0vzauyZiOobTltp1t3BbvWSq7ae/F2gdk0=
 github.com/invopop/yaml v0.1.0 h1:YW3WGUoJEXYfzWBjn00zIlrw7brGVD0fUKRYDPAPhrc=
 github.com/invopop/yaml v0.1.0/go.mod h1:2XuRLgs/ouIrW3XNzuNj7J3Nvu/Dig5MXvbCEdiBN3Q=
 github.com/josharian/intern v1.0.0/go.mod h1:5DoeVV0s6jJacbCEi61lwdGj/aVlrQvzHFFd8Hwg//Y=

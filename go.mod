@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/invopop/gobl v0.64.0
-	github.com/invopop/xmldsig v0.7.1-0.20231221154955-3d68b955b468
+	github.com/invopop/xmldsig v0.8.0
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
