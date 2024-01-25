@@ -7,7 +7,6 @@ import (
 )
 
 var xadesConfig = &xmldsig.XAdESConfig{
-	Role:        xmldsig.XAdESThirdParty,
 	Description: "Fattura PA",
 }
 
