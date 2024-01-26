@@ -17,11 +17,11 @@ FatturaPA defines two versions of invoices:
 - Ordinary invoices, `FatturaElettronica` types `FPA12` and `FPR12` defined in the v1.2 schema, usable for all sales.
 - Simplified invoices, `FatturaElettronicaSemplificata` type `FSM10` defined in the v1.0 schema, with a reduced set of requirements but can only be used for sales of less then €400, as of writing. **Currently not supported!**
 
-Unlike other tax regimes, Italy requires simplified invoices to include the customer's tax ID. For "cash register" style receipts locally called "Scrotinos", another format and API is used for this.
+Unlike other tax regimes, Italy requires simplified invoices to include the customer's tax ID. For "cash register" style receipts locally called "Scontrinos", another format and API is used for this from approved hardware.
 
 ## Sources
 
-You can find copies of the schema in the [schemas folder](./schema).
+You can find copies of the Italian FatturaPA schema in the [schemas folder](./schema).
 
 - [Historical Documentation](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
 - [Ordinary Schema V1.2.1 Spec Table View (EN)](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.1/Table-view-B2B-Ordinary-invoice.pdf) - by far the most comprehensible spec doc. Since the difference between 1.2.2 and 1.2.1 is minimal, this is perfectly usable.
