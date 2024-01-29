@@ -52,7 +52,7 @@ func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *
 func formatoTransmissione(cus *org.Party) string {
 	if cus != nil {
 		taxID := cus.TaxID
-		if taxID.Country == l10n.IT && taxID.Type == it.TaxIdentityTypeGovernment {
+		if taxID != nil && taxID.Country == l10n.IT && taxID.Type == it.TaxIdentityTypeGovernment {
 			return formatoTrasmissioneFPA12
 		}
 	}

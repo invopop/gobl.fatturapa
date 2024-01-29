@@ -47,18 +47,23 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 	var dl []*dettaglioLinee
 
 	for _, line := range inv.Lines {
-		vatTax := line.Taxes.Get(tax.CategoryVAT)
-
-		dl = append(dl, &dettaglioLinee{
+		d := &dettaglioLinee{
 			NumeroLinea:         strconv.Itoa(line.Index),
 			Descrizione:         line.Item.Name,
 			Quantita:            formatAmount(&line.Quantity),
 			PrezzoUnitario:      formatAmount(&line.Item.Price),
 			PrezzoTotale:        formatAmount(&line.Sum),
-			AliquotaIVA:         formatPercentage(vatTax.Percent),
-			Natura:              vatTax.Ext[it.ExtKeySDINature].String(),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
-		})
+		}
+		if len(line.Taxes) > 0 {
+			vatTax := line.Taxes.Get(tax.CategoryVAT)
+			if vatTax != nil {
+				d.AliquotaIVA = formatPercentage(vatTax.Percent)
+				d.Natura = vatTax.Ext[it.ExtKeySDINature].String()
+			}
+		}
+
+		dl = append(dl, d)
 	}
 
 	return dl
@@ -114,7 +119,6 @@ func findRiferimentoNormativo(rateTotal *tax.RateTotal) string {
 	def := regime.ExtensionDef(it.ExtKeySDINature)
 
 	nature := rateTotal.Ext[it.ExtKeySDINature]
-
 	for _, c := range def.Codes {
 		if c.Code == nature {
 			return c.Name[i18n.IT]

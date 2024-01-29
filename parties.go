@@ -95,8 +95,11 @@ func newCedentePrestatore(s *org.Party) *supplier {
 }
 
 func newCessionarioCommittente(c *org.Party) *customer {
-	nc := new(customer)
+	if c == nil {
+		return nil
+	}
 
+	nc := new(customer)
 	if len(c.Addresses) > 0 {
 		nc.Sede = newAddress(c.Addresses[0])
 	}
