@@ -98,12 +98,17 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 		return nil, errors.New("simplified invoices are not currently supported")
 	}
 
+	code := inv.Code
+	if inv.Series != "" {
+		code = fmt.Sprintf("%s-%s", inv.Series, inv.Code)
+	}
+
 	return &datiGenerali{
 		DatiGeneraliDocumento: &datiGeneraliDocumento{
 			TipoDocumento:          codeTipoDocumento,
 			Divisa:                 string(inv.Currency),
 			Data:                   inv.IssueDate.String(),
-			Numero:                 inv.Code,
+			Numero:                 code,
 			DatiRitenuta:           dr,
 			DatiBollo:              newDatiBollo(inv.Charges),
 			ImportoTotaleDocumento: formatAmount(&inv.Totals.Payable),

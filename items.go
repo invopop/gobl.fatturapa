@@ -55,7 +55,7 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 			PrezzoTotale:        formatAmount(&line.Sum),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
 		}
-		if len(line.Taxes) > 0 {
+		if line.Taxes != nil && len(line.Taxes) > 0 {
 			vatTax := line.Taxes.Get(tax.CategoryVAT)
 			if vatTax != nil {
 				d.AliquotaIVA = formatPercentage(vatTax.Percent)
