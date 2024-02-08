@@ -8,9 +8,9 @@ import (
 )
 
 const (
-	statoLiquidazioneDefault   = "LN"
-	euCitizenTaxCodeDefault    = "0000000"
-	nonEUCitizenTaxCodeDefault = "99999999999"
+	statoLiquidazioneDefault    = "LN"
+	nonITCitizenTaxCodeDefault  = "0000000"
+	nonEUBusinessTaxCodeDefault = "OO99999999999"
 )
 
 type supplier struct {
@@ -111,10 +111,8 @@ func newCessionarioCommittente(c *org.Party) *customer {
 	if c.TaxID != nil {
 		if isCodiceFiscale(c.TaxID) {
 			da.CodiceFiscale = c.TaxID.Code.String()
-		} else if isEUCountry(c.TaxID.Country) {
-			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, euCitizenTaxCodeDefault)
 		} else {
-			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID, nonEUCitizenTaxCodeDefault)
+			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID)
 		}
 	}
 
@@ -153,11 +151,17 @@ func newContatti(party *org.Party) *contatti {
 	return c
 }
 
-func customerFiscaleIVA(id *tax.Identity, fallBack string) *taxID {
+func customerFiscaleIVA(id *tax.Identity) *taxID {
 	idCodice := id.Code.String()
 
 	if idCodice == "" {
-		idCodice = fallBack
+		// Assume private individual
+		idCodice = nonITCitizenTaxCodeDefault
+	} else {
+		// Must be a company with a local tax ID
+		if !isEUCountry(id.Country) {
+			idCodice = nonEUBusinessTaxCodeDefault
+		}
 	}
 
 	return &taxID{

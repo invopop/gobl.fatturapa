@@ -118,7 +118,7 @@ func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
 func findRiferimentoNormativo(rateTotal *tax.RateTotal) string {
 	def := regime.ExtensionDef(it.ExtKeySDINature)
 
-	nature := rateTotal.Ext[it.ExtKeySDINature]
+	nature := rateTotal.Ext[it.ExtKeySDINature].Code()
 	for _, c := range def.Codes {
 		if c.Code == nature {
 			return c.Name[i18n.IT]

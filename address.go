@@ -1,7 +1,12 @@
 package fatturapa
 
 import (
+	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
+)
+
+const (
+	foreignCAP = "00000"
 )
 
 // address from IndirizzoType
@@ -15,14 +20,19 @@ type address struct {
 }
 
 func newAddress(addr *org.Address) *address {
-	return &address{
+	ad := &address{
 		Indirizzo:    addressStreet(addr),
 		NumeroCivico: addr.Number,
-		CAP:          addr.Code,
 		Comune:       addr.Locality,
 		Provincia:    addr.Region,
 		Nazione:      addr.Country.String(),
 	}
+	if addr.Country == l10n.IT {
+		ad.CAP = addr.Code
+	} else {
+		ad.CAP = foreignCAP
+	}
+	return ad
 }
 
 func addressStreet(address *org.Address) string {
