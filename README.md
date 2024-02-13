@@ -24,7 +24,7 @@ Unlike other tax regimes, Italy requires simplified invoices to include the cust
 You can find copies of the Italian FatturaPA schema in the [schemas folder](./schema).
 
 Key websites:
-- [FatturaPA & SDI service documentation page on  on Italy's tax authority's website ] (https://www.agenziaentrate.gov.it/portale/web/guest/fatturazione-elettronica-e-dati-fatture-transfrontaliere-new)
+- [FatturaPA & SDI service documentation page on  on Italy's tax authority's website](https://www.agenziaentrate.gov.it/portale/web/guest/fatturazione-elettronica-e-dati-fatture-transfrontaliere-new/)
 - [FatturaPA documentation page on FatturaPA's dedicated website](https://www.fatturapa.gov.it/en/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/)
 
 Useful files:
