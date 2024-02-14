@@ -1,9 +1,9 @@
 module github.com/invopop/gobl.fatturapa
 
-go 1.19
+go 1.20
 
 require (
-	github.com/invopop/gobl v0.67.0
+	github.com/invopop/gobl v0.67.3
 	github.com/invopop/xmldsig v0.8.0
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.7.0

@@ -116,7 +116,7 @@ func TestPartiesCustomer(t *testing.T) {
 		assert.Equal(t, "0000000", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 	})
 
-	t.Run("should contain customer info for non-EU citizen with Tax ID given", func(t *testing.T) {
+	t.Run("should replace customer ID info for non-EU citizen with Tax ID given", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Customer.TaxID.Code = "09823876432"
@@ -129,7 +129,7 @@ func TestPartiesCustomer(t *testing.T) {
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente
 
 		assert.Equal(t, "GB", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
-		assert.Equal(t, "09823876432", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "OO99999999999", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 	})
 
 	t.Run("should contain customer info for non-EU citizen with no Tax ID given", func(t *testing.T) {
@@ -145,7 +145,7 @@ func TestPartiesCustomer(t *testing.T) {
 		c := doc.FatturaElettronicaHeader.CessionarioCommittente
 
 		assert.Equal(t, "JP", c.DatiAnagrafici.IdFiscaleIVA.IdPaese)
-		assert.Equal(t, "99999999999", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
+		assert.Equal(t, "0000000", c.DatiAnagrafici.IdFiscaleIVA.IdCodice)
 	})
 
 	t.Run("should not fail if missing key data", func(t *testing.T) {

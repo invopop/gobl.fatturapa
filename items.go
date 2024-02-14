@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -119,9 +118,9 @@ func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
 func findRiferimentoNormativo(rateTotal *tax.RateTotal) string {
 	def := regime.ExtensionDef(it.ExtKeySDINature)
 
-	nature := rateTotal.Ext[it.ExtKeySDINature]
+	nature := rateTotal.Ext[it.ExtKeySDINature].Code()
 	for _, c := range def.Codes {
-		if c.Code == cbc.Code(nature) {
+		if c.Code == nature {
 			return c.Name[i18n.IT]
 		}
 	}
