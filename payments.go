@@ -7,7 +7,6 @@ import (
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
 	"github.com/invopop/gobl/regimes/it"
-	"github.com/invopop/gobl/tax"
 )
 
 // datiPagamento contains all data related to the payment of the document.
@@ -87,7 +86,7 @@ func findCodeModalitaPagamento(key cbc.Key) (string, error) {
 	return code.String(), nil
 }
 
-func findPaymentKeyDefinition(key cbc.Key) *tax.KeyDefinition {
+func findPaymentKeyDefinition(key cbc.Key) *cbc.KeyDefinition {
 	for _, keyDef := range regime.PaymentMeansKeys {
 		if key == keyDef.Key {
 			return keyDef

@@ -14,6 +14,5 @@ func formatAmount(a *num.Amount) string {
 	if a == nil {
 		return ""
 	}
-
-	return a.Rescale(2).String()
+	return a.RescaleUp(2).String()
 }
