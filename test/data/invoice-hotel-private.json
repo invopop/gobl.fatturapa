@@ -1,141 +1,160 @@
 {
-  "$schema": "https://gobl.org/draft-0/envelope",
-  "head": {
-    "uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
-    "dig": {
-      "alg": "sha256",
-      "val": "AAAA"
-    }
-  },
-  "doc": {
-    "$schema": "https://gobl.org/draft-0/bill/invoice",
-    "type": "standard",
-    "series": "SAMPLE",
-    "code": "003",
-    "issue_date": "2023-05-21",
-    "currency": "EUR",
-    "tax": {
-      "prices_include": "VAT"
-    },
-    "supplier": {
-      "name": "Hotel California",
-      "tax_id": {
-        "country": "IT",
-        "code": "12345678903"
-      },
-      "addresses": [
-        {
-          "num": "102",
-          "street": "Via California",
-          "locality": "Palermo",
-          "region": "PA",
-          "code": "33213",
-          "country": "IT"
+    "$schema": "https://gobl.org/draft-0/envelope",
+    "head": {
+        "uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
+        "dig": {
+            "alg": "sha256",
+            "val": "6bdbb4af110f22bad603e55d8703b9ecafcfa9d0b1750b633834add3b618f931"
         }
-      ],
-      "registration": {
+    },
+    "doc": {
+        "$schema": "https://gobl.org/draft-0/bill/invoice",
+        "uuid": "018f76a8-958f-7000-ac84-68b205937de3",
+        "type": "standard",
+        "series": "SAMPLE",
+        "code": "003",
+        "issue_date": "2023-05-21",
         "currency": "EUR",
-        "office": "RM",
-        "entry": "123456"
-      }
-    },
-    "customer": {
-      "name": "Random Person",
-      "tax_id": {
-        "country": "GB"
-      },
-      "addresses": [
-        {
-          "num": "23",
-          "street": "Main Street",
-          "locality": "London",
-          "code": "W1 A2",
-          "country": "GB"
-        }
-      ]
-    },
-    "lines": [
-      {
-        "i": 1,
-        "quantity": "1",
-        "item": {
-          "name": "Tassa di Soggiorno",
-          "price": "1.00"
+        "tax": {
+            "prices_include": "VAT"
         },
-        "sum": "1.00",
-        "taxes": [
-          {
-            "cat": "VAT",
-            "rate": "exempt",
-            "ext": {
-              "it-sdi-nature": "N1"
-            }
-          }
-        ],
-        "total": "1.00"
-      },
-      {
-        "i": 2,
-        "quantity": "1",
-        "item": {
-          "name": "Camera Matrimoniale",
-          "price": "125.00"
-        },
-        "sum": "125.00",
-        "taxes": [
-          {
-            "cat": "VAT",
-            "rate": "intermediate",
-            "percent": "10.0%"
-          }
-        ],
-        "total": "125.00"
-      }
-    ],
-    "payment": {
-      "advances": [
-        {
-          "date": "2023-05-01",
-          "key": "card",
-          "desc": "deposit",
-          "amount": "29.00"
-        }
-      ]
-    },
-    "totals": {
-      "sum": "126.00",
-      "tax_included": "11.36",
-      "total": "114.64",
-      "taxes": {
-        "categories": [
-          {
-            "code": "VAT",
-            "rates": [
-              {
-                "key": "exempt",
-                "ext": {
-                  "it-sdi-nature": "N1"
-                },
-                "base": "1.00",
-                "amount": "0.00"
-              },
-              {
-                "key": "intermediate",
-                "base": "113.6364",
-                "percent": "10.0%",
-                "amount": "11.3636"
-              }
+        "supplier": {
+            "name": "Hotel California",
+            "tax_id": {
+                "country": "IT",
+                "type": "business",
+                "code": "12345678903"
+            },
+            "addresses": [
+                {
+                    "num": "102",
+                    "street": "Via California",
+                    "locality": "Palermo",
+                    "region": "PA",
+                    "code": "33213",
+                    "country": "IT"
+                }
             ],
-            "amount": "11.3636"
-          }
+            "registration": {
+                "currency": "EUR",
+                "office": "RM",
+                "entry": "123456"
+            }
+        },
+        "customer": {
+            "name": "Random Person",
+            "tax_id": {
+                "country": "GB"
+            },
+            "addresses": [
+                {
+                    "num": "23",
+                    "street": "Main Street",
+                    "locality": "London",
+                    "code": "W1 A2",
+                    "country": "GB"
+                }
+            ]
+        },
+        "lines": [
+            {
+                "i": 1,
+                "quantity": "1",
+                "item": {
+                    "name": "Tassa di Soggiorno",
+                    "price": "1.00"
+                },
+                "sum": "1.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "rate": "exempt",
+                        "ext": {
+                            "it-sdi-nature": "N1"
+                        }
+                    }
+                ],
+                "total": "1.00"
+            },
+            {
+                "i": 2,
+                "quantity": "1",
+                "item": {
+                    "name": "Camera Matrimoniale",
+                    "price": "125.00"
+                },
+                "sum": "125.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "rate": "intermediate",
+                        "percent": "10.0%"
+                    }
+                ],
+                "total": "125.00"
+            },
+            {
+                "i": 3,
+                "quantity": "10",
+                "item": {
+                    "name": "Camera Matrimoniale",
+                    "price": "75.00"
+                },
+                "sum": "750.00",
+                "taxes": [
+                    {
+                        "cat": "VAT",
+                        "rate": "intermediate",
+                        "percent": "10.0%"
+                    }
+                ],
+                "total": "750.00"
+            }
         ],
-        "sum": "11.3636"
-      },
-      "tax": "11.36",
-      "total_with_tax": "126.00",
-      "payable": "126.00",
-      "advance": "29.00",
-      "due": "97.00"
+        "payment": {
+            "advances": [
+                {
+                    "date": "2023-05-01",
+                    "key": "card",
+                    "description": "deposit",
+                    "amount": "29.00"
+                }
+            ]
+        },
+        "totals": {
+            "sum": "876.00",
+            "tax_included": "79.55",
+            "total": "796.45",
+            "taxes": {
+                "categories": [
+                    {
+                        "code": "VAT",
+                        "rates": [
+                            {
+                                "key": "exempt",
+                                "ext": {
+                                    "it-sdi-nature": "N1"
+                                },
+                                "base": "1.00",
+                                "amount": "0.00"
+                            },
+                            {
+                                "key": "intermediate",
+                                "base": "795.45",
+                                "percent": "10.0%",
+                                "amount": "79.55"
+                            }
+                        ],
+                        "amount": "79.55"
+                    }
+                ],
+                "sum": "79.55"
+            },
+            "tax": "79.55",
+            "total_with_tax": "876.00",
+            "payable": "876.00",
+            "advance": "29.00",
+            "due": "847.00"
+        }
     }
-  }
 }

@@ -3,7 +3,7 @@ module github.com/invopop/gobl.fatturapa
 go 1.20
 
 require (
-	github.com/invopop/gobl v0.67.3
+	github.com/invopop/gobl v0.76.0
 	github.com/invopop/xmldsig v0.8.0
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.7.0
@@ -19,10 +19,11 @@ require (
 	github.com/beevik/etree v1.1.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/davecgh/go-spew v1.1.1 // indirect
-	github.com/google/uuid v1.3.0 // indirect
+	github.com/google/uuid v1.6.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/invopop/jsonschema v0.12.0 // indirect
 	github.com/invopop/validation v0.3.0 // indirect
+	github.com/invopop/yaml v0.3.1 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/otiai10/copy v1.10.0 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
