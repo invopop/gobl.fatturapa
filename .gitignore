@@ -16,3 +16,10 @@
 
 # ENV files
 .env
+
+# Ignore Certificate Signing Request files
+*.csr
+# Ignore private RSA key files
+*.key
+# Ignore p7m files
+*.p7m
