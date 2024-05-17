@@ -37,3 +37,13 @@ Contents of the `ca` folder:
   for the production environment
 - `UserTrustCA.cer`: CA certificate for servizi.fatturapa.it.cer
   for the production environment
+
+## Public keys
+
+[Exchange System documentation](https://www.fatturapa.gov.it/en/norme-e-regole/DocumentazioneSDI/)
+
+Public key of the client certificate of the SDICoop Transmission and SDICoop Reception Service.
+Contents of the `keys` folder:
+
+- `sdi_client_prod.cer_`: real flow
+- `sdi_client_test.cer_`: test flow
