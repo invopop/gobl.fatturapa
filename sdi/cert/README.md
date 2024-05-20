@@ -2,6 +2,13 @@
 
 [Source link](https://www.fatturapa.gov.it/it/norme-e-regole/DocumentazioneSDI/)
 
+These certificates can also be obtained with the following commands:
+
+```console
+$ openssl s_client -connect testservizi.fatturapa.it:443 -showcerts
+$ openssl s_client -connect servizi.fatturapa.it:443 -showcerts
+```
+
 ## Test Certificates
 
 Contents of the `test` folder:
