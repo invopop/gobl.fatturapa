@@ -49,7 +49,7 @@
 
 	<wsdl:service name="SdIRiceviNotifica_service">
 		<wsdl:port name="SdIRiceviNotifica_port" binding="tns:SdIRiceviNotifica_binding">
-			<soapbind:address location="http://servizi.fatturapa.it/ricevi_notifica" />
+			<soapbind:address location="https://servizi.fatturapa.it/ricevi_notifica" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>
