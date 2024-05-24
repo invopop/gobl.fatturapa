@@ -49,7 +49,7 @@
 
 	<wsdl:service name="SdIRiceviFile_service">
 		<wsdl:port name="SdIRiceviFile_port" binding="tns:SdIRiceviFile_binding">
-			<soapbind:address location="http://servizi.fatturapa.it/ricevi_file" />
+			<soapbind:address location="https://servizi.fatturapa.it/ricevi_file" />
 		</wsdl:port>
 	</wsdl:service>
 </wsdl:definitions>
