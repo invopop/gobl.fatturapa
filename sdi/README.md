@@ -85,3 +85,53 @@ $ openssl pkcs12 -export -certpbe PBE-SHA1-3DES -keypbe PBE-SHA1-3DES -nomac -ou
 Enter Export Password:
 Verifying - Enter Export Password:
 ```
+
+## Receive an invoice
+
+### Development
+
+To communicate with the server the client need:
+
+- file with CA certificates in PEM format
+- PEM certificate (see the Certificator_Server folder)
+- PEM RSA private key (generated during initial registration process)
+
+The server must use HTTPS.
+Since certificates are associated with a domain,
+we need to convince our local DNS that this is the right domain.
+
+In this example the domain used will be `sdi-it.invopop.com`.
+
+Set this domain in the `/etc/hosts` file to point to `0.0.0.0`.
+
+```console
+$ cat /etc/hosts | grep sdi
+0.0.0.0		sdi-it.invopop.com
+```
+
+Run the server in one console:
+
+```console
+$ go run ./cmd/gobl.fatturapa server --ca-cert ./ca-all.pem --cert ./SDI-IT.INVOPOP.COM.pem --key ./key_server.key --verbose sdi-it.invopop.com 8080
+Server start: sdi-it.invopop.com:8080
+Client auth: RequireAndVerifyClientCert
+Incoming request:
+GET / HTTP/2.0
+Host: sdi-it.invopop.com:8080
+Accept: */*
+User-Agent: curl/7.88.1
+
+Outgoing response:
+HTTP/2.0 200 OK
+Content-Length: 2
+Content-Type: text/plain
+
+OK
+```
+
+In another console, send requests:
+
+```console
+$ curl --cacert ./ca-all.pem --cert ./SDI-IT.INVOPOP.COM.pem --key ./key_server.key https://sdi-it.invopop.com:8080
+OK
+```
