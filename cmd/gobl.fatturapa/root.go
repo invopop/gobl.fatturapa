@@ -23,6 +23,7 @@ func (o *rootOpts) cmd() *cobra.Command {
 	cmd.AddCommand(versionCmd())
 	cmd.AddCommand(convert(o).cmd())
 	cmd.AddCommand(transmit(o).cmd())
+	cmd.AddCommand(server(o).cmd())
 
 	return cmd
 }
