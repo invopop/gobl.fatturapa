@@ -31,7 +31,7 @@ func (c *transmitOpts) cmd() *cobra.Command {
 	f.String("ca-cert", "", "Path to a file containing the CA certificate")
 	f.String("cert", "", "Path to a file containing the SDI PEM certificate")
 	f.String("key", "", "Path to a file containing the sender PEM RSA private key")
-	f.String("env", "test", "Environment for running command")
+	f.StringP("env", "e", "test", "Environment for running command")
 	_ = cmd.MarkFlagRequired("ca-cert")
 	_ = cmd.MarkFlagRequired("cert")
 	_ = cmd.MarkFlagRequired("key")
