@@ -18,6 +18,66 @@ import (
 )
 
 func TestSendInvoice(t *testing.T) {
+	t.Run("should return error for empty invoice file", func(t *testing.T) {
+		ctx := context.Background()
+		cfg := sdi.DevelopmentSdIConfig
+
+		xop := `
+--MIMEBoundary_000000000000000000000000000000000000000000000000
+Content-Type: application/xop+xml; charset=utf-8; type="text/xml"
+Content-Transfer-Encoding: binary
+Content-ID: <0.4672616374616c20536f667420697320636f6f6c21203f3f@apache.org>
+
+<?xml version="1.0" encoding="utf-8"?>
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
+  <soapenv:Body>
+    <ns2:rispostaSdIRiceviFile
+      xmlns:ns2="http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types">
+      <IdentificativoSdI>0</IdentificativoSdI>
+      <DataOraRicezione>2024-06-10T17:00:00.400+02:00</DataOraRicezione>
+      <Errore>EI01</Errore>
+    </ns2:rispostaSdIRiceviFile>
+  </soapenv:Body>
+</soapenv:Envelope>
+--MIMEBoundary_000000000000000000000000000000000000000000000000--
+`
+
+		expectedResponse := sdi.ReceiveFileResponse{
+			SdiIdentifier: "0",
+			ReceiptTime:   "2024-06-10T17:00:00.400+02:00",
+			Error:         &sdi.ErrorReceipt{ErrorCode: "EI01"},
+		}
+
+		invOpts := sdi.InvoiceOpts{
+			FileName: "FILENAME.xml",
+			FileBody: []byte(""),
+		}
+
+		client := resty.New()
+
+		// block all HTTP requests
+		httpmock.ActivateNonDefault(client.GetClient())
+
+		header := http.Header{}
+		header.Set("Content-Type", `multipart/related; boundary="MIMEBoundary_000000000000000000000000000000000000000000000000"; type="application/xop+xml"; start="<0.4672616374616c20536f667420697320636f6f6c21203f3f@apache.org>"; start-info="text/xml"`)
+		header.Set("X-Powered-By", "Servlet/3.0")
+		responder := httpmock.NewStringResponder(200, xop).HeaderAdd(header)
+		httpmock.RegisterResponder("POST", cfg.SOAPReceiveFileEndpoint(), responder)
+
+		c := sdi.NewClient(
+			sdi.WithClient(client),
+			sdi.WithDebugMode(true),
+		)
+
+		response, err := sdi.SendInvoice(ctx, invOpts, c, cfg)
+		require.Error(t, err)
+		require.EqualError(t, err, "attached file is empty")
+
+		assert.Equal(t, expectedResponse, response.Body.Response)
+
+		httpmock.DeactivateAndReset()
+	})
+
 	t.Run("should return receive file response", func(t *testing.T) {
 		ctx := context.Background()
 		cfg := sdi.DevelopmentSdIConfig
