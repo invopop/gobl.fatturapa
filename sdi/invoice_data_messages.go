@@ -31,6 +31,7 @@ type ErrorListType struct {
 
 // ErrorType represents the Errore element.
 type ErrorType struct {
-	Code        string `xml:"Codice"`
-	Description string `xml:"Descrizione"`
+	Code        string  `xml:"Codice"`
+	Description string  `xml:"Descrizione"`
+	Suggestion  *string `xml:"Suggerimento,omitempty"`
 }
