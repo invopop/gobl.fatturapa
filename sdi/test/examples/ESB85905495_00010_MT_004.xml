@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:typ='http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types'>
+	<soapenv:Header/>
+	<soapenv:Body>
+		<ns3:NotificaMancataConsegna xmlns:ns3="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" versione="1.0">
+			<IdentificativoSdI>29218239</IdentificativoSdI>
+			<NomeFile>ESB85905495_00010.xml</NomeFile>
+			<DataOraRicezione>2024-05-31T14:54:02.000+02:00</DataOraRicezione>
+			<Descrizione>Non è stato possibile recapitare la fattura/e al destinatario.Sono in corso le necessarie verifiche,al termine delle quali si procederà ad un nuovo tentativo di trasmissione. Si rimanda pertanto ad un momento successivo l'invio della ricevuta di consegna.</Descrizione>
+			<MessageId>176130653</MessageId>
+			<Note/>
+		</ns3:NotificaMancataConsegna>
+	</soapenv:Body>
+</soapenv:Envelope>

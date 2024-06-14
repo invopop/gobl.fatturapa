@@ -9,41 +9,50 @@ import (
 )
 
 // MessageHandler processes SOAP requests from SdI (Sistema di Interscambio)
-func MessageHandler(w http.ResponseWriter, req *http.Request) {
-	requestDump, err := httputil.DumpRequest(req, true)
-	if err != nil {
-		log.Printf("Failed to dump incoming request: %s\n", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	log.Printf("Incoming request:\n%s", requestDump)
+func MessageHandler(handler HandleSOAPRequest) http.HandlerFunc {
+	return func(w http.ResponseWriter, req *http.Request) {
+		requestDump, err := httputil.DumpRequest(req, true)
+		if err != nil {
+			log.Printf("Failed to dump incoming request: %s\n", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		log.Printf("Incoming request:\n%s", requestDump)
 
-	responseBody := []byte(soapEmptyResponse())
-	response := &http.Response{
-		Status:        "200 OK",
-		StatusCode:    http.StatusOK,
-		Proto:         "HTTP/2.0",
-		ProtoMajor:    2,
-		ProtoMinor:    0,
-		Body:          io.NopCloser(bytes.NewReader(responseBody)),
-		ContentLength: int64(len(responseBody)),
-		Header:        make(http.Header),
-	}
-	// contentType := http.DetectContentType(responseBody)
-	response.Header.Set("Content-Type", "application/soap+xml")
+		err = ParseMessage(req.Body, handler)
+		if err != nil {
+			log.Printf("Failed to parse body: %s\n", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
 
-	responseDump, err := httputil.DumpResponse(response, true)
-	if err != nil {
-		log.Printf("Failed to dump outgoing response: %v", err)
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		return
-	}
-	log.Printf("Outgoing response:\n%s", responseDump)
+		responseBody := []byte(soapEmptyResponse())
+		response := &http.Response{
+			Status:        "200 OK",
+			StatusCode:    http.StatusOK,
+			Proto:         "HTTP/2.0",
+			ProtoMajor:    2,
+			ProtoMinor:    0,
+			Body:          io.NopCloser(bytes.NewReader(responseBody)),
+			ContentLength: int64(len(responseBody)),
+			Header:        make(http.Header),
+		}
+		// contentType := http.DetectContentType(responseBody)
+		response.Header.Set("Content-Type", "application/soap+xml")
 
-	err = responseToWriter(w, response)
-	if err != nil {
-		log.Printf("Failed to send response: %v", err)
-		return
+		responseDump, err := httputil.DumpResponse(response, true)
+		if err != nil {
+			log.Printf("Failed to dump outgoing response: %v", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+		log.Printf("Outgoing response:\n%s", responseDump)
+
+		err = responseToWriter(w, response)
+		if err != nil {
+			log.Printf("Failed to send response: %v", err)
+			return
+		}
 	}
 }
 

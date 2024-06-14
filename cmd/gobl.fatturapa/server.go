@@ -91,7 +91,9 @@ func (c *serverOpts) runE(cmd *cobra.Command, args []string) error {
 		ClientAuth: clientAuth,
 	}
 
-	err = sdi.RunServer(config, sdi.MessageHandler)
+	messageHandler := sdi.MessageHandler(handleRequest)
+
+	err = sdi.RunServer(config, messageHandler)
 	if err != nil {
 		return fmt.Errorf("server error: %w", err)
 	}
@@ -120,6 +122,18 @@ func loadTLSCert(publicCertPEM, privateKeyPEM []byte) (tls.Certificate, error) {
 	}
 
 	return serverTLSCert, nil
+}
+
+func handleRequest(env *sdi.Envelope) {
+	if env.Body.FileSubmissionMetadata != nil {
+		log.Printf("parsing MetadatiInvioFile:\n")
+	}
+	if env.Body.NonDeliveryNotificationMessage != nil {
+		log.Printf("parsing NotificaMancataConsegna:\n")
+	}
+	if env.Body.InvoiceTransmissionCertificate != nil {
+		log.Printf("parsing AttestazioneTrasmissioneFattura:\n")
+	}
 }
 
 func loadCertPoolFromPEM(caCertPEM []byte) (*x509.CertPool, error) {
