@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:typ='http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types'>
+	<soapenv:Header/>
+	<soapenv:Body>
+		<ns3:AttestazioneTrasmissioneFattura xmlns:ns3="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" versione="1.0">
+			<IdentificativoSdI>29218239</IdentificativoSdI>
+			<NomeFile>ESB85905495_00010.xml</NomeFile>
+			<DataOraRicezione>2024-05-31T14:54:02.000+02:00</DataOraRicezione>
+			<Destinatario>
+				<Codice>WSBKWM</Codice>
+				<Descrizione>Amministrazione di test - Ufficio_test</Descrizione>
+			</Destinatario>
+			<MessageId>176197456</MessageId>
+			<Note>Fattura</Note>
+			<HashFileOriginale>bc0c40728a04f06d52412d946a939540583cbe0ea0edaa5c0ba8097fc0519d16</HashFileOriginale>
+		</ns3:AttestazioneTrasmissioneFattura>
+	</soapenv:Body>
+</soapenv:Envelope>

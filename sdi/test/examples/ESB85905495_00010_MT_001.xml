@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<soapenv:Envelope xmlns:soapenv='http://schemas.xmlsoap.org/soap/envelope/' xmlns:typ='http://www.fatturapa.gov.it/sdi/ws/trasmissione/v1.0/types'>
+  <soapenv:Header/>
+	<soapenv:Body>
+		<ns3:MetadatiInvioFile xmlns:ns2="http://www.w3.org/2000/09/xmldsig#" xmlns:ns3="http://www.fatturapa.gov.it/sdi/messaggi/v1.0" versione="1.0">
+			<IdentificativoSdI>29218239</IdentificativoSdI>
+			<NomeFile>ESB85905495_00010.xml</NomeFile>
+			<CodiceDestinatario>WSBKWM</CodiceDestinatario>
+			<Formato>FPA12</Formato>
+			<TentativiInvio>1</TentativiInvio>
+			<MessageId>176121330</MessageId>
+		</ns3:MetadatiInvioFile>
+	</soapenv:Body>
+</soapenv:Envelope>
