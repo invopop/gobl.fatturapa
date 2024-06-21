@@ -2,11 +2,11 @@
 
 ## SDICoop Web Service
 
-### Test
+### Test endpoint
 
 - [Test URI](https://testservizi.fatturapa.it/)
 
-### Production
+### Production endpoint
 
 - [Production URI](https://fatturapa.it/)
 
@@ -29,6 +29,7 @@ After logging in, we have access to the following options:
 ## Send an invoice
 
 To send an invoice you need:
+
 - invoice file in XML format
 - file with CA certificates in PEM format
 - PEM certificate (see the Certificato_Client folder)
@@ -74,11 +75,9 @@ Content-ID: <0.182152212d14b303688146ac0db42b507ac086a479534824@apache.org>
 ==============================================================================
 ```
 
-## Links
-
-- [Manage the channel](https://sdi.fatturapa.gov.it/SdI2FatturaPAWebSpa/GestireCanaleAction.do)
-
 ## Receive an invoice
+
+To receive invoices and notifications, you need to set up a server communicating with SdI.
 
 ### Development
 
@@ -127,3 +126,27 @@ In another console, send requests:
 $ curl --cacert ./ca-all.pem --cert ./SDI-IT.INVOPOP.COM.pem --key ./key_server.key https://sdi-it.invopop.com:8080
 OK
 ```
+
+### Production
+
+#### Pre-requirements
+
+Read [instructions for creating the CSR using OpenSSL commands](https://www.fatturapa.gov.it/it/norme-e-regole/DocumentazioneSDI/) / SDICoop Service / Example of CSR generation using OpenSSL commands (for expert users).
+
+To ensure proper functionality, the Common Name (CN) of the SSL certificate
+should match the DNS name of the endpoint it is used with.
+Mismatch lead to authentication issues.
+
+SdI uses two-way SSL authentication, where both the client (SdI)
+and the server (your endpoint) exchange certificates for authentication.
+The server must have a certificate issued by
+[Agenzia delle Entrate](https://www.agenziaentrate.gov.it/portale/)
+configured to the IP address, not the domain,
+due to SdI not supporting SNI (Server Name Indication).
+
+Failure to meet the above requirements will result in communication
+being blocked at the TLS level.
+Any attempts from SdI will only be visible in the simulation section
+of the "Manage the channel" interface.
+
+---
