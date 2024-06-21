@@ -78,14 +78,6 @@ Content-ID: <0.182152212d14b303688146ac0db42b507ac086a479534824@apache.org>
 
 - [Manage the channel](https://sdi.fatturapa.gov.it/SdI2FatturaPAWebSpa/GestireCanaleAction.do)
 
-## Pfx server certificate
-
-```
-$ openssl pkcs12 -export -certpbe PBE-SHA1-3DES -keypbe PBE-SHA1-3DES -nomac -out SDI-PIVA-SERVER.pfx -inkey key_server.key -in SDI-IT.INVOPOP.COM.pem -certfile ca-all.pem
-Enter Export Password:
-Verifying - Enter Export Password:
-```
-
 ## Receive an invoice
 
 ### Development
