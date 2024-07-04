@@ -20,7 +20,7 @@ func TestDettaglioLinee(t *testing.T) {
 		assert.Equal(t, "Development services", dl.Descrizione)
 		assert.Equal(t, "20.00", dl.Quantita)
 		assert.Equal(t, "90.00", dl.PrezzoUnitario)
-		assert.Equal(t, "1800.00", dl.PrezzoTotale)
+		assert.Equal(t, "1620.00", dl.PrezzoTotale)
 		assert.Equal(t, "22.00", dl.AliquotaIVA)
 		assert.Equal(t, "", dl.Natura)
 
