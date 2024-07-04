@@ -52,7 +52,7 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 			Descrizione:         line.Item.Name,
 			Quantita:            formatAmount(&line.Quantity),
 			PrezzoUnitario:      formatAmount(&line.Item.Price),
-			PrezzoTotale:        formatAmount(&line.Sum),
+			PrezzoTotale:        formatAmount(&line.Total),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
 		}
 		if line.Taxes != nil && len(line.Taxes) > 0 {
