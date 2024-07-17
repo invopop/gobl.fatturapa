@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	formatoTrasmissioneFPA12 = "FPA12"
-	formatoTrasmissioneFPR12 = "FPR12"
+	formatoTrasmissioneFPA12 = "FPA12" // B2G
+	formatoTrasmissioneFPR12 = "FPR12" // B2B or B2C
 )
 
 // Invoices sent to Italian individuals or businesses can use 0000000 as the
@@ -23,11 +23,11 @@ const (
 
 // Data related to the transmission of the invoice
 type datiTrasmissione struct {
-	IdTrasmittente      *taxID `xml:",omitempty"` // nolint:revive
-	ProgressivoInvio    string `xml:",omitempty"`
-	FormatoTrasmissione string `xml:",omitempty"`
-	CodiceDestinatario  string
-	PECDestinatario     string `xml:",omitempty"`
+	IdTrasmittente      *TaxID `xml:"IdTrasmittente,omitempty"` // nolint:revive
+	ProgressivoInvio    string `xml:"ProgressivoInvio,omitempty"`
+	FormatoTrasmissione string `xml:"FormatoTrasmissione,omitempty"`
+	CodiceDestinatario  string `xml:"CodiceDestinatario"`
+	PECDestinatario     string `xml:"PECDestinatario,omitempty"`
 }
 
 func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *datiTrasmissione {
@@ -38,25 +38,23 @@ func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *
 
 	// Do we need to add the transmitter info?
 	if c.Config.Transmitter != nil {
-		dt.IdTrasmittente = &taxID{
-			IdPaese:  c.Config.Transmitter.CountryCode,
-			IdCodice: c.Config.Transmitter.TaxID,
+		dt.IdTrasmittente = &TaxID{
+			Country: c.Config.Transmitter.CountryCode,
+			Code:    c.Config.Transmitter.TaxID,
 		}
 		dt.ProgressivoInvio = env.Head.UUID.String()[:8]
-		dt.FormatoTrasmissione = formatoTransmissione(inv.Customer)
+		dt.FormatoTrasmissione = formatoTransmissione(inv)
 	}
 
 	return dt
 }
 
-func formatoTransmissione(cus *org.Party) string {
-	if cus != nil {
-		taxID := cus.TaxID
-		if taxID != nil && taxID.Country == l10n.IT && taxID.Type == it.TaxIdentityTypeGovernment {
-			return formatoTrasmissioneFPA12
-		}
-	}
+func formatoTransmissione(inv *bill.Invoice) string {
+	if inv.Tax != nil && inv.Tax.Ext.Has(it.ExtKeySDIFormat) {
+		return inv.Tax.Ext[it.ExtKeySDIFormat].String()
 
+	}
+	// Default is always FPR12 for regular non-government invoices
 	return formatoTrasmissioneFPR12
 }
 

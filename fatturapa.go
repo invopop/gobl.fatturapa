@@ -71,7 +71,7 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 		FPANamespace:             namespaceFatturaPA,
 		DSigNamespace:            namespaceDSig,
 		XSINamespace:             namespaceXSI,
-		Versione:                 formatoTransmissione(invoice.Customer),
+		Versione:                 formatoTransmissione(invoice),
 		SchemaLocation:           schemaLocation,
 		FatturaElettronicaHeader: header,
 		FatturaElettronicaBody:   []*fatturaElettronicaBody{body},
