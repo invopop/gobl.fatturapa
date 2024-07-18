@@ -20,7 +20,7 @@ func TestAddressRegion(t *testing.T) {
 		}
 
 		out := newAddress(addr)
-		assert.Equal(t, "RM", out.Provincia)
+		assert.Equal(t, "RM", out.Region)
 	})
 
 	t.Run("should ignore text name", func(t *testing.T) {
@@ -34,7 +34,7 @@ func TestAddressRegion(t *testing.T) {
 		}
 
 		out := newAddress(addr)
-		assert.Empty(t, out.Provincia)
+		assert.Empty(t, out.Region)
 	})
 
 	t.Run("should ignore foreign addresses", func(t *testing.T) {
@@ -48,6 +48,6 @@ func TestAddressRegion(t *testing.T) {
 		}
 
 		out := newAddress(addr)
-		assert.Empty(t, out.Provincia)
+		assert.Empty(t, out.Region)
 	})
 }

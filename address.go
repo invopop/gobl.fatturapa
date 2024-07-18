@@ -15,28 +15,28 @@ var (
 	provinceRegexp = regexp.MustCompile(`^[A-Z]{2}$`)
 )
 
-// address from IndirizzoType
-type address struct {
-	Indirizzo    string // Street
-	NumeroCivico string `xml:",omitempty"` // Number
-	CAP          string // Post Code
-	Comune       string // Locality
-	Provincia    string `xml:",omitempty"` // Region
-	Nazione      string // Country Code
+// Address from IndirizzoType
+type Address struct {
+	Street   string `xml:"Indirizzo"`              // Street
+	Number   string `xml:"NumeroCivico,omitempty"` // Number
+	Code     string `xml:"CAP"`                    // Post Code
+	Locality string `xml:"Comune"`                 // Locality
+	Region   string `xml:"Provincia,omitempty"`    // Region
+	Country  string `xml:"Nazione"`                // Country Code
 }
 
-func newAddress(addr *org.Address) *address {
-	ad := &address{
-		Indirizzo:    addressStreet(addr),
-		NumeroCivico: addr.Number,
-		Comune:       addr.Locality,
-		Provincia:    addressRegion(addr),
-		Nazione:      addr.Country.String(),
+func newAddress(addr *org.Address) *Address {
+	ad := &Address{
+		Street:   addressStreet(addr),
+		Number:   addr.Number,
+		Locality: addr.Locality,
+		Region:   addressRegion(addr),
+		Country:  addr.Country.String(),
 	}
 	if addr.Country == l10n.IT {
-		ad.CAP = addr.Code
+		ad.Code = addr.Code
 	} else {
-		ad.CAP = foreignCAP
+		ad.Code = foreignCAP
 	}
 	return ad
 }

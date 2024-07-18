@@ -17,8 +17,8 @@ func TestTransmissionData(t *testing.T) {
 
 		dt := doc.FatturaElettronicaHeader.DatiTrasmissione
 
-		assert.Equal(t, converter.Config.Transmitter.CountryCode, dt.IdTrasmittente.IdPaese)
-		assert.Equal(t, converter.Config.Transmitter.TaxID, dt.IdTrasmittente.IdCodice)
+		assert.Equal(t, converter.Config.Transmitter.CountryCode, dt.IdTrasmittente.Country)
+		assert.Equal(t, converter.Config.Transmitter.TaxID, dt.IdTrasmittente.Code)
 		assert.Equal(t, "679a2f25", dt.ProgressivoInvio)
 		assert.Equal(t, "FPR12", dt.FormatoTrasmissione)
 		assert.Equal(t, "ABCDEF1", dt.CodiceDestinatario)

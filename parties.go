@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
@@ -13,164 +14,187 @@ const (
 	nonEUBusinessTaxCodeDefault = "OO99999999999"
 )
 
-type supplier struct {
-	DatiAnagrafici *datiAnagrafici
-	Sede           *address
-	IscrizioneREA  *iscrizioneREA `xml:",omitempty"`
-	Contatti       *contatti      `xml:",omitempty"`
+// Supplier describes the seller/provider of the invoice.
+type Supplier struct {
+	Identity               *Identity               `xml:"DatiAnagrafici"`
+	Address                *Address                `xml:"Sede"`
+	PermanentEstablishment *PermanentEstablishment `xml:"StabileOrganizzazione,omitempty"`
+	Registration           *Registration           `xml:"IscrizioneREA,omitempty"`
+	Contact                *Contact                `xml:"Contatti,omitempty"`
 }
 
-type customer struct {
-	DatiAnagrafici *datiAnagrafici
-	Sede           *address
+// Customer contains the details about who the invoice is addressed to.
+type Customer struct {
+	Identity *Identity `xml:"DatiAnagrafici"`
+	Address  *Address  `xml:"Sede"`
 }
 
-// datiAnagrafici contains information related to an individual or company
-type datiAnagrafici struct {
-	IdFiscaleIVA *taxID `xml:",omitempty"` // nolint:revive
-	// CodiceFiscale is the Italian fiscal code, distinct from TaxID
-	CodiceFiscale string `xml:",omitempty"`
-	Anagrafica    *anagrafica
-	// RegimeFiscale identifies the tax system to be applied
+// Identity (DatiAnagrafici) contains information related to an individual or company
+type Identity struct {
+	TaxID      *TaxID   `xml:"IdFiscaleIVA,omitempty"` // nolint:revive
+	FiscalCode string   `xml:"CodiceFiscale,omitempty"`
+	Profile    *Profile `xml:"Anagrafica"`
+	// FiscaleRegime identifies the tax system to be applied
 	// Has the form RFXX where XX is numeric; required only for the supplier
-	RegimeFiscale string `xml:",omitempty"`
+	FiscalRegime string `xml:"RegimeFiscale,omitempty"`
 }
 
-// anagrafica contains further party information
-type anagrafica struct {
+// TaxID is the VAT identification number consisting of a country code and the
+// actual VAT number.
+type TaxID struct {
+	Country string `xml:"IdPaese"` // ISO 3166-1 alpha-2 country code
+	Code    string `xml:"IdCodice"`
+}
+
+// PermanentEstablishment (StabileOrganizzazione) to be filled in if the seller/provider
+// is not resident, but has a permanent establishment in Italy
+type PermanentEstablishment struct {
+	Street   string `xml:"Indirizzo"`
+	Number   string `xml:"NumeroCivico,omitempty"`
+	PostCode string `xml:"CAP"`
+	Locality string `xml:"Comune"`
+	Region   string `xml:"Provincia,omitempty"` // Province initials (2 characters) for IT country
+	Country  string `xml:"Nazione"`             // Country code ISO alpha-2
+}
+
+// Profile contains identity data of the seller/provider
+type Profile struct {
 	// Name of the organization
-	Denominazione string `xml:",omitempty"`
-	// Name of the person
-	Nome string `xml:",omitempty"`
+	Name string `xml:"Denominazione,omitempty"`
+	// Natural person's first or given name if no "Denominazione" is provided
+	Given string `xml:"Name,omitempty"`
 	// Surname of the person
-	Cognome string `xml:",omitempty"`
+	Surname string `xml:"Cognome,omitempty"`
 	// Title of the person
-	Titolo string `xml:",omitempty"`
+	Title string `xml:"Titolo,omitempty"`
 	// EORI (Economic Operator Registration and Identification) code
-	CodEORI string `xml:",omitempty"`
+	EORI string `xml:"CodEORI,omitempty"`
 }
 
-// iscrizioneREA contains information related to the company registration details (REA)
-type iscrizioneREA struct {
+// Registration contains information related to the company registration details (REA)
+type Registration struct {
 	// Initials of the province where the company's Registry Office is located
-	Ufficio string
+	Office string `xml:"Ufficio,omitempty"`
 	// Company's REA registration number
-	NumeroREA string
+	Entry string `xml:"NumeroREA,omitempty"`
 	// Company's share capital
-	CapitaleSociale string `xml:",omitempty"`
+	Capital string `xml:"CapitaleSociale,omitempty"`
 	// Indication of whether the Company is in liquidation or not.
 	// Possible values: LS (in liquidation), LN (not in liquidation)
-	StatoLiquidazione string
+	LiquidationState string `xml:"StatoLiquidazione,omitempty"`
 }
 
-type contatti struct {
-	Telefono string `xml:",omitempty"`
-	Email    string `xml:",omitempty"`
+// Contact describes how the party can be contacted
+type Contact struct {
+	Telephone string `xml:"Telefono,omitempty"`
+	Email     string `xml:"Email,omitempty"`
 }
 
-func newCedentePrestatore(s *org.Party) *supplier {
-	ns := &supplier{
-		DatiAnagrafici: &datiAnagrafici{
-			IdFiscaleIVA: &taxID{
-				IdPaese:  s.TaxID.Country.String(),
-				IdCodice: s.TaxID.Code.String(),
+func newSupplier(s *org.Party) *Supplier {
+	ns := &Supplier{
+		Identity: &Identity{
+			TaxID: &TaxID{
+				Country: s.TaxID.Country.String(),
+				Code:    s.TaxID.Code.String(),
 			},
-			Anagrafica: newAnagrafica(s),
+			Profile: newProfile(s),
 		},
-		IscrizioneREA: newIscrizioneREA(s),
-		Contatti:      newContatti(s),
+		Registration: newRegistration(s),
+		Contact:      newContact(s),
 	}
 
 	if v, ok := s.Ext[it.ExtKeySDIFiscalRegime]; ok {
-		ns.DatiAnagrafici.RegimeFiscale = v.String()
+		ns.Identity.FiscalRegime = v.String()
 	} else {
-		ns.DatiAnagrafici.RegimeFiscale = "RF01"
+		ns.Identity.FiscalRegime = "RF01"
 	}
 
 	if len(s.Addresses) > 0 {
-		ns.Sede = newAddress(s.Addresses[0])
+		ns.Address = newAddress(s.Addresses[0])
 	}
 
 	return ns
 }
 
-func newCessionarioCommittente(c *org.Party) *customer {
+func newCustomer(c *org.Party) *Customer {
 	if c == nil {
 		return nil
 	}
 
-	nc := new(customer)
+	nc := new(Customer)
 	if len(c.Addresses) > 0 {
-		nc.Sede = newAddress(c.Addresses[0])
+		nc.Address = newAddress(c.Addresses[0])
 	}
 
-	da := &datiAnagrafici{
-		Anagrafica: newAnagrafica(c),
+	da := &Identity{
+		Profile: newProfile(c),
 	}
 
 	if c.TaxID != nil {
-		if isCodiceFiscale(c.TaxID) {
-			da.CodiceFiscale = c.TaxID.Code.String()
-		} else {
-			da.IdFiscaleIVA = customerFiscaleIVA(c.TaxID)
-		}
+		da.TaxID = customerTaxID(c.TaxID)
+	}
+	if id := org.IdentityForKey(c.Identities, it.IdentityKeyFiscalCode); id != nil {
+		da.FiscalCode = id.Code.String()
 	}
 
-	nc.DatiAnagrafici = da
+	nc.Identity = da
 
 	return nc
 }
 
-func newAnagrafica(party *org.Party) *anagrafica {
-	if len(party.People) > 0 && party.TaxID.Type == it.TaxIdentityTypeIndividual {
-		name := party.People[0].Name
+func newProfile(party *org.Party) *Profile {
+	if party.TaxID == nil || party.TaxID.Code == cbc.CodeEmpty {
+		// not a company
+		if len(party.People) > 0 {
+			name := party.People[0].Name
 
-		return &anagrafica{
-			Nome:    name.Given,
-			Cognome: name.Surname,
-			Titolo:  name.Prefix,
+			return &Profile{
+				Given:   name.Given,
+				Surname: name.Surname,
+				Title:   name.Prefix,
+			}
 		}
 	}
 
-	return &anagrafica{
-		Denominazione: party.Name,
+	return &Profile{
+		Name: party.Name,
 	}
 }
 
-func newContatti(party *org.Party) *contatti {
-	c := &contatti{}
-
+func newContact(party *org.Party) *Contact {
+	c := new(Contact)
 	if len(party.Emails) > 0 {
 		c.Email = party.Emails[0].Address
 	}
-
 	if len(party.Telephones) > 0 {
-		c.Telefono = party.Telephones[0].Number
+		c.Telephone = party.Telephones[0].Number
 	}
-
 	return c
 }
 
-func customerFiscaleIVA(id *tax.Identity) *taxID {
-	idCodice := id.Code.String()
+func customerTaxID(id *tax.Identity) *TaxID {
+	code := id.Code.String()
 
-	if idCodice == "" {
+	if code == "" {
+		if id.Country == l10n.IT {
+			return nil
+		}
 		// Assume private individual
-		idCodice = nonITCitizenTaxCodeDefault
+		code = nonITCitizenTaxCodeDefault
 	} else {
 		// Must be a company with a local tax ID
 		if !isEUCountry(id.Country) {
-			idCodice = nonEUBusinessTaxCodeDefault
+			code = nonEUBusinessTaxCodeDefault
 		}
 	}
 
-	return &taxID{
-		IdPaese:  id.Country.String(),
-		IdCodice: idCodice,
+	return &TaxID{
+		Country: id.Country.String(),
+		Code:    code,
 	}
 }
 
-func newIscrizioneREA(supplier *org.Party) *iscrizioneREA {
+func newRegistration(supplier *org.Party) *Registration {
 	if supplier.Registration == nil {
 		return nil
 	}
@@ -184,18 +208,10 @@ func newIscrizioneREA(supplier *org.Party) *iscrizioneREA {
 		capitalFormatted = capital.Rescale(2).String()
 	}
 
-	return &iscrizioneREA{
-		Ufficio:           supplier.Registration.Office,
-		NumeroREA:         supplier.Registration.Entry,
-		CapitaleSociale:   capitalFormatted,
-		StatoLiquidazione: statoLiquidazioneDefault,
+	return &Registration{
+		Office:           supplier.Registration.Office,
+		Entry:            supplier.Registration.Entry,
+		Capital:          capitalFormatted,
+		LiquidationState: statoLiquidazioneDefault,
 	}
-}
-
-func isCodiceFiscale(taxID *tax.Identity) bool {
-	if taxID.Country != l10n.IT {
-		return false
-	}
-
-	return len(taxID.Code.String()) == 16
 }

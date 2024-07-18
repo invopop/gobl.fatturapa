@@ -65,7 +65,7 @@ func ConvertFromGOBL(env *gobl.Envelope, converter ...*fatturapa.Converter) (*fa
 // into XML fatturapa documents.
 func TestConversion() error { // nolint:revive
 	var files []string
-	err := filepath.Walk(GetDataPath(), func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(GetDataPath(), func(path string, _ os.FileInfo, _ error) error {
 		if filepath.Ext(path) == ".json" {
 			files = append(files, filepath.Base(path))
 		}
