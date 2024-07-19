@@ -46,6 +46,14 @@
             "tax_id": {
                 "country": "GB"
             },
+            "people": [
+                {
+                    "name": {
+                        "given": "John",
+                        "surname": "Doe"
+                    }
+                }
+            ],
             "addresses": [
                 {
                     "num": "23",

@@ -62,7 +62,7 @@ type Profile struct {
 	// Name of the organization
 	Name string `xml:"Denominazione,omitempty"`
 	// Natural person's first or given name if no "Denominazione" is provided
-	Given string `xml:"Name,omitempty"`
+	Given string `xml:"Nome,omitempty"`
 	// Surname of the person
 	Surname string `xml:"Cognome,omitempty"`
 	// Title of the person
@@ -147,7 +147,6 @@ func newProfile(party *org.Party) *Profile {
 		// not a company
 		if len(party.People) > 0 {
 			name := party.People[0].Name
-
 			return &Profile{
 				Given:   name.Given,
 				Surname: name.Surname,
