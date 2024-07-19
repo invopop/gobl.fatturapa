@@ -4,11 +4,12 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "796bb9019577dcda5b03baa8916eb2e46d6ba975618d42203f39941e36bd338c"
+			"val": "aa6690ff798fe637147f95713634f33e34f8c03b1b5bba1b12150a8665c3fb2a"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "0190caea-c344-7afa-a530-252b67108175",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
@@ -105,7 +106,7 @@
 				{
 					"date": "2023-05-01",
 					"key": "card",
-					"desc": "deposit",
+					"description": "deposit",
 					"amount": "29.00"
 				}
 			]
@@ -129,15 +130,15 @@
 							},
 							{
 								"key": "intermediate",
-								"base": "113.6364",
+								"base": "113.64",
 								"percent": "10.0%",
-								"amount": "11.3636"
+								"amount": "11.36"
 							}
 						],
-						"amount": "11.3636"
+						"amount": "11.36"
 					}
 				],
-				"sum": "11.3636"
+				"sum": "11.36"
 			},
 			"tax": "11.36",
 			"total_with_tax": "126.00",

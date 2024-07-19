@@ -2,6 +2,7 @@ package fatturapa
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/invopop/xmldsig"
 )
@@ -27,6 +28,12 @@ func (d *Document) sign(config *Config) error {
 
 	if config.WithTimestamp {
 		dsigOpts = append(dsigOpts, xmldsig.WithTimestamp(xmldsig.TimestampFreeTSA))
+	}
+
+	if config.WithCurrentTime != (time.Time{}) {
+		dsigOpts = append(dsigOpts, xmldsig.WithCurrentTime(func() time.Time {
+			return config.WithCurrentTime
+		}))
 	}
 
 	sig, err := xmldsig.Sign(data, dsigOpts...)

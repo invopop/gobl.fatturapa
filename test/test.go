@@ -3,11 +3,13 @@
 package test
 
 import (
-	"fmt"
+	"encoding/json"
+	"flag"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/invopop/gobl"
 	fatturapa "github.com/invopop/gobl.fatturapa"
@@ -15,12 +17,17 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/schema"
 	"github.com/invopop/xmldsig"
+	"github.com/lestrrat-go/libxml2"
+	"github.com/lestrrat-go/libxml2/xsd"
 )
 
 const (
 	certificateFile     = "test.p12"
 	certificatePassword = "invopop"
 )
+
+// UpdateOut is a flag that can be set to update example files
+var UpdateOut = flag.Bool("update", false, "Update the example files in test/data and test/data/out")
 
 // NewConverter returns a fatturapa.Converter with the test certificate and
 // transmitter data.
@@ -36,9 +43,13 @@ func NewConverter() *fatturapa.Converter {
 		TaxID:       "01234567890",
 	}
 
+	// Set a fixed time to get deterministic signatures
+	ts, _ := time.Parse(time.RFC3339, "2022-02-01T04:00:00Z")
+
 	converter := fatturapa.NewConverter(
 		fatturapa.WithTransmitterData(transmitter),
 		fatturapa.WithCertificate(cert),
+		fatturapa.WithCurrentTime(ts),
 	)
 
 	return converter
@@ -59,53 +70,6 @@ func ConvertFromGOBL(env *gobl.Envelope, converter ...*fatturapa.Converter) (*fa
 		return nil, err
 	}
 	return doc, nil
-}
-
-// TestConversion takes the .json invoices generated previously and converts them
-// into XML fatturapa documents.
-func TestConversion() error { // nolint:revive
-	var files []string
-	err := filepath.Walk(GetDataPath(), func(path string, _ os.FileInfo, _ error) error {
-		if filepath.Ext(path) == ".json" {
-			files = append(files, filepath.Base(path))
-		}
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-
-	for _, file := range files {
-		fmt.Printf("processing file: %v\n", file)
-
-		envelopeReader, err := os.Open(GetDataPath() + file)
-		if err != nil {
-			return err
-		}
-
-		env, err := fatturapa.UnmarshalGOBL(envelopeReader)
-		if err != nil {
-			return err
-		}
-
-		doc, err := ConvertFromGOBL(env, NewConverter())
-		if err != nil {
-			return err
-		}
-
-		data, err := doc.Bytes()
-		if err != nil {
-			return fmt.Errorf("extracting document bytes: %w", err)
-		}
-
-		np := strings.TrimSuffix(file, filepath.Ext(file)) + ".xml"
-		err = os.WriteFile(GetDataPath()+"/"+np, data, 0644)
-		if err != nil {
-			return fmt.Errorf("writing file: %w", err)
-		}
-	}
-
-	return nil
 }
 
 // GetDataPath returns the path where test can find data files
@@ -133,7 +97,8 @@ func ModifyInvoice(env *gobl.Envelope, modifyFunc func(*bill.Invoice)) {
 
 // LoadTestFile loads a test file from the test/data folder as a GOBL envelope
 func LoadTestFile(file string) *gobl.Envelope {
-	f, err := os.Open(GetDataPath() + file)
+	path := filepath.Join(GetDataPath(), file)
+	f, err := os.Open(path)
 	if err != nil {
 		panic(err)
 	}
@@ -143,7 +108,52 @@ func LoadTestFile(file string) *gobl.Envelope {
 		panic(err)
 	}
 
+	if err := env.Calculate(); err != nil {
+		panic(err)
+	}
+
+	if err := env.Validate(); err != nil {
+		panic(err)
+	}
+
+	if *UpdateOut {
+		data, err := json.MarshalIndent(env, "", "\t")
+		if err != nil {
+			panic(err)
+		}
+
+		if err := os.WriteFile(path, data, 0644); err != nil {
+			panic(err)
+		}
+	}
+
 	return env
+}
+
+// LoadSchema loads a XSD schema for validating XML documents
+func LoadSchema() (*xsd.Schema, error) {
+	schemaPath := filepath.Join(GetDataPath(), "schema", "Schema_del_file_xml_FatturaPA_v1.2.2.xsd")
+	schema, err := xsd.ParseFromFile(schemaPath)
+	if err != nil {
+		return nil, err
+	}
+
+	return schema, nil
+}
+
+// ValidateXML validates an XML document against a XSD schema
+func ValidateXML(schema *xsd.Schema, doc []byte) []error {
+	xmlDoc, err := libxml2.ParseString(string(doc))
+	if err != nil {
+		return []error{err}
+	}
+
+	err = schema.Validate(xmlDoc)
+	if err != nil {
+		return err.(xsd.SchemaValidationError).Errors()
+	}
+
+	return nil
 }
 
 func loadCertificate() (*xmldsig.Certificate, error) {

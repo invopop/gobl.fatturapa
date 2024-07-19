@@ -39,7 +39,7 @@ func TestDatiRitenuta(t *testing.T) {
 			assert.Equal(t, "RT01", dr[1].TipoRitenuta)
 			assert.Equal(t, "50.00", dr[1].ImportoRitenuta)
 			assert.Equal(t, "50.00", dr[1].AliquotaRitenuta)
-			assert.Equal(t, "J", dr[1].CausalePagamento)
+			assert.Equal(t, "I", dr[1].CausalePagamento)
 		})
 	})
 }

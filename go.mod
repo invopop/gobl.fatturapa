@@ -1,10 +1,13 @@
 module github.com/invopop/gobl.fatturapa
 
-go 1.20
+go 1.21
+
+toolchain go1.22.1
 
 require (
 	github.com/invopop/gobl v0.81.0
 	github.com/invopop/xmldsig v0.8.0
+	github.com/lestrrat-go/libxml2 v0.0.0-20240521004304-a75c203ac627
 	github.com/magefile/mage v1.14.0
 	github.com/spf13/cobra v1.7.0
 	github.com/stretchr/testify v1.8.4
