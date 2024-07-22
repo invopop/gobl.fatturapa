@@ -1,259 +1,262 @@
 {
-  "$schema": "https://gobl.org/draft-0/envelope",
-  "head": {
-    "uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
-    "dig": {
-      "alg": "sha256",
-      "val": "943bb8169e975f7b5f03e9e28bc9d476b0a715321295d65d9c29c749de171897"
-    }
-  },
-  "doc": {
-    "$schema": "https://gobl.org/draft-0/bill/invoice",
-    "type": "standard",
-    "series": "SAMPLE",
-    "code": "001",
-    "issue_date": "2023-03-02",
-    "currency": "EUR",
-    "tax": {
-      "tags": ["freelance"]
-    },
-    "supplier": {
-      "name": "Rossi Digital Services",
-      "tax_id": {
-        "country": "IT",
-        "code": "12345678903"
-      },
-      "people": [
-        {
-          "name": {
-            "given": "GIANCARLO",
-            "surname": "ROSSI"
-          }
-        }
-      ],
-      "addresses": [
-        {
-          "num": "1",
-          "street": "VIALE DELLA LIBERTÀ",
-          "locality": "ROMA",
-          "region": "RM",
-          "code": "00100",
-          "country": "IT"
-        }
-      ],
-      "emails": [
-        {
-          "addr": "billing@example.com"
-        }
-      ]
-    },
-    "customer": {
-      "name": "MARIO LEONI",
-      "tax_id": {
-        "country": "IT"
-      },
-      "identities": [
-        {
-          "key": "it-fiscal-code",
-          "code": "MRALNE80E05H501C"
-        }
-      ],
-      "people": [
-        {
-          "name": {
-            "prefix": "Dott.",
-            "given": "MARIO",
-            "surname": "LEONI"
-          }
-        }
-      ],
-      "inboxes": [
-        {
-          "key": "codice-destinatario",
-          "code": "ABCDEF1"
-        }
-      ],
-      "addresses": [
-        {
-          "num": "32",
-          "street": "VIALE DELI LAVORATORI",
-          "locality": "FIRENZE",
-          "region": "FI",
-          "code": "50100",
-          "country": "IT"
-        }
-      ],
-      "emails": [
-        {
-          "addr": "leoni@mario.com"
-        }
-      ]
-    },
-    "lines": [
-      {
-        "i": 1,
-        "quantity": "20",
-        "item": {
-          "name": "Development services",
-          "price": "90.00",
-          "unit": "h"
-        },
-        "sum": "1800.00",
-        "discounts": [
-          {
-            "percent": "10%",
-            "amount": "180.00",
-            "reason": "Special discount"
-          }
-        ],
-        "taxes": [
-          {
-            "cat": "VAT",
-            "rate": "standard",
-            "percent": "22.0%"
-          },
-          {
-            "cat": "IRPEF",
-            "percent": "20.0%",
-            "ext": {
-              "it-sdi-retained-tax": "A"
-            }
-          }
-        ],
-        "total": "1620.00"
-      },
-      {
-        "i": 2,
-        "quantity": "1",
-        "item": {
-          "name": "Truffle Gathering",
-          "price": "100.00",
-          "unit": "h"
-        },
-        "sum": "100.00",
-        "taxes": [
-          {
-            "cat": "VAT",
-            "rate": "exempt",
-            "ext": {
-              "it-sdi-nature": "N2.2"
-            }
-          },
-          {
-            "cat": "IRPEF",
-            "percent": "50.0%",
-            "ext": {
-              "it-sdi-retained-tax": "J"
-            }
-          }
-        ],
-        "total": "100.00"
-      }
-    ],
-    "discounts": [
-      {
-        "i": 1,
-        "base": "1720.00",
-        "percent": "50%",
-        "amount": "860.00",
-        "reason": "10th year anniversary discount"
-      }
-    ],
-    "charges": [
-      {
-        "i": 1,
-        "base": "1720.00",
-        "percent": "10%",
-        "amount": "172.00",
-        "reason": "10th year anniversary charge"
-      },
-      {
-        "key": "stamp-duty",
-        "i": 2,
-        "amount": "12.34"
-      }
-    ],
-    "payment": {
-      "terms": {
-        "key": "due-date",
-        "due_dates": [
-          {
-            "date": "2023-03-02",
-            "amount": "500.00"
-          },
-          {
-            "date": "2023-04-02",
-            "amount": "544.40"
-          }
-        ]
-      },
-      "instructions": {
-        "key": "credit-transfer",
-        "credit_transfer": [
-          {
-            "iban": "IT60X0542811101000000123456",
-            "bic": "BCITITMM",
-            "name": "BANCA POPOLARE DI MILANO"
-          }
-        ]
-      }
-    },
-    "totals": {
-      "sum": "1720.00",
-      "discount": "860.00",
-      "charge": "184.34",
-      "total": "1044.34",
-      "taxes": {
-        "categories": [
-          {
-            "code": "VAT",
-            "rates": [
-              {
-                "key": "standard",
-                "base": "1620.00",
-                "percent": "22.0%",
-                "amount": "356.40"
-              },
-              {
-                "key": "exempt",
-                "ext": {
-                  "it-sdi-nature": "N2.2"
-                },
-                "base": "100.00",
-                "amount": "0.00"
-              }
-            ],
-            "amount": "356.40"
-          },
-          {
-            "code": "IRPEF",
-            "retained": true,
-            "rates": [
-              {
-                "ext": {
-                  "it-sdi-retained-tax": "A"
-                },
-                "base": "1620.00",
-                "percent": "20.0%",
-                "amount": "324.00"
-              },
-              {
-                "ext": {
-                  "it-sdi-retained-tax": "J"
-                },
-                "base": "100.00",
-                "percent": "50.0%",
-                "amount": "50.00"
-              }
-            ],
-            "amount": "374.00"
-          }
-        ],
-        "sum": "-17.60"
-      },
-      "tax": "-17.60",
-      "total_with_tax": "1026.74",
-      "payable": "1026.74"
-    }
-  }
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
+		"dig": {
+			"alg": "sha256",
+			"val": "5df55bfe1a0d605d9be685ea1c2c0d020d9cdf6626f2c0717f2fe8ae30b94035"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"uuid": "0190caea-c352-7310-90fe-cbf74a3cd084",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "001",
+		"issue_date": "2023-03-02",
+		"currency": "EUR",
+		"tax": {
+			"tags": [
+				"freelance"
+			]
+		},
+		"supplier": {
+			"name": "Rossi Digital Services",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"people": [
+				{
+					"name": {
+						"given": "GIANCARLO",
+						"surname": "ROSSI"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"num": "1",
+					"street": "VIALE DELLA LIBERTÀ",
+					"locality": "ROMA",
+					"region": "RM",
+					"code": "00100",
+					"country": "IT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "billing@example.com"
+				}
+			]
+		},
+		"customer": {
+			"name": "MARIO LEONI",
+			"tax_id": {
+				"country": "IT"
+			},
+			"identities": [
+				{
+					"key": "it-fiscal-code",
+					"code": "MRALNE80E05H501C"
+				}
+			],
+			"people": [
+				{
+					"name": {
+						"prefix": "Dott.",
+						"given": "MARIO",
+						"surname": "LEONI"
+					}
+				}
+			],
+			"inboxes": [
+				{
+					"key": "codice-destinatario",
+					"code": "ABCDEF1"
+				}
+			],
+			"addresses": [
+				{
+					"num": "32",
+					"street": "VIALE DELI LAVORATORI",
+					"locality": "FIRENZE",
+					"region": "FI",
+					"code": "50100",
+					"country": "IT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "leoni@mario.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "20",
+				"item": {
+					"name": "Development services",
+					"price": "90.00",
+					"unit": "h"
+				},
+				"sum": "1800.00",
+				"discounts": [
+					{
+						"percent": "10%",
+						"amount": "180.00",
+						"reason": "Special discount"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "standard",
+						"percent": "22.0%"
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "20.0%",
+						"ext": {
+							"it-sdi-retained-tax": "A"
+						}
+					}
+				],
+				"total": "1620.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1",
+				"item": {
+					"name": "Truffle Gathering",
+					"price": "100.00",
+					"unit": "h"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-nature": "N2.2"
+						}
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "50.0%",
+						"ext": {
+							"it-sdi-retained-tax": "I"
+						}
+					}
+				],
+				"total": "100.00"
+			}
+		],
+		"discounts": [
+			{
+				"i": 1,
+				"base": "1720.00",
+				"percent": "50%",
+				"amount": "860.00",
+				"reason": "10th year anniversary discount"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"base": "1720.00",
+				"percent": "10%",
+				"amount": "172.00",
+				"reason": "10th year anniversary charge"
+			},
+			{
+				"key": "stamp-duty",
+				"i": 2,
+				"amount": "12.34"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2023-03-02",
+						"amount": "500.00"
+					},
+					{
+						"date": "2023-04-02",
+						"amount": "544.40"
+					}
+				]
+			},
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "IT60X0542811101000000123456",
+						"bic": "BCITITMM",
+						"name": "BANCA POPOLARE DI MILANO"
+					}
+				]
+			}
+		},
+		"totals": {
+			"sum": "1720.00",
+			"discount": "860.00",
+			"charge": "184.34",
+			"total": "1044.34",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "1620.00",
+								"percent": "22.0%",
+								"amount": "356.40"
+							},
+							{
+								"key": "exempt",
+								"ext": {
+									"it-sdi-nature": "N2.2"
+								},
+								"base": "100.00",
+								"amount": "0.00"
+							}
+						],
+						"amount": "356.40"
+					},
+					{
+						"code": "IRPEF",
+						"retained": true,
+						"rates": [
+							{
+								"ext": {
+									"it-sdi-retained-tax": "A"
+								},
+								"base": "1620.00",
+								"percent": "20.0%",
+								"amount": "324.00"
+							},
+							{
+								"ext": {
+									"it-sdi-retained-tax": "I"
+								},
+								"base": "100.00",
+								"percent": "50.0%",
+								"amount": "50.00"
+							}
+						],
+						"amount": "374.00"
+					}
+				],
+				"sum": "-17.60"
+			},
+			"tax": "-17.60",
+			"total_with_tax": "1026.74",
+			"payable": "1026.74"
+		}
+	}
 }

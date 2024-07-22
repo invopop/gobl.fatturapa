@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"time"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/xmldsig"
@@ -24,9 +25,10 @@ type Transmitter struct {
 
 // Config contains the configuration for the Converter
 type Config struct {
-	Certificate   *xmldsig.Certificate
-	WithTimestamp bool
-	Transmitter   *Transmitter
+	Certificate     *xmldsig.Certificate
+	WithTimestamp   bool
+	Transmitter     *Transmitter
+	WithCurrentTime time.Time
 }
 
 // Option is a function that can be passed to NewConverter to configure it
@@ -50,6 +52,13 @@ func WithCertificate(cert *xmldsig.Certificate) Option {
 func WithTimestamp() Option {
 	return func(c *Converter) {
 		c.Config.WithTimestamp = true
+	}
+}
+
+// WithCurrentTime will ensure the XML document is signed with the given current time
+func WithCurrentTime(t time.Time) Option {
+	return func(c *Converter) {
+		c.Config.WithCurrentTime = t
 	}
 }
 
