@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "aa6690ff798fe637147f95713634f33e34f8c03b1b5bba1b12150a8665c3fb2a"
+			"val": "4b6ec1bb24bdd707520a89e632279966d887f0a3339dc737c30f69f7664c5345"
 		}
 	},
 	"doc": {
@@ -85,12 +85,18 @@
 			},
 			{
 				"i": 2,
-				"quantity": "1",
+				"quantity": "2",
 				"item": {
 					"name": "Camera Matrimoniale",
 					"price": "125.00"
 				},
-				"sum": "125.00",
+				"sum": "250.00",
+				"discounts": [
+					{
+						"amount": "10.00",
+						"reason": "Sconto"
+					}
+				],
 				"taxes": [
 					{
 						"cat": "VAT",
@@ -98,7 +104,7 @@
 						"percent": "10.0%"
 					}
 				],
-				"total": "125.00"
+				"total": "240.00"
 			}
 		],
 		"payment": {
@@ -112,9 +118,9 @@
 			]
 		},
 		"totals": {
-			"sum": "126.00",
-			"tax_included": "11.36",
-			"total": "114.64",
+			"sum": "241.00",
+			"tax_included": "21.82",
+			"total": "219.18",
 			"taxes": {
 				"categories": [
 					{
@@ -130,21 +136,21 @@
 							},
 							{
 								"key": "intermediate",
-								"base": "113.64",
+								"base": "218.18",
 								"percent": "10.0%",
-								"amount": "11.36"
+								"amount": "21.82"
 							}
 						],
-						"amount": "11.36"
+						"amount": "21.82"
 					}
 				],
-				"sum": "11.36"
+				"sum": "21.82"
 			},
-			"tax": "11.36",
-			"total_with_tax": "126.00",
-			"payable": "126.00",
+			"tax": "21.82",
+			"total_with_tax": "241.00",
+			"payable": "241.00",
 			"advance": "29.00",
-			"due": "97.00"
+			"due": "212.00"
 		}
 	}
 }

@@ -57,9 +57,9 @@ type datiBollo struct {
 // scontoMaggiorazione contains data about price adjustments like discounts and
 // charges.
 type scontoMaggiorazione struct {
-	Tipo        string
-	Percentuale string
-	Importo     string
+	Tipo        string `xml:"Tipo"`
+	Percentuale string `xml:"Percentuale,omitempty"`
+	Importo     string `xml:"Importo,omitempty"`
 }
 
 func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, error) {

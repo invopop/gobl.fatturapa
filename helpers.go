@@ -4,10 +4,16 @@ import "github.com/invopop/gobl/num"
 
 func formatPercentage(p *num.Percentage) string {
 	if p == nil {
-		return num.MakePercentage(0, 4).StringWithoutSymbol()
+		return ""
 	}
-
 	return p.Rescale(4).StringWithoutSymbol()
+}
+
+func formatPercentageWithZero(p *num.Percentage) string {
+	if p == nil {
+		p = num.NewPercentage(0, 4)
+	}
+	return formatPercentage(p)
 }
 
 func formatAmount(a *num.Amount) string {

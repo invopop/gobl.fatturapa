@@ -17,14 +17,14 @@ type datiBeniServizi struct {
 
 // dettaglioLinee contains line data such as description, quantity, price, etc.
 type dettaglioLinee struct {
-	NumeroLinea         string
-	Descrizione         string
-	Quantita            string
-	PrezzoUnitario      string
-	ScontoMaggiorazione []*scontoMaggiorazione `xml:",omitempty"`
-	PrezzoTotale        string
-	AliquotaIVA         string
-	Natura              string `xml:",omitempty"`
+	NumeroLinea         string                 `xml:"NumeroLinea"`
+	Descrizione         string                 `xml:"Descrizione"`
+	Quantita            string                 `xml:"Quantita"`
+	PrezzoUnitario      string                 `xml:"PrezzoUnitario"`
+	ScontoMaggiorazione []*scontoMaggiorazione `xml:"ScontoMaggiorazione,omitempty"`
+	PrezzoTotale        string                 `xml:"PrezzoTotale"`
+	AliquotaIVA         string                 `xml:"AliquotaIVA"`
+	Natura              string                 `xml:"Natura,omitempty"`
 }
 
 // datiRiepilogo contains tax summary data such as tax rate, tax amount, etc.
@@ -58,7 +58,7 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 		if line.Taxes != nil && len(line.Taxes) > 0 {
 			vatTax := line.Taxes.Get(tax.CategoryVAT)
 			if vatTax != nil {
-				d.AliquotaIVA = formatPercentage(vatTax.Percent)
+				d.AliquotaIVA = formatPercentageWithZero(vatTax.Percent)
 				d.Natura = vatTax.Ext[it.ExtKeySDINature].String()
 			}
 		}
@@ -82,7 +82,7 @@ func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
 
 	for _, rateTotal := range vatRateTotals {
 		dr = append(dr, &datiRiepilogo{
-			AliquotaIVA:          formatPercentage(rateTotal.Percent),
+			AliquotaIVA:          formatPercentageWithZero(rateTotal.Percent),
 			Natura:               rateTotal.Ext[it.ExtKeySDINature].String(),
 			ImponibileImporto:    formatAmount(&rateTotal.Base),
 			Imposta:              formatAmount(&rateTotal.Amount),
@@ -94,25 +94,30 @@ func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
 }
 
 func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
-	var scontiMaggiorazioni []*scontoMaggiorazione
+	list := make([]*scontoMaggiorazione, 0)
 
 	for _, discount := range line.Discounts {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
+		// Unlike most formats, FatturaPA applies the discount to the unit price
+		// instead of the line sum.
+		// Quick ref: https://fex-app.com/FatturaElettronica/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/PrezzoTotale
+		a := discount.Amount.Divide(line.Quantity)
+		list = append(list, &scontoMaggiorazione{
 			Tipo:        scontoMaggiorazioneTypeDiscount,
 			Percentuale: formatPercentage(discount.Percent),
-			Importo:     formatAmount(&discount.Amount),
+			Importo:     formatAmount(&a),
 		})
 	}
 
 	for _, charge := range line.Charges {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
+		a := charge.Amount.Divide(line.Quantity)
+		list = append(list, &scontoMaggiorazione{
 			Tipo:        scontoMaggiorazioneTypeCharge,
 			Percentuale: formatPercentage(charge.Percent),
-			Importo:     formatAmount(&charge.Amount),
+			Importo:     formatAmount(&a),
 		})
 	}
 
-	return scontiMaggiorazioni
+	return list
 }
 
 func findRiferimentoNormativo(rateTotal *tax.RateTotal) string {
