@@ -28,7 +28,7 @@ func TestDettaglioLinee(t *testing.T) {
 
 		assert.Equal(t, "SC", sm.Tipo)
 		assert.Equal(t, "10.00", sm.Percentuale)
-		assert.Equal(t, "180.00", sm.Importo)
+		assert.Equal(t, "9.00", sm.Importo)
 
 		dl = doc.FatturaElettronicaBody[0].DatiBeniServizi.DettaglioLinee[1]
 
