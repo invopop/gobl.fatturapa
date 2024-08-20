@@ -126,7 +126,7 @@ converter := fatturapa.NewConverter(
 The command line interface can be useful for situations when you're using a language other than Golang in your application. Install with:
 
 ```bash
-go install github.com/invopop/gobl.fatturapa
+go install github.com/invopop/gobl.fatturapa/cmd/gobl.fatturapa
 ```
 
 Simply provide the input GOBL JSON file and output to a file or another application:
