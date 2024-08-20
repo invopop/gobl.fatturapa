@@ -60,7 +60,7 @@ func formatoTransmissione(inv *bill.Invoice) string {
 
 func codiceDestinatario(cus *org.Party) string {
 	if cus != nil {
-		if cus.TaxID != nil && cus.TaxID.Country != l10n.IT {
+		if cus.TaxID != nil && cus.TaxID.Country.Code() != l10n.IT {
 			return defaultCodiceDestinatarioForeignBusiness
 		}
 		for _, inbox := range cus.Inboxes {

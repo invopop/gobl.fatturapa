@@ -175,14 +175,14 @@ func customerTaxID(id *tax.Identity) *TaxID {
 	code := id.Code.String()
 
 	if code == "" {
-		if id.Country == l10n.IT {
+		if id.Country.Code() == l10n.IT {
 			return nil
 		}
 		// Assume private individual
 		code = nonITCitizenTaxCodeDefault
 	} else {
 		// Must be a company with a local tax ID
-		if !isEUCountry(id.Country) {
+		if !isEUCountry(id.Country.Code()) {
 			code = nonEUBusinessTaxCodeDefault
 		}
 	}

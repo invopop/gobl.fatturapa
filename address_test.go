@@ -3,7 +3,6 @@ package fatturapa
 import (
 	"testing"
 
-	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,7 +15,7 @@ func TestAddressRegion(t *testing.T) {
 			Locality: "Roma",
 			Region:   "RM",
 			Code:     "00100",
-			Country:  l10n.IT,
+			Country:  "IT",
 		}
 
 		out := newAddress(addr)
@@ -30,7 +29,7 @@ func TestAddressRegion(t *testing.T) {
 			Locality: "Roma",
 			Region:   "Rome",
 			Code:     "00100",
-			Country:  l10n.IT,
+			Country:  "IT",
 		}
 
 		out := newAddress(addr)
@@ -44,7 +43,7 @@ func TestAddressRegion(t *testing.T) {
 			Locality: "London",
 			Region:   "RM",
 			Code:     "00100",
-			Country:  l10n.GB,
+			Country:  "GB",
 		}
 
 		out := newAddress(addr)

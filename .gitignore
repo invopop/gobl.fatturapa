@@ -16,3 +16,5 @@
 
 # ENV files
 .env
+
+/gobl.fatturapa
