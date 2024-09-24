@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/regimes/it"
@@ -100,7 +101,7 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 
 	code := inv.Code
 	if inv.Series != "" {
-		code = fmt.Sprintf("%s-%s", inv.Series, inv.Code)
+		code = cbc.Code(fmt.Sprintf("%s-%s", inv.Series, inv.Code))
 	}
 
 	return &datiGenerali{
@@ -108,7 +109,7 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 			TipoDocumento:          codeTipoDocumento,
 			Divisa:                 string(inv.Currency),
 			Data:                   inv.IssueDate.String(),
-			Numero:                 code,
+			Numero:                 code.String(),
 			DatiRitenuta:           dr,
 			DatiBollo:              newDatiBollo(inv.Charges),
 			ImportoTotaleDocumento: formatAmount(&inv.Totals.Payable),
@@ -119,14 +120,16 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 }
 
 func findCodeTipoDocumento(inv *bill.Invoice) (string, error) {
-	ss := inv.ScenarioSummary()
-
-	code := ss.Codes[it.KeyFatturaPATipoDocumento]
-	if code == "" {
-		return "", fmt.Errorf("could not find TipoDocumento code")
+	if inv.Tax == nil {
+		return "", fmt.Errorf("missing tax")
 	}
 
-	return code.String(), nil
+	val, ok := inv.Tax.Ext[sdi.ExtKeyDocumentType]
+	if !ok || val == "" {
+		return "", fmt.Errorf("missing %s", sdi.ExtKeyDocumentType)
+	}
+
+	return val.String(), nil
 }
 
 func newDatiBollo(charges []*bill.Charge) *datiBollo {

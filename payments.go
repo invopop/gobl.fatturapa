@@ -3,10 +3,9 @@ package fatturapa
 import (
 	"fmt"
 
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/pay"
-	"github.com/invopop/gobl/regimes/it"
 )
 
 // datiPagamento contains all data related to the payment of the document.
@@ -17,44 +16,63 @@ type datiPagamento struct {
 
 // dettaglioPagamento contains data related to a single payment.
 type dettaglioPagamento struct {
-	ModalitaPagamento     string
-	DataScadenzaPagamento string `xml:",omitempty"`
-	ImportoPagamento      string
+	ModalitaPagamento string
+	Date              string `xml:"DataRiferimentoTerminiPagamento,omitempty"`
+	DueDate           string `xml:"DataScadenzaPagamento,omitempty"`
+	ImportoPagamento  string
 }
 
 func newDatiPagamento(inv *bill.Invoice) (*datiPagamento, error) {
-	if inv.Payment == nil || inv.Payment.Instructions == nil {
+	if inv.Payment == nil {
 		return nil, nil
 	}
 
-	dp, err := newDettalgioPagamento(inv)
+	dp, err := preparePaymentDetails(inv)
 	if err != nil {
 		return nil, err
 	}
 
 	return &datiPagamento{
-		CondizioniPagamento: determinePaymentConditions(inv.Payment),
+		CondizioniPagamento: determinePaymentConditions(inv),
 		DettaglioPagamento:  dp,
 	}, nil
 }
 
-func newDettalgioPagamento(inv *bill.Invoice) ([]*dettaglioPagamento, error) {
+func preparePaymentDetails(inv *bill.Invoice) ([]*dettaglioPagamento, error) {
 	var dp []*dettaglioPagamento
 	payment := inv.Payment
 
-	codeModalitaPagamento, err := findCodeModalitaPagamento(payment.Instructions.Key)
-	if err != nil {
-		return nil, err
+	if len(payment.Advances) == 0 && payment.Instructions == nil {
+		return nil, fmt.Errorf("missing payment advances or instructions")
 	}
+
+	// First deal with payment advances
+	for _, advance := range payment.Advances {
+		row := &dettaglioPagamento{
+			ModalitaPagamento: advance.Ext[sdi.ExtKeyPaymentMeans].String(),
+			ImportoPagamento:  formatAmount(&advance.Amount),
+		}
+		if advance.Date != nil {
+			row.Date = advance.Date.String()
+		}
+		dp = append(dp, row)
+	}
+
+	if payment.Instructions == nil {
+		// No instructions, ignore anything else
+		return dp, nil
+	}
+
+	codeModalitaPagamento := payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String()
 
 	// First check if there are multiple due dates, and if so, create a
 	// DettaglioPagamento for each one.
 	if terms := payment.Terms; terms != nil {
 		for _, dueDate := range payment.Terms.DueDates {
 			dp = append(dp, &dettaglioPagamento{
-				ModalitaPagamento:     codeModalitaPagamento,
-				DataScadenzaPagamento: dueDate.Date.String(), // ISO 8601 YYYY-MM-DD format
-				ImportoPagamento:      formatAmount(&dueDate.Amount),
+				ModalitaPagamento: codeModalitaPagamento,
+				DueDate:           dueDate.Date.String(), // ISO 8601 YYYY-MM-DD format
+				ImportoPagamento:  formatAmount(&dueDate.Amount),
 			})
 		}
 	}
@@ -71,38 +89,13 @@ func newDettalgioPagamento(inv *bill.Invoice) ([]*dettaglioPagamento, error) {
 	return dp, nil
 }
 
-func findCodeModalitaPagamento(key cbc.Key) (string, error) {
-	keyDef := findPaymentKeyDefinition(key)
-
-	if keyDef == nil {
-		return "", fmt.Errorf("ModalitaPagamento Code not found for payment method key '%s'", key)
-	}
-
-	code := keyDef.Map[it.KeyFatturaPAModalitaPagamento]
-	if code == "" {
-		return "", fmt.Errorf("ModalitaPagamento Code not found for payment method key '%s'", key)
-	}
-
-	return code.String(), nil
-}
-
-func findPaymentKeyDefinition(key cbc.Key) *cbc.KeyDefinition {
-	for _, keyDef := range regime.PaymentMeansKeys {
-		if key == keyDef.Key {
-			return keyDef
-		}
-	}
-	return nil
-}
-
-func determinePaymentConditions(payment *bill.Payment) string {
+func determinePaymentConditions(inv *bill.Invoice) string {
+	p := inv.Payment
 	switch {
-	case payment.Terms == nil:
-		return condizioniPagamentoFull
-	case len(payment.Terms.DueDates) > 1:
-		return condizioniPagamentoInstallments
-	case payment.Terms.Key == pay.TermKeyAdvanced:
+	case inv.Totals.Paid() || (p.Terms != nil && p.Terms.Key == pay.TermKeyAdvanced):
 		return condizioniPagamentoAdvance
+	case len(p.Advances) > 0 || (p.Terms != nil && len(p.Terms.DueDates) > 1):
+		return condizioniPagamentoInstallments
 	default:
 		return condizioniPagamentoFull
 	}

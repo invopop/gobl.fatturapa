@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
@@ -103,7 +104,7 @@ func newSupplier(s *org.Party) *Supplier {
 		Contact:      newContact(s),
 	}
 
-	if v, ok := s.Ext[it.ExtKeySDIFiscalRegime]; ok {
+	if v, ok := s.Ext[sdi.ExtKeyFiscalRegime]; ok {
 		ns.Identity.FiscalRegime = v.String()
 	} else {
 		ns.Identity.FiscalRegime = "RF01"

@@ -4,11 +4,18 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "5df55bfe1a0d605d9be685ea1c2c0d020d9cdf6626f2c0717f2fe8ae30b94035"
+			"val": "1a7ebf9bcec0525294d085a246c528304ed1317e52652e1e17f37fb4f12a7271"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"$tags": [
+			"freelance"
+		],
 		"uuid": "0190caea-c352-7310-90fe-cbf74a3cd084",
 		"type": "standard",
 		"series": "SAMPLE",
@@ -16,9 +23,10 @@
 		"issue_date": "2023-03-02",
 		"currency": "EUR",
 		"tax": {
-			"tags": [
-				"freelance"
-			]
+			"ext": {
+				"it-sdi-document-type": "TD06",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "Rossi Digital Services",
@@ -48,7 +56,10 @@
 				{
 					"addr": "billing@example.com"
 				}
-			]
+			],
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
 		},
 		"customer": {
 			"name": "MARIO LEONI",
@@ -119,7 +130,7 @@
 						"cat": "IRPEF",
 						"percent": "20.0%",
 						"ext": {
-							"it-sdi-retained-tax": "A"
+							"it-sdi-retained": "A"
 						}
 					}
 				],
@@ -139,14 +150,14 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"it-sdi-nature": "N2.2"
+							"it-sdi-exempt": "N2.2"
 						}
 					},
 					{
 						"cat": "IRPEF",
 						"percent": "50.0%",
 						"ext": {
-							"it-sdi-retained-tax": "I"
+							"it-sdi-retained": "I"
 						}
 					}
 				],
@@ -198,7 +209,10 @@
 						"bic": "BCITITMM",
 						"name": "BANCA POPOLARE DI MILANO"
 					}
-				]
+				],
+				"ext": {
+					"it-sdi-payment-means": "MP05"
+				}
 			}
 		},
 		"totals": {
@@ -220,7 +234,7 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"it-sdi-nature": "N2.2"
+									"it-sdi-exempt": "N2.2"
 								},
 								"base": "100.00",
 								"amount": "0.00"
@@ -234,7 +248,7 @@
 						"rates": [
 							{
 								"ext": {
-									"it-sdi-retained-tax": "A"
+									"it-sdi-retained": "A"
 								},
 								"base": "1620.00",
 								"percent": "20.0%",
@@ -242,7 +256,7 @@
 							},
 							{
 								"ext": {
-									"it-sdi-retained-tax": "I"
+									"it-sdi-retained": "I"
 								},
 								"base": "100.00",
 								"percent": "50.0%",
