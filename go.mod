@@ -39,4 +39,4 @@ require (
 	software.sslmate.com/src/go-pkcs12 v0.2.0 // indirect
 )
 
-replace github.com/invopop/gobl => ../gobl
+// replace github.com/invopop/gobl => ../gobl
