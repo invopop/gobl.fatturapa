@@ -84,7 +84,7 @@ func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
 		countryCode := c.transmitter[:2]
 		taxID := c.transmitter[2:]
 
-		code := l10n.CountryCode(countryCode)
+		code := l10n.TaxCountryCode(countryCode)
 		err := code.Validate()
 		if err != nil {
 			return nil, fmt.Errorf("tax ID must be prefixed by a valid country code")

@@ -2,10 +2,10 @@ package fatturapa
 
 import (
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/it"
 )
 
 const (
@@ -50,8 +50,8 @@ func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *
 }
 
 func formatoTransmissione(inv *bill.Invoice) string {
-	if inv.Tax != nil && inv.Tax.Ext.Has(it.ExtKeySDIFormat) {
-		return inv.Tax.Ext[it.ExtKeySDIFormat].String()
+	if inv.Tax != nil && inv.Tax.Ext.Has(sdi.ExtKeyFormat) {
+		return inv.Tax.Ext[sdi.ExtKeyFormat].String()
 
 	}
 	// Default is always FPR12 for regular non-government invoices
@@ -60,11 +60,11 @@ func formatoTransmissione(inv *bill.Invoice) string {
 
 func codiceDestinatario(cus *org.Party) string {
 	if cus != nil {
-		if cus.TaxID != nil && cus.TaxID.Country != l10n.IT {
+		if cus.TaxID != nil && cus.TaxID.Country.Code() != l10n.IT {
 			return defaultCodiceDestinatarioForeignBusiness
 		}
 		for _, inbox := range cus.Inboxes {
-			if inbox.Key == it.KeyInboxSDICode {
+			if inbox.Key == sdi.KeyInboxCode {
 				return inbox.Code
 			}
 		}
@@ -78,7 +78,7 @@ func codiceDestinatario(cus *org.Party) string {
 func pecDestinatario(cus *org.Party) string {
 	if cus != nil {
 		for _, inbox := range cus.Inboxes {
-			if inbox.Key == it.KeyInboxSDIPEC {
+			if inbox.Key == sdi.KeyInboxPEC {
 				return inbox.Code
 			}
 		}

@@ -33,7 +33,7 @@ func newAddress(addr *org.Address) *Address {
 		Region:   addressRegion(addr),
 		Country:  addr.Country.String(),
 	}
-	if addr.Country == l10n.IT {
+	if addr.Country == l10n.IT.ISO() {
 		ad.Code = addr.Code
 	} else {
 		ad.Code = foreignCAP
@@ -46,7 +46,7 @@ func newAddress(addr *org.Address) *Address {
 // or return an empty string to avoid FatturaPA validation issues.
 // The province is optional, so it's not a problem if it's not set.
 func addressRegion(address *org.Address) string {
-	if address.Country == l10n.IT {
+	if address.Country == l10n.IT.ISO() {
 		if provinceRegexp.MatchString(address.Region) {
 			return address.Region
 		}

@@ -2,7 +2,7 @@ package fatturapa
 
 import "github.com/invopop/gobl/l10n"
 
-var euCountries = []l10n.CountryCode{
+var euCountries = []l10n.Code{
 	l10n.AT, // Austria
 	l10n.BE, // Belgium
 	l10n.BG, // Bulgaria
@@ -32,7 +32,7 @@ var euCountries = []l10n.CountryCode{
 	l10n.SE, // Sweden
 }
 
-func isEUCountry(c l10n.CountryCode) bool {
+func isEUCountry(c l10n.Code) bool {
 	for _, cc := range euCountries {
 		if c == cc {
 			return true

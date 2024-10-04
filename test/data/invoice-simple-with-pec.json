@@ -4,11 +4,18 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "af8a70f8e1d7a666ffd2abf461f223bfa5805af14657b00c39c1615d17fc315b"
+			"val": "3a010567cc0f19963f2d6eb35418a11aa2a53dd3abc973bd4136d924e1a83802"
 		}
 	},
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"$tags": [
+			"freelance"
+		],
 		"uuid": "0190caea-c35f-72c1-92a0-728defa74ce2",
 		"type": "standard",
 		"series": "SAMPLE",
@@ -16,9 +23,10 @@
 		"issue_date": "2023-03-02",
 		"currency": "EUR",
 		"tax": {
-			"tags": [
-				"freelance"
-			]
+			"ext": {
+				"it-sdi-document-type": "TD06",
+				"it-sdi-format": "FPR12"
+			}
 		},
 		"supplier": {
 			"name": "MªF. Services",
@@ -141,7 +149,7 @@
 						"cat": "VAT",
 						"rate": "exempt",
 						"ext": {
-							"it-sdi-nature": "N2.2"
+							"it-sdi-exempt": "N2.2"
 						}
 					}
 				],
@@ -168,7 +176,10 @@
 		],
 		"payment": {
 			"instructions": {
-				"key": "card"
+				"key": "card",
+				"ext": {
+					"it-sdi-payment-means": "MP08"
+				}
 			}
 		},
 		"totals": {
@@ -190,7 +201,7 @@
 							{
 								"key": "exempt",
 								"ext": {
-									"it-sdi-nature": "N2.2"
+									"it-sdi-exempt": "N2.2"
 								},
 								"base": "100.00",
 								"amount": "0.00"

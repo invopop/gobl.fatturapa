@@ -96,7 +96,7 @@ func TestPartiesCustomer(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Customer.TaxID.Code = "81237984062783472"
-			inv.Customer.TaxID.Country = l10n.AT
+			inv.Customer.TaxID.Country = l10n.AT.Tax()
 		})
 
 		doc, err := test.ConvertFromGOBL(env)
@@ -112,7 +112,7 @@ func TestPartiesCustomer(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Customer.TaxID.Code = ""
-			inv.Customer.TaxID.Country = l10n.SE
+			inv.Customer.TaxID.Country = l10n.SE.Tax()
 		})
 
 		doc, err := test.ConvertFromGOBL(env)
@@ -128,7 +128,7 @@ func TestPartiesCustomer(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Customer.TaxID.Code = "09823876432"
-			inv.Customer.TaxID.Country = l10n.GB
+			inv.Customer.TaxID.Country = l10n.GB.Tax()
 		})
 
 		doc, err := test.ConvertFromGOBL(env)
@@ -144,7 +144,7 @@ func TestPartiesCustomer(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json")
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Customer.TaxID.Code = ""
-			inv.Customer.TaxID.Country = l10n.JP
+			inv.Customer.TaxID.Country = l10n.JP.Tax()
 		})
 
 		doc, err := test.ConvertFromGOBL(env)

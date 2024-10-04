@@ -3,9 +3,9 @@ package fatturapa
 import (
 	"strconv"
 
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/i18n"
-	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -59,7 +59,7 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 			vatTax := line.Taxes.Get(tax.CategoryVAT)
 			if vatTax != nil {
 				d.AliquotaIVA = formatPercentageWithZero(vatTax.Percent)
-				d.Natura = vatTax.Ext[it.ExtKeySDINature].String()
+				d.Natura = exemptExtensionCode(vatTax.Ext)
 			}
 		}
 
@@ -67,6 +67,16 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 	}
 
 	return dl
+}
+
+func exemptExtensionCode(ext tax.Extensions) string {
+	if ext.Has(sdi.ExtKeyExempt) {
+		return ext[sdi.ExtKeyExempt].String()
+	}
+	if ext.Has("it-sdi-nature") { // old key
+		return ext["it-sdi-nature"].String()
+	}
+	return ""
 }
 
 func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
@@ -83,7 +93,7 @@ func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
 	for _, rateTotal := range vatRateTotals {
 		dr = append(dr, &datiRiepilogo{
 			AliquotaIVA:          formatPercentageWithZero(rateTotal.Percent),
-			Natura:               rateTotal.Ext[it.ExtKeySDINature].String(),
+			Natura:               exemptExtensionCode(rateTotal.Ext),
 			ImponibileImporto:    formatAmount(&rateTotal.Base),
 			Imposta:              formatAmount(&rateTotal.Amount),
 			RiferimentoNormativo: findRiferimentoNormativo(rateTotal),
@@ -121,11 +131,11 @@ func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
 }
 
 func findRiferimentoNormativo(rateTotal *tax.RateTotal) string {
-	def := regime.ExtensionDef(it.ExtKeySDINature)
+	def := tax.ExtensionForKey(sdi.ExtKeyExempt)
 
-	nature := rateTotal.Ext[it.ExtKeySDINature].Code()
-	for _, c := range def.Codes {
-		if c.Code == nature {
+	nature := exemptExtensionCode(rateTotal.Ext)
+	for _, c := range def.Values {
+		if c.Value == nature {
 			return c.Name[i18n.IT]
 		}
 	}
