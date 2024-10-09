@@ -2,8 +2,11 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
 
+	"github.com/invopop/gobl"
 	fatturapa "github.com/invopop/gobl.fatturapa"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/xmldsig"
@@ -55,8 +58,12 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	env, err := fatturapa.UnmarshalGOBL(input)
-	if err != nil {
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(input); err != nil {
+		panic(err)
+	}
+	env := new(gobl.Envelope)
+	if err := json.Unmarshal(buf.Bytes(), env); err != nil {
 		return err
 	}
 

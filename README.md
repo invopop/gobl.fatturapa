@@ -21,7 +21,7 @@ Unlike other tax regimes, Italy requires simplified invoices to include the cust
 
 ## Sources
 
-You can find copies of the Italian FatturaPA schema in the [schemas folder](./schema).
+You can find copies of the Italian FatturaPA schema in the [schemas folder](./schemas).
 
 Key websites:
 
@@ -46,11 +46,6 @@ The FatturaPA XML schema is quite large and complex. This library is not complet
 Some of the optional elements currently not supported include:
 
 - `Allegati` (attachments)
-- `DatiOrdineAcquisto` (data related to purchase orders)
-- `DatiContratto` (data related to contracts)
-- `DatiConvenzione` (data related to conventions)
-- `DatiRicezione` (data related to receipts)
-- `DatiFattureCollegate` (data related to linked invoices)
 - `DatiBollo` (data related to duty stamps)
 
 ## Usage
