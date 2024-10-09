@@ -1,12 +1,8 @@
 package fatturapa
 
 import (
-	"bytes"
-	"encoding/json"
-	"io"
 	"time"
 
-	"github.com/invopop/gobl"
 	"github.com/invopop/xmldsig"
 )
 
@@ -71,19 +67,4 @@ func NewConverter(opts ...Option) *Converter {
 	}
 
 	return c
-}
-
-// UnmarshalGOBL converts the given JSON document to a GOBL Envelope
-func UnmarshalGOBL(reader io.Reader) (*gobl.Envelope, error) {
-	buf := new(bytes.Buffer)
-	if _, err := buf.ReadFrom(reader); err != nil {
-		return nil, err
-	}
-
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(buf.Bytes(), env); err != nil {
-		return nil, err
-	}
-
-	return env, nil
 }

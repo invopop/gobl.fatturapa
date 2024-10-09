@@ -3,6 +3,7 @@
 package test
 
 import (
+	"bytes"
 	"encoding/json"
 	"flag"
 	"os"
@@ -103,9 +104,25 @@ func LoadTestFile(file string) *gobl.Envelope {
 		panic(err)
 	}
 
-	env, err := fatturapa.UnmarshalGOBL(f)
+	buf := new(bytes.Buffer)
+	if _, err := buf.ReadFrom(f); err != nil {
+		panic(err)
+	}
+
+	out, err := gobl.Parse(buf.Bytes())
 	if err != nil {
 		panic(err)
+	}
+
+	var env *gobl.Envelope
+	switch doc := out.(type) {
+	case *gobl.Envelope:
+		env = doc
+	default:
+		env = gobl.NewEnvelope()
+		if err := env.Insert(doc); err != nil {
+			panic(err)
+		}
 	}
 
 	if err := env.Calculate(); err != nil {
@@ -132,7 +149,7 @@ func LoadTestFile(file string) *gobl.Envelope {
 
 // LoadSchema loads a XSD schema for validating XML documents
 func LoadSchema() (*xsd.Schema, error) {
-	schemaPath := filepath.Join(GetDataPath(), "schema", "Schema_del_file_xml_FatturaPA_v1.2.2.xsd")
+	schemaPath := filepath.Join("schemas", "FatturaPA_v1.2.2.xsd")
 	schema, err := xsd.ParseFromFile(schemaPath)
 	if err != nil {
 		return nil, err
