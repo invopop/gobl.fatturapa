@@ -7,6 +7,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
+	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 )
 
@@ -26,15 +27,31 @@ const stampDutyCode = "SI"
 // fatturaElettronicaBody contains all invoice data apart from the parties
 // involved, which are contained in FatturaElettronicaHeader.
 type fatturaElettronicaBody struct {
-	DatiGenerali    *datiGenerali
+	DatiGenerali    *GeneralData `xml:"DatiGenerali,omitempty"`
 	DatiBeniServizi *datiBeniServizi
 	DatiPagamento   *datiPagamento `xml:",omitempty"`
 }
 
-// datiGenerali contains general data about the invoice such as retained taxes,
+// GeneralData contains general data about the invoice such as retained taxes,
 // invoice number, invoice date, document type, etc.
-type datiGenerali struct {
-	DatiGeneraliDocumento *datiGeneraliDocumento
+type GeneralData struct {
+	Document  *datiGeneraliDocumento `xml:"DatiGeneraliDocumento"`
+	Purchases []*DocumentRef         `xml:"DatiOrdineAcquisto,omitempty"`
+	Contracts []*DocumentRef         `xml:"DatiContratto,omitempty"`
+	Tender    []*DocumentRef         `xml:"DatiConvenzione,omitempty"`
+	Receiving []*DocumentRef         `xml:"DatiRicezione,omitempty"`
+	Preceding []*DocumentRef         `xml:"DatiFattureCollegate,omitempty"`
+}
+
+// DocumentRef contains data about a previous document.
+type DocumentRef struct {
+	Lines     []int  `xml:"RiferimentoNumeroLinea"`              // detail row of the invoice referred to (if the reference is to the entire invoice, this is not filled in)
+	Code      string `xml:"IdDocumento"`                         // document number
+	IssueDate string `xml:"Data,omitempty"`                      // document date (expressed according to the ISO 8601:2004 format)
+	LineCode  string `xml:"NumItem,omitempty"`                   // identification of the single item on the document (e.g. in the case of a purchase order, this is the number of the row of the purchase order, or, in the case of a contract, it is the number of the row of the contract, etc. )
+	OrderCode string `xml:"CodiceCommessaConvenzione,omitempty"` // order or agreement code
+	CUPCode   string `xml:"CodiceCUP,omitempty"`                 // code managed by the CIPE (Interministerial Committee for Economic Planning) which characterises every public investment project (Individual Project Code).
+	CIGCode   string `xml:"CodiceCIG,omitempty"`                 // Tender procedure identification code
 }
 
 type datiGeneraliDocumento struct {
@@ -71,7 +88,7 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 		return nil, err
 	}
 
-	dg, err := newDatiGenerali(inv)
+	dg, err := newGeneralData(inv)
 	if err != nil {
 		return nil, err
 	}
@@ -83,7 +100,57 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 	}, nil
 }
 
-func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
+func newGeneralData(inv *bill.Invoice) (*GeneralData, error) {
+	gd := new(GeneralData)
+	var err error
+	if gd.Document, err = newGeneralDataDocument(inv); err != nil {
+		return nil, err
+	}
+	gd.Preceding = newDocumentRefs(inv.Preceding)
+	if o := inv.Ordering; o != nil {
+		gd.Purchases = newDocumentRefs(o.Purchases)
+		gd.Contracts = newDocumentRefs(o.Contracts)
+		gd.Tender = newDocumentRefs(o.Tender)
+		gd.Receiving = newDocumentRefs(o.Receiving)
+	}
+	return gd, nil
+}
+
+func newDocumentRefs(refs []*org.DocumentRef) []*DocumentRef {
+	out := make([]*DocumentRef, len(refs))
+	for i, ref := range refs {
+		out[i] = newDocumentRef(ref)
+	}
+	return out
+}
+
+func newDocumentRef(ref *org.DocumentRef) *DocumentRef {
+	dr := &DocumentRef{
+		Lines: ref.Lines,
+		Code:  ref.Series.Join(ref.Code).String(),
+	}
+	if ref.IssueDate != nil {
+		dr.IssueDate = ref.IssueDate.String()
+	}
+	for _, id := range ref.Identities {
+		switch id.Key {
+		case org.IdentityKeyOrder:
+			dr.OrderCode = string(id.Code)
+		case org.IdentityKeyItem:
+			dr.LineCode = string(id.Code)
+		}
+		switch id.Type {
+		case sdi.IdentityTypeCIG:
+			dr.CIGCode = string(id.Code)
+		case sdi.IdentityTypeCUP:
+			dr.CUPCode = string(id.Code)
+		}
+	}
+
+	return dr
+}
+
+func newGeneralDataDocument(inv *bill.Invoice) (*datiGeneraliDocumento, error) {
 	dr, err := extractRetainedTaxes(inv)
 	if err != nil {
 		return nil, err
@@ -104,19 +171,19 @@ func newDatiGenerali(inv *bill.Invoice) (*datiGenerali, error) {
 		code = cbc.Code(fmt.Sprintf("%s-%s", inv.Series, inv.Code))
 	}
 
-	return &datiGenerali{
-		DatiGeneraliDocumento: &datiGeneraliDocumento{
-			TipoDocumento:          codeTipoDocumento,
-			Divisa:                 string(inv.Currency),
-			Data:                   inv.IssueDate.String(),
-			Numero:                 code.String(),
-			DatiRitenuta:           dr,
-			DatiBollo:              newDatiBollo(inv.Charges),
-			ImportoTotaleDocumento: formatAmount(&inv.Totals.Payable),
-			ScontoMaggiorazione:    extractPriceAdjustments(inv),
-			Causale:                extractInvoiceReasons(inv),
-		},
-	}, nil
+	doc := &datiGeneraliDocumento{
+		TipoDocumento:          codeTipoDocumento,
+		Divisa:                 string(inv.Currency),
+		Data:                   inv.IssueDate.String(),
+		Numero:                 code.String(),
+		DatiRitenuta:           dr,
+		DatiBollo:              newDatiBollo(inv.Charges),
+		ImportoTotaleDocumento: formatAmount(&inv.Totals.Payable),
+		ScontoMaggiorazione:    extractPriceAdjustments(inv),
+		Causale:                extractInvoiceReasons(inv),
+	}
+
+	return doc, nil
 }
 
 func findCodeTipoDocumento(inv *bill.Invoice) (string, error) {

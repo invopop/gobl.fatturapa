@@ -9,25 +9,25 @@ import (
 )
 
 func TestDatiRitenuta(t *testing.T) {
-	t.Run("When retained taxes are NOT present", func(t *testing.T) {
+	t.Run("when retained taxes are NOT present", func(t *testing.T) {
 		t.Run("should be empty", func(t *testing.T) {
 			env := test.LoadTestFile("invoice-simple.json")
 			doc, err := test.ConvertFromGOBL(env)
 			require.NoError(t, err)
 
-			dr := doc.FatturaElettronicaBody[0].DatiGenerali.DatiGeneraliDocumento.DatiRitenuta
+			dr := doc.FatturaElettronicaBody[0].DatiGenerali.Document.DatiRitenuta
 
 			assert.Empty(t, dr)
 		})
 	})
 
-	t.Run("When retained taxes are present", func(t *testing.T) {
+	t.Run("when retained taxes are present", func(t *testing.T) {
 		t.Run("should contain the correct retainted taxes", func(t *testing.T) {
 			env := test.LoadTestFile("invoice-irpef.json")
 			doc, err := test.ConvertFromGOBL(env)
 			require.NoError(t, err)
 
-			dr := doc.FatturaElettronicaBody[0].DatiGenerali.DatiGeneraliDocumento.DatiRitenuta
+			dr := doc.FatturaElettronicaBody[0].DatiGenerali.Document.DatiRitenuta
 
 			require.Len(t, dr, 2)
 
