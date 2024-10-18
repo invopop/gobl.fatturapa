@@ -5,7 +5,7 @@ go 1.22
 toolchain go1.22.5
 
 require (
-	github.com/invopop/gobl v0.202.0
+	github.com/invopop/gobl v0.202.1-0.20241018130847-fc3cade6decf
 	github.com/invopop/xmldsig v0.8.0
 	github.com/lestrrat-go/libxml2 v0.0.0-20240521004304-a75c203ac627
 	github.com/spf13/cobra v1.8.1

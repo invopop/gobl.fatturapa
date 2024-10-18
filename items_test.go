@@ -54,6 +54,7 @@ func TestDatiRiepilogo(t *testing.T) {
 		dr = doc.FatturaElettronicaBody[0].DatiBeniServizi.DatiRiepilogo[1]
 
 		assert.Equal(t, "N2.2", dr.Natura)
+		assert.Equal(t, "S", dr.EsigibilitaIVA)
 		assert.Equal(t, "Non soggette - altri casi", dr.RiferimentoNormativo)
 	})
 }
