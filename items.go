@@ -33,6 +33,7 @@ type datiRiepilogo struct {
 	Natura               string `xml:",omitempty"`
 	ImponibileImporto    string
 	Imposta              string
+	EsigibilitaIVA       string `xml:"EsigibilitaIVA,omitempty"`
 	RiferimentoNormativo string `xml:",omitempty"`
 }
 
@@ -96,6 +97,7 @@ func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
 			Natura:               exemptExtensionCode(rateTotal.Ext),
 			ImponibileImporto:    formatAmount(&rateTotal.Base),
 			Imposta:              formatAmount(&rateTotal.Amount),
+			EsigibilitaIVA:       rateTotal.Ext[sdi.ExtKeyVATCollect].String(),
 			RiferimentoNormativo: findRiferimentoNormativo(rateTotal),
 		})
 	}
