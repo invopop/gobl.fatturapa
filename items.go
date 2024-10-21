@@ -97,7 +97,7 @@ func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
 			Natura:               exemptExtensionCode(rateTotal.Ext),
 			ImponibileImporto:    formatAmount(&rateTotal.Base),
 			Imposta:              formatAmount(&rateTotal.Amount),
-			EsigibilitaIVA:       rateTotal.Ext[sdi.ExtKeyVATCollect].String(),
+			EsigibilitaIVA:       rateTotal.Ext[sdi.ExtKeyVATLiability].String(),
 			RiferimentoNormativo: findRiferimentoNormativo(rateTotal),
 		})
 	}
