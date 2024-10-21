@@ -34,6 +34,7 @@ Useful files:
 - [Ordinary Schema V1.2.2 PDF (IT)](https://www.fatturapa.gov.it/export/documenti/Specifiche_tecniche_del_formato_FatturaPA_v1.3.1.pdf) - most up-to-date but difficult
 - [XSD V1.2.2](https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd)
 - [XSD V1 (FSM10) - simplified invoices](https://www.agenziaentrate.gov.it/portale/documents/20143/288192/ST+Fatturazione+elettronica+-+Schema+VFSM10_Schema_VFSM10.xsd/010f1b41-6683-1b31-ba36-c8bced659c06)
+- [CIUS-IT (Italian Core Invoice Usage Specification) - EN16931 mappings](https://www.agid.gov.it/sites/default/files/repository_files/documentazione/eigor_cius_it_rel_1_0_0_accessibile_0.pdf)
 
 ## Limitations
 
