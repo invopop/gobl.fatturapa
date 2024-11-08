@@ -34,7 +34,7 @@ func newAddress(addr *org.Address) *Address {
 		Country:  addr.Country.String(),
 	}
 	if addr.Country == l10n.IT.ISO() {
-		ad.Code = addr.Code
+		ad.Code = addr.Code.String()
 	} else {
 		ad.Code = foreignCAP
 	}

@@ -65,7 +65,7 @@ func codiceDestinatario(cus *org.Party) string {
 		}
 		for _, inbox := range cus.Inboxes {
 			if inbox.Key == sdi.KeyInboxCode {
-				return inbox.Code
+				return inbox.Code.String()
 			}
 		}
 	}
@@ -79,7 +79,7 @@ func pecDestinatario(cus *org.Party) string {
 	if cus != nil {
 		for _, inbox := range cus.Inboxes {
 			if inbox.Key == sdi.KeyInboxPEC {
-				return inbox.Code
+				return inbox.Email
 			}
 		}
 	}
