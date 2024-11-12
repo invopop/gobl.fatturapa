@@ -8,7 +8,6 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
-	"github.com/invopop/gobl/regimes/it"
 )
 
 const (
@@ -201,7 +200,7 @@ func findCodeTipoDocumento(inv *bill.Invoice) (string, error) {
 
 func newDatiBollo(charges []*bill.Charge) *datiBollo {
 	for _, charge := range charges {
-		if charge.Key == it.ChargeKeyStampDuty {
+		if charge.Key == bill.ChargeKeyStampDuty {
 			return &datiBollo{
 				BolloVirtuale: stampDutyCode,
 				ImportoBollo:  formatAmount(&charge.Amount),

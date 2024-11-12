@@ -104,8 +104,8 @@
 				"sum": "250.00",
 				"discounts": [
 					{
-						"amount": "10.00",
-						"reason": "Sconto"
+						"reason": "Sconto",
+						"amount": "10.00"
 					}
 				],
 				"taxes": [

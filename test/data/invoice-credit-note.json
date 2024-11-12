@@ -130,9 +130,9 @@
 				"sum": "1800.00",
 				"discounts": [
 					{
+						"reason": "Special discount",
 						"percent": "10%",
-						"amount": "180.00",
-						"reason": "Special discount"
+						"amount": "180.00"
 					}
 				],
 				"taxes": [
@@ -168,19 +168,19 @@
 		"discounts": [
 			{
 				"i": 1,
+				"reason": "10th year anniversary discount",
 				"base": "1720.00",
 				"percent": "50%",
-				"amount": "860.00",
-				"reason": "10th year anniversary discount"
+				"amount": "860.00"
 			}
 		],
 		"charges": [
 			{
 				"i": 1,
+				"reason": "10th year anniversary charge",
 				"base": "1720.00",
 				"percent": "10%",
-				"amount": "172.00",
-				"reason": "10th year anniversary charge"
+				"amount": "172.00"
 			}
 		],
 		"payment": {
