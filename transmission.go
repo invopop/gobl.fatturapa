@@ -79,7 +79,10 @@ func pecDestinatario(cus *org.Party) string {
 	if cus != nil {
 		for _, inbox := range cus.Inboxes {
 			if inbox.Key == sdi.KeyInboxPEC {
-				return inbox.Email
+				if inbox.Email != "" {
+					return inbox.Email
+				}
+				return inbox.Code.String()
 			}
 		}
 	}

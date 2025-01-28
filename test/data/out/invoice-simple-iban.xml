@@ -7,7 +7,7 @@
 			</IdTrasmittente>
 			<ProgressivoInvio>679a2f25</ProgressivoInvio>
 			<FormatoTrasmissione>FPR12</FormatoTrasmissione>
-			<CodiceDestinatario>0000000</CodiceDestinatario>
+			<CodiceDestinatario>ABCDEF1</CodiceDestinatario>
 		</DatiTrasmissione>
 		<CedentePrestatore>
 			<DatiAnagrafici>
@@ -16,9 +16,9 @@
 					<IdCodice>12345678903</IdCodice>
 				</IdFiscaleIVA>
 				<Anagrafica>
-					<Denominazione>Rossi Digital Services</Denominazione>
+					<Denominazione>MªF. Services</Denominazione>
 				</Anagrafica>
-				<RegimeFiscale>RF01</RegimeFiscale>
+				<RegimeFiscale>RF02</RegimeFiscale>
 			</DatiAnagrafici>
 			<Sede>
 				<Indirizzo>VIALE DELLA LIBERTÀ</Indirizzo>
@@ -28,17 +28,25 @@
 				<Provincia>RM</Provincia>
 				<Nazione>IT</Nazione>
 			</Sede>
+			<IscrizioneREA>
+				<Ufficio>RM</Ufficio>
+				<NumeroREA>123456</NumeroREA>
+				<CapitaleSociale>50000.00</CapitaleSociale>
+				<StatoLiquidazione>LN</StatoLiquidazione>
+			</IscrizioneREA>
 			<Contatti>
+				<Telefono>999999999</Telefono>
 				<Email>billing@example.com</Email>
 			</Contatti>
 		</CedentePrestatore>
 		<CessionarioCommittente>
 			<DatiAnagrafici>
-				<CodiceFiscale>MRALNE80E05H501C</CodiceFiscale>
+				<IdFiscaleIVA>
+					<IdPaese>IT</IdPaese>
+					<IdCodice>09876543217</IdCodice>
+				</IdFiscaleIVA>
 				<Anagrafica>
-					<Nome>MARIO</Nome>
-					<Cognome>LEONI</Cognome>
-					<Titolo>Dott.</Titolo>
+					<Denominazione>MARIO LEONI</Denominazione>
 				</Anagrafica>
 			</DatiAnagrafici>
 			<Sede>
@@ -58,22 +66,6 @@
 				<Divisa>EUR</Divisa>
 				<Data>2023-03-02</Data>
 				<Numero>SAMPLE-001</Numero>
-				<DatiRitenuta>
-					<TipoRitenuta>RT01</TipoRitenuta>
-					<ImportoRitenuta>324.00</ImportoRitenuta>
-					<AliquotaRitenuta>20.00</AliquotaRitenuta>
-					<CausalePagamento>A</CausalePagamento>
-				</DatiRitenuta>
-				<DatiRitenuta>
-					<TipoRitenuta>RT01</TipoRitenuta>
-					<ImportoRitenuta>50.00</ImportoRitenuta>
-					<AliquotaRitenuta>50.00</AliquotaRitenuta>
-					<CausalePagamento>I</CausalePagamento>
-				</DatiRitenuta>
-				<DatiBollo>
-					<BolloVirtuale>SI</BolloVirtuale>
-					<ImportoBollo>12.34</ImportoBollo>
-				</DatiBollo>
 				<ScontoMaggiorazione>
 					<Tipo>SC</Tipo>
 					<Percentuale>50.00</Percentuale>
@@ -84,11 +76,7 @@
 					<Percentuale>10.00</Percentuale>
 					<Importo>172.00</Importo>
 				</ScontoMaggiorazione>
-				<ScontoMaggiorazione>
-					<Tipo>MG</Tipo>
-					<Importo>12.34</Importo>
-				</ScontoMaggiorazione>
-				<ImportoTotaleDocumento>1026.74</ImportoTotaleDocumento>
+				<ImportoTotaleDocumento>1388.40</ImportoTotaleDocumento>
 			</DatiGeneraliDocumento>
 		</DatiGenerali>
 		<DatiBeniServizi>
@@ -107,7 +95,7 @@
 			</DettaglioLinee>
 			<DettaglioLinee>
 				<NumeroLinea>2</NumeroLinea>
-				<Descrizione>Truffle Gathering</Descrizione>
+				<Descrizione>Special Untaxed Work</Descrizione>
 				<Quantita>1.00</Quantita>
 				<PrezzoUnitario>100.00</PrezzoUnitario>
 				<PrezzoTotale>100.00</PrezzoTotale>
@@ -128,18 +116,10 @@
 			</DatiRiepilogo>
 		</DatiBeniServizi>
 		<DatiPagamento>
-			<CondizioniPagamento>TP01</CondizioniPagamento>
+			<CondizioniPagamento>TP02</CondizioniPagamento>
 			<DettaglioPagamento>
 				<ModalitaPagamento>MP05</ModalitaPagamento>
-				<DataScadenzaPagamento>2023-03-02</DataScadenzaPagamento>
-				<ImportoPagamento>500.00</ImportoPagamento>
-				<IBAN>IT60X0542811101000000123456</IBAN>
-				<BIC>BCITITMM</BIC>
-			</DettaglioPagamento>
-			<DettaglioPagamento>
-				<ModalitaPagamento>MP05</ModalitaPagamento>
-				<DataScadenzaPagamento>2023-04-02</DataScadenzaPagamento>
-				<ImportoPagamento>544.40</ImportoPagamento>
+				<ImportoPagamento>1388.40</ImportoPagamento>
 				<IBAN>IT60X0542811101000000123456</IBAN>
 				<BIC>BCITITMM</BIC>
 			</DettaglioPagamento>
@@ -154,7 +134,7 @@
 					<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
 				</ds:Transforms>
 				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></ds:DigestMethod>
-				<ds:DigestValue>0OJeCdykCyWw37gg6hcj7LbAm524TuKgbKc9IDXeg149uiWMh8a96ruLewEy9vkfpnpT6AEvAuUGPHMaGMEAVg==</ds:DigestValue>
+				<ds:DigestValue>55zulS0+2e0GJUgb+KmiOK2Zjil8c4/kXn35qAQnqkcU5NVeHQxXd683ezck/DXemuvKjIEB3W7tZYMl+GKi8A==</ds:DigestValue>
 			</ds:Reference>
 			<ds:Reference URI="#Certificate-679a2f25-7483-11ec-9722-7ea2cb436ff6">
 				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></ds:DigestMethod>
@@ -165,7 +145,7 @@
 				<ds:DigestValue>7Tj/Vr2iDe5KuUvZfrT8ntgjkAtz6zIeztpC/liVkbigGbZLGFHcMpSsVtsRc+WIqqwsB7AwFVjqjSIKIDI3uw==</ds:DigestValue>
 			</ds:Reference>
 		</ds:SignedInfo>
-		<ds:SignatureValue Id="Signature-679a2f25-7483-11ec-9722-7ea2cb436ff6-SignatureValue">Qv9caeaTg3lVJv4DLJMP5arW+7s3p0qydJxMgznOY1yHjB2WdE6PQZF1ZAJMhrzTQOOPbyY5wza4nULpf/bvRYbraU4ZcG/RdJ+htRtQMlTVDu11UB7paMGO8TVBVYm+85jcEUYwIX9Z5CP7885EcRqUcJEXuTRD9ptMBKL8W11eeIz1aULMcgyC8BMJPkUvgN2vzJ++yx8Yjb+iYlRi996QKbsgxCMjg+K5S4ruwxSeSFFyvNnhRs2SvI+fbvPfNvT+xffDDFs+I+lvXh6JRVDo0eVUTzCUtsclRCW62nj2iDqemkVwFQZebMD+rfw8bPut6Cda9qqM+KBYpWiwmg==</ds:SignatureValue>
+		<ds:SignatureValue Id="Signature-679a2f25-7483-11ec-9722-7ea2cb436ff6-SignatureValue">sE4zfnqijUq5hrBJFcnr/Xu7l2KabdBucnI3VKEldXH29kiIGNOPPCN2WmFY3nCZTVRtMYkBGnBCDmA5yB+H0IgpIohWDkgMhpWoUczWPEFSeOKaE25hMe7acFdfivPyur47r+NZcrLudmUmTf5jMhnQ/rln8YO1pHLpzqb2Kp9aMEbzIeolx7iOB1FwRVAgX4S/LrVELDGPU4SPK1AcB58CTCN/Z0bTkctA2CNDuZz6UshBSxAL12fPkSbEkVIaQtee/2YsiLWWsSiCXl2wNd2+IkuKsecNB2iZXuOpa08rs5lpkcZ4r+aGdfcPYPnKdr0vj9gcVFX3QldIDCF8ZQ==</ds:SignatureValue>
 		<ds:KeyInfo Id="Certificate-679a2f25-7483-11ec-9722-7ea2cb436ff6">
 			<ds:X509Data>
 				<ds:X509Certificate>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</ds:X509Certificate>

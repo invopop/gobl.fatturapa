@@ -28,7 +28,7 @@ const stampDutyCode = "SI"
 type fatturaElettronicaBody struct {
 	DatiGenerali    *GeneralData `xml:"DatiGenerali,omitempty"`
 	DatiBeniServizi *datiBeniServizi
-	DatiPagamento   *datiPagamento `xml:",omitempty"`
+	DatiPagamento   *paymentData `xml:"DatiPagamento,omitempty"`
 }
 
 // GeneralData contains general data about the invoice such as retained taxes,
@@ -238,7 +238,7 @@ func extractInvoiceReasons(inv *bill.Invoice) []string {
 	var reasons []string
 
 	for _, note := range inv.Notes {
-		if note.Key == cbc.NoteKeyReason {
+		if note.Key == org.NoteKeyReason {
 			reasons = append(reasons, note.Text)
 		}
 	}
