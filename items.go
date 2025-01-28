@@ -137,7 +137,7 @@ func findRiferimentoNormativo(rateTotal *tax.RateTotal) string {
 
 	nature := exemptExtensionCode(rateTotal.Ext)
 	for _, c := range def.Values {
-		if c.Value == nature {
+		if c.Code.String() == nature {
 			return c.Name[i18n.IT]
 		}
 	}
