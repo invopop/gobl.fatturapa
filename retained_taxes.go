@@ -48,7 +48,7 @@ func findRetainedCategories(totals *bill.Totals) []*tax.CategoryTotal {
 
 func newDatiRitenuta(cat cbc.Code, rateTotal *tax.RateTotal) (*datiRitenuta, error) {
 	rate := formatPercentage(rateTotal.Percent)
-	amount := formatAmount(&rateTotal.Amount)
+	amount := formatAmount2(&rateTotal.Amount)
 
 	codeTR, err := findCodeTipoRitenuta(cat)
 	if err != nil {

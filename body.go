@@ -177,7 +177,7 @@ func newGeneralDataDocument(inv *bill.Invoice) (*datiGeneraliDocumento, error) {
 		Numero:                 code.String(),
 		DatiRitenuta:           dr,
 		DatiBollo:              newDatiBollo(inv.Charges),
-		ImportoTotaleDocumento: formatAmount(&inv.Totals.Payable),
+		ImportoTotaleDocumento: formatAmount2(&inv.Totals.Payable),
 		ScontoMaggiorazione:    extractPriceAdjustments(inv),
 		Causale:                extractInvoiceReasons(inv),
 	}
@@ -203,7 +203,7 @@ func newDatiBollo(charges []*bill.Charge) *datiBollo {
 		if charge.Key == bill.ChargeKeyStampDuty {
 			return &datiBollo{
 				BolloVirtuale: stampDutyCode,
-				ImportoBollo:  formatAmount(&charge.Amount),
+				ImportoBollo:  formatAmount2(&charge.Amount),
 			}
 		}
 	}
@@ -218,7 +218,7 @@ func extractPriceAdjustments(inv *bill.Invoice) []*scontoMaggiorazione {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
 			Tipo:        scontoMaggiorazioneTypeDiscount,
 			Percentuale: formatPercentage(discount.Percent),
-			Importo:     formatAmount(&discount.Amount),
+			Importo:     formatAmount8(&discount.Amount),
 		})
 	}
 
@@ -226,7 +226,7 @@ func extractPriceAdjustments(inv *bill.Invoice) []*scontoMaggiorazione {
 		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
 			Tipo:        scontoMaggiorazioneTypeCharge,
 			Percentuale: formatPercentage(charge.Percent),
-			Importo:     formatAmount(&charge.Amount),
+			Importo:     formatAmount8(&charge.Amount),
 		})
 	}
 
