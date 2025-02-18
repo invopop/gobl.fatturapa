@@ -16,9 +16,19 @@ func formatPercentageWithZero(p *num.Percentage) string {
 	return formatPercentage(p)
 }
 
-func formatAmount(a *num.Amount) string {
+// formatAmount2 will format the number always with 2 decimal places.
+func formatAmount2(a *num.Amount) string {
 	if a == nil {
 		return ""
 	}
-	return a.RescaleUp(2).String()
+	return a.Rescale(2).String()
+}
+
+// formatAmount8 will ensure the number has at least 2 decimal places,
+// with a maximum of 8.
+func formatAmount8(a *num.Amount) string {
+	if a == nil {
+		return ""
+	}
+	return a.RescaleRange(2, 8).String()
 }

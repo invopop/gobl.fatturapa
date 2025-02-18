@@ -51,9 +51,9 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 		d := &dettaglioLinee{
 			NumeroLinea:         strconv.Itoa(line.Index),
 			Descrizione:         line.Item.Name,
-			Quantita:            formatAmount(&line.Quantity),
-			PrezzoUnitario:      formatAmount(&line.Item.Price),
-			PrezzoTotale:        formatAmount(&line.Total),
+			Quantita:            formatAmount8(&line.Quantity),
+			PrezzoUnitario:      formatAmount8(&line.Item.Price),
+			PrezzoTotale:        formatAmount8(&line.Total),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
 		}
 		if line.Taxes != nil && len(line.Taxes) > 0 {
@@ -95,8 +95,8 @@ func generateTaxSummary(inv *bill.Invoice) []*datiRiepilogo {
 		dr = append(dr, &datiRiepilogo{
 			AliquotaIVA:          formatPercentageWithZero(rateTotal.Percent),
 			Natura:               exemptExtensionCode(rateTotal.Ext),
-			ImponibileImporto:    formatAmount(&rateTotal.Base),
-			Imposta:              formatAmount(&rateTotal.Amount),
+			ImponibileImporto:    formatAmount2(&rateTotal.Base),
+			Imposta:              formatAmount2(&rateTotal.Amount),
 			EsigibilitaIVA:       rateTotal.Ext[sdi.ExtKeyVATLiability].String(),
 			RiferimentoNormativo: findRiferimentoNormativo(rateTotal),
 		})
@@ -112,20 +112,26 @@ func extractLinePriceAdjustments(line *bill.Line) []*scontoMaggiorazione {
 		// Unlike most formats, FatturaPA applies the discount to the unit price
 		// instead of the line sum.
 		// Quick ref: https://fex-app.com/FatturaElettronica/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/PrezzoTotale
-		a := discount.Amount.Divide(line.Quantity)
+		a := discount.Amount
+		if line.Quantity.Value() != 1 {
+			a = a.RescaleUp(4).Divide(line.Quantity)
+		}
 		list = append(list, &scontoMaggiorazione{
 			Tipo:        scontoMaggiorazioneTypeDiscount,
 			Percentuale: formatPercentage(discount.Percent),
-			Importo:     formatAmount(&a),
+			Importo:     formatAmount8(&a),
 		})
 	}
 
 	for _, charge := range line.Charges {
-		a := charge.Amount.Divide(line.Quantity)
+		a := charge.Amount
+		if line.Quantity.Value() != 1 {
+			a = a.RescaleUp(4).Divide(line.Quantity)
+		}
 		list = append(list, &scontoMaggiorazione{
 			Tipo:        scontoMaggiorazioneTypeCharge,
 			Percentuale: formatPercentage(charge.Percent),
-			Importo:     formatAmount(&a),
+			Importo:     formatAmount8(&a),
 		})
 	}
 

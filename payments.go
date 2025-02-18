@@ -57,7 +57,7 @@ func preparePaymentDetails(inv *bill.Invoice) ([]*paymentDetailRow, error) {
 	for _, advance := range payment.Advances {
 		row := &paymentDetailRow{
 			Method: advance.Ext[sdi.ExtKeyPaymentMeans].String(),
-			Amount: formatAmount(&advance.Amount),
+			Amount: formatAmount2(&advance.Amount),
 		}
 		if advance.Date != nil {
 			row.Date = advance.Date.String()
@@ -85,7 +85,7 @@ func preparePaymentDetails(inv *bill.Invoice) ([]*paymentDetailRow, error) {
 		for _, dueDate := range payment.Terms.DueDates {
 			r := br // copy
 			r.DueDate = dueDate.Date.String()
-			r.Amount = formatAmount(&dueDate.Amount)
+			r.Amount = formatAmount2(&dueDate.Amount)
 			dp = append(dp, &r)
 		}
 	}
@@ -93,7 +93,7 @@ func preparePaymentDetails(inv *bill.Invoice) ([]*paymentDetailRow, error) {
 	// If there are no due dates, then a single DettaglioPagamento is created
 	// with the total payable amount.
 	if len(dp) == 0 {
-		br.Amount = formatAmount(&inv.Totals.Payable)
+		br.Amount = formatAmount2(&inv.Totals.Payable)
 		dp = append(dp, &br)
 	}
 
