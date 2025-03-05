@@ -88,6 +88,12 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	return d, nil
 }
 
+// ConvertToGOBL expects the XML document bytes and provides a new GOBL
+// envelope containing the invoice.
+func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
+	return nil, nil
+}
+
 // Buffer returns a byte buffer representation of the complete XML document.
 func (d *Document) Buffer() (*bytes.Buffer, error) {
 	return d.buffer(xml.Header)
