@@ -29,6 +29,7 @@ require (
 	github.com/kr/text v0.2.0 // indirect
 	github.com/magefile/mage v1.15.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
+	github.com/nbio/xml v0.0.0-20250127210239-7f9281fed8c6 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect

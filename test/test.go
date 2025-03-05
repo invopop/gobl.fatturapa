@@ -73,6 +73,24 @@ func ConvertFromGOBL(env *gobl.Envelope, converter ...*fatturapa.Converter) (*fa
 	return doc, nil
 }
 
+// ConvertToGOBL takes the XML test data and converts into a GOBL envelope
+func ConvertToGOBL(doc []byte, converter ...*fatturapa.Converter) (*gobl.Envelope, error) {
+	var c *fatturapa.Converter
+
+	if len(converter) == 0 {
+		c = NewConverter()
+	} else {
+		c = converter[0]
+	}
+
+	env, err := c.ConvertToGOBL(doc)
+	if err != nil {
+		return nil, err
+	}
+
+	return env, nil
+}
+
 // GetDataPath returns the path where test can find data files
 // to be used in tests
 func GetDataPath() string {

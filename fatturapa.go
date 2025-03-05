@@ -3,9 +3,10 @@ package fatturapa
 
 import (
 	"bytes"
-	"encoding/xml"
 	"errors"
 	"fmt"
+
+	"github.com/nbio/xml"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
@@ -86,6 +87,28 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	}
 
 	return d, nil
+}
+
+// ConvertToGOBL expects the XML document bytes and provides a new GOBL
+// envelope containing the invoice.
+func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
+	d := &Document{}
+	if err := xml.Unmarshal(doc, d); err != nil {
+		return nil, fmt.Errorf("unmarshal document: %w", err)
+	}
+
+	// Verify signature. Standin for now.
+	if d.Signature == nil {
+		return nil, errors.New("signature is missing")
+	}
+
+	// Parse header
+
+	// Parse body
+
+	// Generate envelope
+
+	return nil, nil
 }
 
 // Buffer returns a byte buffer representation of the complete XML document.
