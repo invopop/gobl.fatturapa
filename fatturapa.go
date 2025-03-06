@@ -6,7 +6,10 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/nbio/xml"
+	// Momentary fix for nbio/xml library not properly handling namespace attributes but still needed for unmarshalling
+	"encoding/xml"
+
+	nbioXML "github.com/nbio/xml"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/bill"
@@ -93,7 +96,7 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 // envelope containing the invoice.
 func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 	d := &Document{}
-	if err := xml.Unmarshal(doc, d); err != nil {
+	if err := nbioXML.Unmarshal(doc, d); err != nil {
 		return nil, fmt.Errorf("unmarshal document: %w", err)
 	}
 
@@ -109,7 +112,8 @@ func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 	goblBillInvoiceAddHeader(inv, d.Header)
 
 	// Retrieves information from the body and adds it to the invoice
-	//goblBillInvoiceAddBody(inv, d.Body)
+	// TODO: add support for multiple bodiesß
+	goblBillInvoiceAddBody(inv, d.Body[0])
 
 	// Generate envelope
 

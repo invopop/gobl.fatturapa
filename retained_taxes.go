@@ -50,7 +50,7 @@ func newRetainedTax(cat cbc.Code, rateTotal *tax.RateTotal) (*RetainedTax, error
 	rate := formatPercentage(rateTotal.Percent)
 	amount := formatAmount2(&rateTotal.Amount)
 
-	codeTR, err := findCodeTipoRitenuta(cat)
+	codeTR, err := findCodeTaxType(cat)
 	if err != nil {
 		return nil, err
 	}
@@ -73,7 +73,7 @@ func retainedExtensionCode(ext tax.Extensions) string {
 	return ""
 }
 
-func findCodeTipoRitenuta(cat cbc.Code) (string, error) {
+func findCodeTaxType(cat cbc.Code) (string, error) {
 	switch cat {
 	case it.TaxCategoryIRPEF:
 		return "RT01", nil

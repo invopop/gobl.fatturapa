@@ -14,7 +14,7 @@ func TestPaymentsSimple(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.Body[0].PaymentData
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP02", dp.Conditions)
@@ -30,7 +30,7 @@ func TestPaymentsSimpleIBAN(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.Body[0].PaymentData
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP02", dp.Conditions)
@@ -48,7 +48,7 @@ func TestPayments(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.Body[0].PaymentData
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP01", dp.Conditions)
@@ -66,7 +66,7 @@ func TestPayments(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.Body[0].PaymentData
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP01", dp.Conditions)
@@ -80,7 +80,7 @@ func TestPayments(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.Body[0].PaymentData
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP03", dp.Conditions)

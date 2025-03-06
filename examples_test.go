@@ -8,7 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/nbio/xml"
+	"encoding/xml"
 
 	"github.com/invopop/gobl.fatturapa/test"
 	"github.com/stretchr/testify/assert"

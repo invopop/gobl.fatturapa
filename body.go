@@ -28,7 +28,7 @@ const stampDutyCode = "SI"
 type Body struct {
 	GeneralData   *GeneralData   `xml:"DatiGenerali,omitempty"`
 	GoodsServices *GoodsServices `xml:"DatiBeniServizi,omitempty"`
-	PaymentData   *PaymentData   `xml:"DatiPagamento,omitempty"`
+	PaymentsData  []*PaymentData `xml:"DatiPagamento,omitempty"`
 }
 
 // GeneralData contains general data about the invoice such as retained taxes,
@@ -55,14 +55,14 @@ type DocumentRef struct {
 
 type GeneralDocumentData struct {
 	DocumentType     string             `xml:"TipoDocumento"`
-	Divisa           string             `xml:"Divisa"`
+	Currency         string             `xml:"Divisa"`
 	IssueDate        string             `xml:"Data"`
 	Number           string             `xml:"Numero"`
 	RetainedTaxes    []*RetainedTax     `xml:"DatiRitenuta,omitempty"`
 	StampDuty        *StampDuty         `xml:"DatiBollo,omitempty"`
 	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
 	TotalAmount      string             `xml:"ImportoTotaleDocumento"`
-	Causale          []string           `xml:"Causale,omitempty"`
+	Reasons          []string           `xml:"Causale,omitempty"`
 }
 
 // StampDuty contains data about the stamp duty
@@ -95,7 +95,7 @@ func newBody(inv *bill.Invoice) (*Body, error) {
 	return &Body{
 		GeneralData:   dg,
 		GoodsServices: dbs,
-		PaymentData:   dp,
+		PaymentsData:  dp,
 	}, nil
 }
 
@@ -155,12 +155,12 @@ func newGeneralDocumentData(inv *bill.Invoice) (*GeneralDocumentData, error) {
 		return nil, err
 	}
 
-	codeTipoDocumento, err := findCodeTipoDocumento(inv)
+	codeDocumentType, err := findCodeDocumentType(inv)
 	if err != nil {
 		return nil, err
 	}
 
-	switch codeTipoDocumento {
+	switch codeDocumentType {
 	case "TD07", "TD08", "TD09":
 		return nil, errors.New("simplified invoices are not currently supported")
 	}
@@ -171,21 +171,21 @@ func newGeneralDocumentData(inv *bill.Invoice) (*GeneralDocumentData, error) {
 	}
 
 	doc := &GeneralDocumentData{
-		DocumentType:     codeTipoDocumento,
-		Divisa:           string(inv.Currency),
+		DocumentType:     codeDocumentType,
+		Currency:         string(inv.Currency),
 		IssueDate:        inv.IssueDate.String(),
 		Number:           code.String(),
 		RetainedTaxes:    dr,
 		StampDuty:        newStampDuty(inv.Charges),
 		TotalAmount:      formatAmount2(&inv.Totals.Payable),
 		PriceAdjustments: extractPriceAdjustments(inv),
-		Causale:          extractInvoiceReasons(inv),
+		Reasons:          extractInvoiceReasons(inv),
 	}
 
 	return doc, nil
 }
 
-func findCodeTipoDocumento(inv *bill.Invoice) (string, error) {
+func findCodeDocumentType(inv *bill.Invoice) (string, error) {
 	if inv.Tax == nil {
 		return "", fmt.Errorf("missing tax")
 	}
