@@ -18,7 +18,7 @@ func TestPartiesSupplier(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		s := doc.FatturaElettronicaHeader.Supplier
+		s := doc.Header.Supplier
 
 		assert.Equal(t, "IT", s.Identity.TaxID.Country)
 		assert.Equal(t, "12345678903", s.Identity.TaxID.Code)
@@ -43,7 +43,7 @@ func TestPartiesSupplier(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		s := doc.FatturaElettronicaHeader.Supplier
+		s := doc.Header.Supplier
 
 		assert.Equal(t, "RF01", s.Identity.FiscalRegime)
 	})
@@ -55,7 +55,7 @@ func TestPartiesCustomer(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		c := doc.FatturaElettronicaHeader.Customer
+		c := doc.Header.Customer
 
 		assert.Nil(t, c.Identity.TaxID)
 		assert.Equal(t, "MRALNE80E05H501C", c.Identity.FiscalCode)
@@ -86,7 +86,7 @@ func TestPartiesCustomer(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		c := doc.FatturaElettronicaHeader.Customer
+		c := doc.Header.Customer
 
 		assert.Nil(t, c.Identity.TaxID)
 		assert.Equal(t, "RSSGNC73A02F205X", c.Identity.FiscalCode)
@@ -102,7 +102,7 @@ func TestPartiesCustomer(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		c := doc.FatturaElettronicaHeader.Customer
+		c := doc.Header.Customer
 
 		assert.Equal(t, "AT", c.Identity.TaxID.Country)
 		assert.Equal(t, "81237984062783472", c.Identity.TaxID.Code)
@@ -118,7 +118,7 @@ func TestPartiesCustomer(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		c := doc.FatturaElettronicaHeader.Customer
+		c := doc.Header.Customer
 
 		assert.Equal(t, "SE", c.Identity.TaxID.Country)
 		assert.Equal(t, "0000000", c.Identity.TaxID.Code)
@@ -134,7 +134,7 @@ func TestPartiesCustomer(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		c := doc.FatturaElettronicaHeader.Customer
+		c := doc.Header.Customer
 
 		assert.Equal(t, "GB", c.Identity.TaxID.Country)
 		assert.Equal(t, "OO99999999999", c.Identity.TaxID.Code)
@@ -150,7 +150,7 @@ func TestPartiesCustomer(t *testing.T) {
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		c := doc.FatturaElettronicaHeader.Customer
+		c := doc.Header.Customer
 
 		assert.Equal(t, "JP", c.Identity.TaxID.Country)
 		assert.Equal(t, "0000000", c.Identity.TaxID.Code)

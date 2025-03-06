@@ -8,14 +8,14 @@ import (
 	"github.com/invopop/gobl/pay"
 )
 
-// paymentData contains all data related to the payment of the document.
-type paymentData struct {
+// PaymentData contains all data related to the payment of the document.
+type PaymentData struct {
 	Conditions string              `xml:"CondizioniPagamento"`
-	Payments   []*paymentDetailRow `xml:"DettaglioPagamento,omitempty"`
+	Payments   []*PaymentDetailRow `xml:"DettaglioPagamento,omitempty"`
 }
 
-// paymentDetailRow contains data related to a single payment.
-type paymentDetailRow struct {
+// PaymentDetailRow contains data related to a single payment.
+type PaymentDetailRow struct {
 	Beneficiary string `xml:"Beneficiario,omitempty"`
 	Method      string `xml:"ModalitaPagamento"`
 	Date        string `xml:"DataRiferimentoTerminiPagamento,omitempty"`
@@ -29,7 +29,7 @@ type paymentDetailRow struct {
 	Code        string `xml:"CodicePagamento,omitempty"`
 }
 
-func newDatiPagamento(inv *bill.Invoice) (*paymentData, error) {
+func newPaymentData(inv *bill.Invoice) (*PaymentData, error) {
 	if inv.Payment == nil {
 		return nil, nil
 	}
@@ -39,14 +39,14 @@ func newDatiPagamento(inv *bill.Invoice) (*paymentData, error) {
 		return nil, err
 	}
 
-	return &paymentData{
+	return &PaymentData{
 		Conditions: determinePaymentConditions(inv),
 		Payments:   dp,
 	}, nil
 }
 
-func preparePaymentDetails(inv *bill.Invoice) ([]*paymentDetailRow, error) {
-	var dp []*paymentDetailRow
+func preparePaymentDetails(inv *bill.Invoice) ([]*PaymentDetailRow, error) {
+	var dp []*PaymentDetailRow
 	payment := inv.Payment
 
 	if len(payment.Advances) == 0 && payment.Instructions == nil {
@@ -55,7 +55,7 @@ func preparePaymentDetails(inv *bill.Invoice) ([]*paymentDetailRow, error) {
 
 	// First deal with payment advances
 	for _, advance := range payment.Advances {
-		row := &paymentDetailRow{
+		row := &PaymentDetailRow{
 			Method: advance.Ext[sdi.ExtKeyPaymentMeans].String(),
 			Amount: formatAmount2(&advance.Amount),
 		}
@@ -70,7 +70,7 @@ func preparePaymentDetails(inv *bill.Invoice) ([]*paymentDetailRow, error) {
 		return dp, nil
 	}
 
-	br := paymentDetailRow{
+	br := PaymentDetailRow{
 		Method: payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String(),
 	}
 	if len(payment.Instructions.CreditTransfer) > 0 {

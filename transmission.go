@@ -22,28 +22,28 @@ const (
 )
 
 // Data related to the transmission of the invoice
-type datiTrasmissione struct {
-	IdTrasmittente      *TaxID `xml:"IdTrasmittente,omitempty"` // nolint:revive
-	ProgressivoInvio    string `xml:"ProgressivoInvio,omitempty"`
-	FormatoTrasmissione string `xml:"FormatoTrasmissione,omitempty"`
-	CodiceDestinatario  string `xml:"CodiceDestinatario"`
-	PECDestinatario     string `xml:"PECDestinatario,omitempty"`
+type TransmissionData struct {
+	TransmitterID      *TaxID `xml:"IdTrasmittente,omitempty"` // nolint:revive
+	ProgressiveNumber  string `xml:"ProgressivoInvio,omitempty"`
+	TransmissionFormat string `xml:"FormatoTrasmissione,omitempty"`
+	RecipientCode      string `xml:"CodiceDestinatario"`
+	RecipientPEC       string `xml:"PECDestinatario,omitempty"`
 }
 
-func (c *Converter) newDatiTrasmissione(inv *bill.Invoice, env *gobl.Envelope) *datiTrasmissione {
-	dt := &datiTrasmissione{
-		CodiceDestinatario: codiceDestinatario(inv.Customer),
-		PECDestinatario:    pecDestinatario(inv.Customer),
+func (c *Converter) newTransmissionData(inv *bill.Invoice, env *gobl.Envelope) *TransmissionData {
+	dt := &TransmissionData{
+		RecipientCode: codiceDestinatario(inv.Customer),
+		RecipientPEC:  pecDestinatario(inv.Customer),
 	}
 
 	// Do we need to add the transmitter info?
 	if c.Config.Transmitter != nil {
-		dt.IdTrasmittente = &TaxID{
+		dt.TransmitterID = &TaxID{
 			Country: c.Config.Transmitter.CountryCode,
 			Code:    c.Config.Transmitter.TaxID,
 		}
-		dt.ProgressivoInvio = env.Head.UUID.String()[:8]
-		dt.FormatoTrasmissione = formatoTransmissione(inv)
+		dt.ProgressiveNumber = env.Head.UUID.String()[:8]
+		dt.TransmissionFormat = formatoTransmissione(inv)
 	}
 
 	return dt

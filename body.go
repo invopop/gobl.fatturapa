@@ -23,23 +23,23 @@ const (
 
 const stampDutyCode = "SI"
 
-// fatturaElettronicaBody contains all invoice data apart from the parties
-// involved, which are contained in FatturaElettronicaHeader.
-type fatturaElettronicaBody struct {
-	DatiGenerali    *GeneralData `xml:"DatiGenerali,omitempty"`
-	DatiBeniServizi *datiBeniServizi
-	DatiPagamento   *paymentData `xml:"DatiPagamento,omitempty"`
+// Body contains all invoice data apart from the parties involved, which are
+// contained in Header.
+type Body struct {
+	GeneralData   *GeneralData   `xml:"DatiGenerali,omitempty"`
+	GoodsServices *GoodsServices `xml:"DatiBeniServizi,omitempty"`
+	PaymentData   *PaymentData   `xml:"DatiPagamento,omitempty"`
 }
 
 // GeneralData contains general data about the invoice such as retained taxes,
 // invoice number, invoice date, document type, etc.
 type GeneralData struct {
-	Document  *datiGeneraliDocumento `xml:"DatiGeneraliDocumento"`
-	Purchases []*DocumentRef         `xml:"DatiOrdineAcquisto,omitempty"`
-	Contracts []*DocumentRef         `xml:"DatiContratto,omitempty"`
-	Tender    []*DocumentRef         `xml:"DatiConvenzione,omitempty"`
-	Receiving []*DocumentRef         `xml:"DatiRicezione,omitempty"`
-	Preceding []*DocumentRef         `xml:"DatiFattureCollegate,omitempty"`
+	Document  *GeneralDocumentData `xml:"DatiGeneraliDocumento"`
+	Purchases []*DocumentRef       `xml:"DatiOrdineAcquisto,omitempty"`
+	Contracts []*DocumentRef       `xml:"DatiContratto,omitempty"`
+	Tender    []*DocumentRef       `xml:"DatiConvenzione,omitempty"`
+	Receiving []*DocumentRef       `xml:"DatiRicezione,omitempty"`
+	Preceding []*DocumentRef       `xml:"DatiFattureCollegate,omitempty"`
 }
 
 // DocumentRef contains data about a previous document.
@@ -53,36 +53,36 @@ type DocumentRef struct {
 	CIGCode   string `xml:"CodiceCIG,omitempty"`                 // Tender procedure identification code
 }
 
-type datiGeneraliDocumento struct {
-	TipoDocumento          string
-	Divisa                 string
-	Data                   string
-	Numero                 string
-	DatiRitenuta           []*datiRitenuta
-	DatiBollo              *datiBollo `xml:",omitempty"`
-	ScontoMaggiorazione    []*scontoMaggiorazione
-	ImportoTotaleDocumento string `xml:",omitempty"`
-	Causale                []string
+type GeneralDocumentData struct {
+	DocumentType     string             `xml:"TipoDocumento"`
+	Divisa           string             `xml:"Divisa"`
+	IssueDate        string             `xml:"Data"`
+	Number           string             `xml:"Numero"`
+	RetainedTaxes    []*RetainedTax     `xml:"DatiRitenuta,omitempty"`
+	StampDuty        *StampDuty         `xml:"DatiBollo,omitempty"`
+	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
+	TotalAmount      string             `xml:"ImportoTotaleDocumento"`
+	Causale          []string           `xml:"Causale,omitempty"`
 }
 
-// datiBollo contains data about the stamp duty
-type datiBollo struct {
-	BolloVirtuale string
-	ImportoBollo  string `xml:",omitempty"`
+// StampDuty contains data about the stamp duty
+type StampDuty struct {
+	VirtualStamp string `xml:"BolloVirtuale"`
+	Amount       string `xml:"ImportoBollo,omitempty"`
 }
 
-// scontoMaggiorazione contains data about price adjustments like discounts and
+// PriceAdjustment contains data about price adjustments like discounts and
 // charges.
-type scontoMaggiorazione struct {
-	Tipo        string `xml:"Tipo"`
-	Percentuale string `xml:"Percentuale,omitempty"`
-	Importo     string `xml:"Importo,omitempty"`
+type PriceAdjustment struct {
+	Type    string `xml:"Tipo"`
+	Percent string `xml:"Percentuale,omitempty"`
+	Amount  string `xml:"Importo,omitempty"`
 }
 
-func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, error) {
-	dbs := newDatiBeniServizi(inv)
+func newBody(inv *bill.Invoice) (*Body, error) {
+	dbs := newGoodsServices(inv)
 
-	dp, err := newDatiPagamento(inv)
+	dp, err := newPaymentData(inv)
 	if err != nil {
 		return nil, err
 	}
@@ -92,17 +92,17 @@ func newFatturaElettronicaBody(inv *bill.Invoice) (*fatturaElettronicaBody, erro
 		return nil, err
 	}
 
-	return &fatturaElettronicaBody{
-		DatiGenerali:    dg,
-		DatiBeniServizi: dbs,
-		DatiPagamento:   dp,
+	return &Body{
+		GeneralData:   dg,
+		GoodsServices: dbs,
+		PaymentData:   dp,
 	}, nil
 }
 
 func newGeneralData(inv *bill.Invoice) (*GeneralData, error) {
 	gd := new(GeneralData)
 	var err error
-	if gd.Document, err = newGeneralDataDocument(inv); err != nil {
+	if gd.Document, err = newGeneralDocumentData(inv); err != nil {
 		return nil, err
 	}
 	gd.Preceding = newDocumentRefs(inv.Preceding)
@@ -149,7 +149,7 @@ func newDocumentRef(ref *org.DocumentRef) *DocumentRef {
 	return dr
 }
 
-func newGeneralDataDocument(inv *bill.Invoice) (*datiGeneraliDocumento, error) {
+func newGeneralDocumentData(inv *bill.Invoice) (*GeneralDocumentData, error) {
 	dr, err := extractRetainedTaxes(inv)
 	if err != nil {
 		return nil, err
@@ -170,16 +170,16 @@ func newGeneralDataDocument(inv *bill.Invoice) (*datiGeneraliDocumento, error) {
 		code = cbc.Code(fmt.Sprintf("%s-%s", inv.Series, inv.Code))
 	}
 
-	doc := &datiGeneraliDocumento{
-		TipoDocumento:          codeTipoDocumento,
-		Divisa:                 string(inv.Currency),
-		Data:                   inv.IssueDate.String(),
-		Numero:                 code.String(),
-		DatiRitenuta:           dr,
-		DatiBollo:              newDatiBollo(inv.Charges),
-		ImportoTotaleDocumento: formatAmount2(&inv.Totals.Payable),
-		ScontoMaggiorazione:    extractPriceAdjustments(inv),
-		Causale:                extractInvoiceReasons(inv),
+	doc := &GeneralDocumentData{
+		DocumentType:     codeTipoDocumento,
+		Divisa:           string(inv.Currency),
+		IssueDate:        inv.IssueDate.String(),
+		Number:           code.String(),
+		RetainedTaxes:    dr,
+		StampDuty:        newStampDuty(inv.Charges),
+		TotalAmount:      formatAmount2(&inv.Totals.Payable),
+		PriceAdjustments: extractPriceAdjustments(inv),
+		Causale:          extractInvoiceReasons(inv),
 	}
 
 	return doc, nil
@@ -198,12 +198,12 @@ func findCodeTipoDocumento(inv *bill.Invoice) (string, error) {
 	return val.String(), nil
 }
 
-func newDatiBollo(charges []*bill.Charge) *datiBollo {
+func newStampDuty(charges []*bill.Charge) *StampDuty {
 	for _, charge := range charges {
 		if charge.Key == bill.ChargeKeyStampDuty {
-			return &datiBollo{
-				BolloVirtuale: stampDutyCode,
-				ImportoBollo:  formatAmount2(&charge.Amount),
+			return &StampDuty{
+				VirtualStamp: stampDutyCode,
+				Amount:       formatAmount2(&charge.Amount),
 			}
 		}
 	}
@@ -211,26 +211,26 @@ func newDatiBollo(charges []*bill.Charge) *datiBollo {
 	return nil
 }
 
-func extractPriceAdjustments(inv *bill.Invoice) []*scontoMaggiorazione {
-	var scontiMaggiorazioni []*scontoMaggiorazione
+func extractPriceAdjustments(inv *bill.Invoice) []*PriceAdjustment {
+	var priceAdjustments []*PriceAdjustment
 
 	for _, discount := range inv.Discounts {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
-			Tipo:        scontoMaggiorazioneTypeDiscount,
-			Percentuale: formatPercentage(discount.Percent),
-			Importo:     formatAmount8(&discount.Amount),
+		priceAdjustments = append(priceAdjustments, &PriceAdjustment{
+			Type:    scontoMaggiorazioneTypeDiscount,
+			Percent: formatPercentage(discount.Percent),
+			Amount:  formatAmount8(&discount.Amount),
 		})
 	}
 
 	for _, charge := range inv.Charges {
-		scontiMaggiorazioni = append(scontiMaggiorazioni, &scontoMaggiorazione{
-			Tipo:        scontoMaggiorazioneTypeCharge,
-			Percentuale: formatPercentage(charge.Percent),
-			Importo:     formatAmount8(&charge.Amount),
+		priceAdjustments = append(priceAdjustments, &PriceAdjustment{
+			Type:    scontoMaggiorazioneTypeCharge,
+			Percent: formatPercentage(charge.Percent),
+			Amount:  formatAmount8(&charge.Amount),
 		})
 	}
 
-	return scontiMaggiorazioni
+	return priceAdjustments
 }
 
 func extractInvoiceReasons(inv *bill.Invoice) []string {

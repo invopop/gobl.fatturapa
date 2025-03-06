@@ -36,8 +36,8 @@ type Document struct {
 	Versione       string   `xml:"versione,attr"`
 	SchemaLocation string   `xml:"xsi:schemaLocation,attr"`
 
-	FatturaElettronicaHeader *fatturaElettronicaHeader
-	FatturaElettronicaBody   []*fatturaElettronicaBody
+	Header *Header `xml:"FatturaElettronicaHeader"`
+	Body   []*Body `xml:"FatturaElettronicaBody"`
 
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
 }
@@ -57,25 +57,25 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 		return nil, err
 	}
 
-	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
+	TransmissionData := c.newTransmissionData(invoice, env)
 
-	header := newFatturaElettronicaHeader(invoice, datiTrasmissione)
+	header := newHeader(invoice, TransmissionData)
 
-	body, err := newFatturaElettronicaBody(invoice)
+	body, err := newBody(invoice)
 	if err != nil {
 		return nil, err
 	}
 
 	// Basic document headers
 	d := &Document{
-		env:                      env,
-		FPANamespace:             namespaceFatturaPA,
-		DSigNamespace:            namespaceDSig,
-		XSINamespace:             namespaceXSI,
-		Versione:                 formatoTransmissione(invoice),
-		SchemaLocation:           schemaLocation,
-		FatturaElettronicaHeader: header,
-		FatturaElettronicaBody:   []*fatturaElettronicaBody{body},
+		env:            env,
+		FPANamespace:   namespaceFatturaPA,
+		DSigNamespace:  namespaceDSig,
+		XSINamespace:   namespaceXSI,
+		Versione:       formatoTransmissione(invoice),
+		SchemaLocation: schemaLocation,
+		Header:         header,
+		Body:           []*Body{body},
 	}
 
 	if c.Config.Certificate != nil {
@@ -102,9 +102,14 @@ func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 		return nil, errors.New("signature is missing")
 	}
 
-	// Parse header
+	// Create a new invoice with empty fields so that converter can fill it
+	inv := new(bill.Invoice)
 
-	// Parse body
+	// Retrieves information from the header and adds it to the invoice
+	goblBillInvoiceAddHeader(inv, d.Header)
+
+	// Retrieves information from the body and adds it to the invoice
+	//goblBillInvoiceAddBody(inv, d.Body)
 
 	// Generate envelope
 
