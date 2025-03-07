@@ -131,6 +131,19 @@
 			}
 		],
 		"payment": {
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2023-03-02",
+						"amount": "200.00"
+					},
+					{
+						"date": "2023-04-02",
+						"amount": "200.00"
+					}
+				]
+			},
 			"advances": [
 				{
 					"date": "2023-05-01",
@@ -141,7 +154,20 @@
 						"it-sdi-payment-means": "MP08"
 					}
 				}
-			]
+			],
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "IT60X0542811101000000123456",
+						"bic": "BCITITMM",
+						"name": "BANCA POPOLARE DI MILANO"
+					}
+				],
+				"ext": {
+					"it-sdi-payment-means": "MP05"
+				}
+			}
 		},
 		"totals": {
 			"sum": "876.00",

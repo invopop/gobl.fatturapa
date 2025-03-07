@@ -103,12 +103,15 @@ func goblBillPaymentAddAdvancePayment(payment *bill.Payment, paymentDetail *Paym
 
 	// Create advance payment
 	advance := &pay.Advance{
-		Amount: amount,
-		Ext:    make(tax.Extensions),
+		Amount:      amount,
+		Description: "Advance payment",
 	}
 
 	// Add payment method if available
 	if paymentDetail.Method != "" {
+		if advance.Ext == nil {
+			advance.Ext = tax.Extensions{}
+		}
 		advance.Ext[sdi.ExtKeyPaymentMeans] = cbc.Code(paymentDetail.Method)
 	}
 
@@ -169,9 +172,23 @@ func goblBillPaymentAddPaymentInstructions(payment *bill.Payment, paymentDetail 
 		payment.Instructions = new(pay.Instructions)
 	}
 
+	// Add a Key
+	payment.Instructions.Key = pay.MeansKeyAny
+
 	// Add payment method if available
 	if paymentDetail.Method != "" {
+		if payment.Instructions.Ext == nil {
+			payment.Instructions.Ext = tax.Extensions{}
+		}
 		payment.Instructions.Ext[sdi.ExtKeyPaymentMeans] = cbc.Code(paymentDetail.Method)
+		// Find the key for the payment method code
+		keyMap := sdi.PaymentMeansExtensions()
+		for k, v := range keyMap {
+			if v == cbc.Code(paymentDetail.Method) {
+				payment.Instructions.Key = k
+				break
+			}
+		}
 	}
 
 	// Add credit transfer if IBAN or BIC is available
@@ -179,6 +196,9 @@ func goblBillPaymentAddPaymentInstructions(payment *bill.Payment, paymentDetail 
 		creditTransfer := pay.CreditTransfer{
 			IBAN: paymentDetail.IBAN,
 			BIC:  paymentDetail.BIC,
+		}
+		if paymentDetail.FinancialInstitution != "" {
+			creditTransfer.Name = paymentDetail.FinancialInstitution
 		}
 		payment.Instructions.CreditTransfer = append(payment.Instructions.CreditTransfer, &creditTransfer)
 	}

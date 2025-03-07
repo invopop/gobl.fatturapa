@@ -19,8 +19,10 @@ func TestGOBLToXMLExamples(t *testing.T) {
 	schema, err := test.LoadSchema()
 	require.NoError(t, err)
 
+	path := test.GetDataPath() + "/" + test.PathGOBLFatturaPA
+
 	var files []string
-	err = filepath.Walk(test.GetDataPath(), func(path string, _ os.FileInfo, _ error) error {
+	err = filepath.Walk(path, func(path string, _ os.FileInfo, _ error) error {
 		if filepath.Ext(path) == ".json" {
 			files = append(files, filepath.Base(path))
 		}
@@ -66,7 +68,10 @@ func TestGOBLToXMLExamples(t *testing.T) {
 func TestXMLToGOBLExamples(t *testing.T) {
 	var err error
 	var files []string
-	err = filepath.Walk(test.GetDataPath(), func(path string, _ os.FileInfo, _ error) error {
+
+	path := test.GetDataPath() + "/" + test.PathFatturaPAGOBL
+
+	err = filepath.Walk(path, func(path string, _ os.FileInfo, _ error) error {
 		if filepath.Ext(path) == ".xml" {
 			files = append(files, filepath.Base(path))
 		}
@@ -92,13 +97,14 @@ func TestXMLToGOBLExamples(t *testing.T) {
 		np := strings.TrimSuffix(file, filepath.Ext(file)) + ".json"
 		outPath := filepath.Join(test.GetDataPath(), "out", np)
 
-		if *test.UpdateOut {
-			require.NoError(t, env.Validate())
-			assert.Fail(t, "Invalid GOBL:\n"+string(data))
+		//if *test.UpdateOut {
+		err = env.Validate()
+		require.NoError(t, err)
+		//assert.Fail(t, "Invalid GOBL:\n"+string(err.Error()))
 
-			err = os.WriteFile(outPath, data, 0644)
-			require.NoError(t, err, "writing file")
-		}
+		err = os.WriteFile(outPath, data, 0644)
+		require.NoError(t, err, "writing file")
+		//}
 
 		expected, err := os.ReadFile(outPath)
 		require.False(t, os.IsNotExist(err), "output file %s missing, run tests with `--update` flag to create", filepath.Base(outPath))

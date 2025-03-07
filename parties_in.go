@@ -54,11 +54,29 @@ func goblOrgPartyAddIdentity(party *org.Party, identity *Identity) {
 		party.TaxID = &tax.Identity{}
 	}
 
-	party.TaxID.Country = l10n.TaxCountryCode(identity.TaxID.Country)
-	party.TaxID.Code = cbc.Code(identity.TaxID.Code)
+	if identity.TaxID != nil {
+		party.TaxID.Country = l10n.TaxCountryCode(identity.TaxID.Country)
+		if identity.TaxID.Code != "" && identity.TaxID.Code != "0000000" {
+			party.TaxID.Code = cbc.Code(identity.TaxID.Code)
+		}
+	}
+
+	if identity.FiscalRegime != "" {
+		if party.Ext == nil {
+			party.Ext = tax.Extensions{}
+		}
+		party.Ext[sdi.ExtKeyFiscalRegime] = cbc.Code(identity.FiscalRegime)
+	}
+
+	if identity.Profile == nil {
+		return
+	}
+
 	party.Name = identity.Profile.Name
 
 	if identity.Profile.Given != "" {
+		party.Name = identity.Profile.Given + " " + identity.Profile.Surname
+
 		if party.People == nil {
 			party.People = []*org.Person{}
 		}
@@ -71,10 +89,6 @@ func goblOrgPartyAddIdentity(party *org.Party, identity *Identity) {
 			},
 		})
 	}
-
-	if identity.FiscalRegime != "" {
-		party.Ext[sdi.ExtKeyFiscalRegime] = cbc.Code(identity.FiscalRegime)
-	}
 }
 
 func goblOrgPartyAddRegistration(party *org.Party, registration *Registration) {
@@ -82,15 +96,16 @@ func goblOrgPartyAddRegistration(party *org.Party, registration *Registration) {
 		return
 	}
 
-	capital, err := num.AmountFromString(registration.Capital)
-	if err != nil {
-		return
+	party.Registration = &org.Registration{
+		Office: registration.Office,
+		Entry:  registration.Entry,
 	}
 
-	party.Registration = &org.Registration{
-		Office:  registration.Office,
-		Entry:   registration.Entry,
-		Capital: &capital,
+	if registration.Capital != "" {
+		capital, err := num.AmountFromString(registration.Capital)
+		if err == nil {
+			party.Registration.Capital = &capital
+		}
 	}
 }
 
@@ -99,19 +114,23 @@ func goblOrgPartyAddContact(party *org.Party, contact *Contact) {
 		return
 	}
 
-	if party.Emails == nil {
-		party.Emails = []*org.Email{}
+	if contact.Email != "" {
+		if party.Emails == nil {
+			party.Emails = []*org.Email{}
+		}
+
+		party.Emails = append(party.Emails, &org.Email{
+			Address: contact.Email,
+		})
 	}
 
-	party.Emails = append(party.Emails, &org.Email{
-		Address: contact.Email,
-	})
+	if contact.Telephone != "" {
+		if party.Telephones == nil {
+			party.Telephones = []*org.Telephone{}
+		}
 
-	if party.Telephones == nil {
-		party.Telephones = []*org.Telephone{}
+		party.Telephones = append(party.Telephones, &org.Telephone{
+			Number: contact.Telephone,
+		})
 	}
-
-	party.Telephones = append(party.Telephones, &org.Telephone{
-		Number: contact.Telephone,
-	})
 }

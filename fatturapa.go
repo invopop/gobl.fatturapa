@@ -12,7 +12,9 @@ import (
 	nbioXML "github.com/nbio/xml"
 
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/xmldsig"
 )
 
@@ -101,12 +103,15 @@ func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 	}
 
 	// Verify signature. Standin for now.
+	// Skip signature verification for now
 	if d.Signature == nil {
 		return nil, errors.New("signature is missing")
 	}
 
 	// Create a new invoice with empty fields so that converter can fill it
 	inv := new(bill.Invoice)
+
+	inv.Addons = tax.WithAddons(sdi.V1)
 
 	// Retrieves information from the header and adds it to the invoice
 	goblBillInvoiceAddHeader(inv, d.Header)
@@ -116,8 +121,12 @@ func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 	goblBillInvoiceAddBody(inv, d.Body[0])
 
 	// Generate envelope
+	env, err := gobl.Envelop(inv)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	return env, nil
 }
 
 // Buffer returns a byte buffer representation of the complete XML document.

@@ -1,0 +1,198 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "01957056-151b-71e5-bbf5-8bb38cf9556c",
+		"dig": {
+			"alg": "sha256",
+			"val": "77c703524ccdac6ddec4f3f9dff198c31a1b21602d29771418533ad214945c56"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"uuid": "01957056-151b-73fd-8841-4a46e6362dde",
+		"type": "standard",
+		"series": "SAMPLE",
+		"code": "003",
+		"issue_date": "2023-05-21",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
+		},
+		"supplier": {
+			"name": "Hotel California",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"num": "102",
+					"street": "Via California",
+					"locality": "Palermo",
+					"region": "PA",
+					"code": "33213",
+					"country": "IT"
+				}
+			],
+			"registration": {
+				"office": "RM",
+				"entry": "123456"
+			},
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
+		},
+		"customer": {
+			"name": "John Doe",
+			"tax_id": {
+				"country": "GB"
+			},
+			"people": [
+				{
+					"name": {
+						"given": "John",
+						"surname": "Doe"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"num": "23",
+					"street": "Main Street",
+					"locality": "London",
+					"country": "GB"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1.00",
+				"item": {
+					"name": "Tassa di Soggiorno",
+					"price": "1.00"
+				},
+				"sum": "1.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "0.00%",
+						"ext": {
+							"it-sdi-exempt": "N1"
+						}
+					}
+				],
+				"total": "1.00"
+			},
+			{
+				"i": 2,
+				"quantity": "1.00",
+				"item": {
+					"name": "Camera Matrimoniale",
+					"price": "113.6364"
+				},
+				"sum": "113.6364",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "10.00%"
+					}
+				],
+				"total": "113.6364"
+			},
+			{
+				"i": 3,
+				"quantity": "10.00",
+				"item": {
+					"name": "Camera Matrimoniale",
+					"price": "68.1818"
+				},
+				"sum": "681.8180",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "10.00%"
+					}
+				],
+				"total": "681.8180"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "due-date",
+				"due_dates": [
+					{
+						"date": "2023-03-02",
+						"amount": "200.00"
+					},
+					{
+						"date": "2023-04-02",
+						"amount": "200.00"
+					}
+				]
+			},
+			"advances": [
+				{
+					"date": "2023-05-01",
+					"description": "Advance payment",
+					"amount": "29.00",
+					"ext": {
+						"it-sdi-payment-means": "MP08"
+					}
+				}
+			],
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "IT60X0542811101000000123456",
+						"bic": "BCITITMM"
+					}
+				],
+				"ext": {
+					"it-sdi-payment-means": "MP05"
+				}
+			}
+		},
+		"totals": {
+			"sum": "796.45",
+			"total": "796.45",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"ext": {
+									"it-sdi-exempt": "N1"
+								},
+								"base": "1.00",
+								"percent": "0.00%",
+								"amount": "0.00"
+							},
+							{
+								"base": "795.45",
+								"percent": "10.00%",
+								"amount": "79.55"
+							}
+						],
+						"amount": "79.55"
+					}
+				],
+				"sum": "79.55"
+			},
+			"tax": "79.55",
+			"total_with_tax": "876.00",
+			"payable": "876.00",
+			"advance": "29.00",
+			"due": "847.00"
+		}
+	}
+}

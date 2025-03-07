@@ -9,6 +9,7 @@ import (
 	"github.com/invopop/gobl/currency"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 )
 
 // goblBillInvoiceAddBody adds a body to the GOBL invoice
@@ -69,6 +70,9 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	// Add tax extension key
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
+	}
+	if inv.Tax.Ext == nil {
+		inv.Tax.Ext = tax.Extensions{}
 	}
 	inv.Tax.Ext[sdi.ExtKeyDocumentType] = cbc.Code(doc.DocumentType)
 

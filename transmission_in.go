@@ -27,14 +27,22 @@ func goblBillInvoiceAddTransmission(inv *bill.Invoice, dt *TransmissionData) {
 		inv.Customer.Inboxes = []*org.Inbox{}
 	}
 
-	inv.Customer.Inboxes = append(inv.Customer.Inboxes,
-		&org.Inbox{
-			Key:  sdi.KeyInboxCode,
-			Code: cbc.Code(dt.RecipientCode),
-		}, &org.Inbox{
-			Key:   sdi.KeyInboxPEC,
-			Email: dt.RecipientPEC,
-		},
-	)
+	if dt.RecipientCode != "" && dt.RecipientCode != "XXXXXXX" && dt.RecipientCode != "000000" {
+		inv.Customer.Inboxes = append(inv.Customer.Inboxes,
+			&org.Inbox{
+				Key:  sdi.KeyInboxCode,
+				Code: cbc.Code(dt.RecipientCode),
+			},
+		)
+	}
+
+	if dt.RecipientPEC != "" {
+		inv.Customer.Inboxes = append(inv.Customer.Inboxes,
+			&org.Inbox{
+				Key:   sdi.KeyInboxPEC,
+				Email: dt.RecipientPEC,
+			},
+		)
+	}
 
 }

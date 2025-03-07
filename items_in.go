@@ -82,13 +82,17 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail)
 			}
 
 			// Add tax rate if it's not zero
-			taxRate, _ := num.PercentageFromString(detail.TaxRate)
+			// FatturaPA stores the tax rate as a percentage without the % symbol so we add it so that the conversion works
+			taxRate, _ := num.PercentageFromString(detail.TaxRate + "%")
 			if taxRate != num.PercentageZero {
 				taxCombo.Percent = &taxRate
 			}
 
 			// Add exempt extension if nature is provided
 			if detail.TaxNature != "" {
+				if taxCombo.Ext == nil {
+					taxCombo.Ext = tax.Extensions{}
+				}
 				taxCombo.Ext[sdi.ExtKeyExempt] = cbc.Code(detail.TaxNature)
 			}
 

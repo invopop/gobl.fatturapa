@@ -25,6 +25,8 @@ import (
 const (
 	certificateFile     = "test.p12"
 	certificatePassword = "invopop"
+	PathGOBLFatturaPA   = "gobl.fatturapa"
+	PathFatturaPAGOBL   = "fatturapa.gobl"
 )
 
 // UpdateOut is a flag that can be set to update example files
