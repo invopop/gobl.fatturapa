@@ -56,7 +56,8 @@ func goblTaxCategoryTotalFromRetainedTax(rt *RetainedTax) *tax.CategoryTotal {
 
 	// Parse amount and rate
 	amount, err1 := num.AmountFromString(rt.Amount)
-	rate, err2 := num.PercentageFromString(rt.Rate)
+	// FatturaPA stores the rate as a percentage without the % symbol so we add it so that the conversion works
+	rate, err2 := num.PercentageFromString(rt.Rate + "%")
 	if err1 != nil || err2 != nil {
 		return nil
 	}

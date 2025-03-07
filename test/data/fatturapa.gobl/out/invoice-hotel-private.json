@@ -1,10 +1,10 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "01957056-151b-71e5-bbf5-8bb38cf9556c",
+		"uuid": "01957104-0f54-7bfb-91cb-191cd5fc5f36",
 		"dig": {
 			"alg": "sha256",
-			"val": "77c703524ccdac6ddec4f3f9dff198c31a1b21602d29771418533ad214945c56"
+			"val": "e57b310d80d6fbd87974f12b9b6aa571ffc32de257d3d02df7c516d28a10ee17"
 		}
 	},
 	"doc": {
@@ -13,7 +13,7 @@
 		"$addons": [
 			"it-sdi-v1"
 		],
-		"uuid": "01957056-151b-73fd-8841-4a46e6362dde",
+		"uuid": "01957104-0f54-7c17-a0b2-0fe4cb7793bc",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "003",
@@ -141,6 +141,7 @@
 			"advances": [
 				{
 					"date": "2023-05-01",
+					"key": "card",
 					"description": "Advance payment",
 					"amount": "29.00",
 					"ext": {
@@ -153,7 +154,8 @@
 				"credit_transfer": [
 					{
 						"iban": "IT60X0542811101000000123456",
-						"bic": "BCITITMM"
+						"bic": "BCITITMM",
+						"name": "BANCA POPOLARE DI MILANO"
 					}
 				],
 				"ext": {

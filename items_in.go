@@ -71,6 +71,11 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail)
 			},
 		}
 
+		// Add unit
+		if detail.Unit != "" {
+			line.Item.Unit = org.Unit(detail.Unit)
+		}
+
 		// Add price adjustments
 		goblBillLineAddPriceAdjustments(line, detail.PriceAdjustments)
 
@@ -115,7 +120,8 @@ func goblBillLineAddPriceAdjustments(line *bill.Line, adjustments []*PriceAdjust
 
 	for _, adj := range adjustments {
 		amount, err1 := num.AmountFromString(adj.Amount)
-		percent, err2 := num.PercentageFromString(adj.Percent)
+		// FatturaPA stores the percentage as a string without the % symbol so we add it so that the conversion works
+		percent, err2 := num.PercentageFromString(adj.Percent + "%")
 
 		if err1 != nil && err2 != nil {
 			// Skip if both amount and percent are invalid
@@ -188,7 +194,8 @@ func goblBillInvoiceAddTaxSummary(inv *bill.Invoice, taxSummaries []*TaxSummary)
 	// Process each tax summary
 	for _, summary := range taxSummaries {
 		// Parse tax rate, taxable amount, and tax amount
-		taxRate, err1 := num.PercentageFromString(summary.TaxRate)
+		// FatturaPA stores the tax rate as a percentage without the % symbol so we add it so that the conversion works
+		taxRate, err1 := num.PercentageFromString(summary.TaxRate + "%")
 		taxableAmount, err2 := num.AmountFromString(summary.TaxableAmount)
 		taxAmount, err3 := num.AmountFromString(summary.TaxAmount)
 

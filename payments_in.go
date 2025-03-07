@@ -71,21 +71,23 @@ func goblBillInvoiceAddPaymentsData(inv *bill.Invoice, paymentsData []*PaymentDa
 	}
 
 	// Set payment terms key based on conditions
-	if inv.Payment.Terms != nil {
-		// If it has installments, it's always due date
-		if hasInstallments {
+	if inv.Payment.Terms == nil {
+		inv.Payment.Terms = new(pay.Terms)
+	}
+
+	// If it has installments, it's always due date
+	if hasInstallments {
+		inv.Payment.Terms.Key = pay.TermKeyDueDate
+	} else if hasFull {
+		// If it has full but the days is 0, then it's instant, otherwise it's still due date
+		if hasZeroDays {
+			inv.Payment.Terms.Key = pay.TermKeyInstant
+		} else {
 			inv.Payment.Terms.Key = pay.TermKeyDueDate
-		} else if hasFull {
-			// If it has full but the days is 0, then it's instant, otherwise it's still due date
-			if hasZeroDays {
-				inv.Payment.Terms.Key = pay.TermKeyInstant
-			} else {
-				inv.Payment.Terms.Key = pay.TermKeyDueDate
-			}
-		} else if hasAdvance {
-			// If it only has advances, it's advanced
-			inv.Payment.Terms.Key = pay.TermKeyAdvanced
 		}
+	} else if hasAdvance {
+		// If it only has advances, it's advanced
+		inv.Payment.Terms.Key = pay.TermKeyAdvanced
 	}
 }
 
@@ -109,10 +111,7 @@ func goblBillPaymentAddAdvancePayment(payment *bill.Payment, paymentDetail *Paym
 
 	// Add payment method if available
 	if paymentDetail.Method != "" {
-		if advance.Ext == nil {
-			advance.Ext = tax.Extensions{}
-		}
-		advance.Ext[sdi.ExtKeyPaymentMeans] = cbc.Code(paymentDetail.Method)
+		setPaymentMethodAndKey(paymentDetail.Method, &advance.Ext, &advance.Key)
 	}
 
 	// Add date if available
@@ -177,18 +176,7 @@ func goblBillPaymentAddPaymentInstructions(payment *bill.Payment, paymentDetail 
 
 	// Add payment method if available
 	if paymentDetail.Method != "" {
-		if payment.Instructions.Ext == nil {
-			payment.Instructions.Ext = tax.Extensions{}
-		}
-		payment.Instructions.Ext[sdi.ExtKeyPaymentMeans] = cbc.Code(paymentDetail.Method)
-		// Find the key for the payment method code
-		keyMap := sdi.PaymentMeansExtensions()
-		for k, v := range keyMap {
-			if v == cbc.Code(paymentDetail.Method) {
-				payment.Instructions.Key = k
-				break
-			}
-		}
+		setPaymentMethodAndKey(paymentDetail.Method, &payment.Instructions.Ext, &payment.Instructions.Key)
 	}
 
 	// Add credit transfer if IBAN or BIC is available
@@ -201,5 +189,22 @@ func goblBillPaymentAddPaymentInstructions(payment *bill.Payment, paymentDetail 
 			creditTransfer.Name = paymentDetail.FinancialInstitution
 		}
 		payment.Instructions.CreditTransfer = append(payment.Instructions.CreditTransfer, &creditTransfer)
+	}
+}
+
+// setPaymentMethodAndKey sets the payment method extension and key based on the method code
+func setPaymentMethodAndKey(methodCode string, ext *tax.Extensions, key *cbc.Key) {
+	if *ext == nil {
+		*ext = tax.Extensions{}
+	}
+	(*ext)[sdi.ExtKeyPaymentMeans] = cbc.Code(methodCode)
+
+	// Find the key for the payment method code
+	keyMap := sdi.PaymentMeansExtensions()
+	for k, v := range keyMap {
+		if v == cbc.Code(methodCode) {
+			*key = k
+			break
+		}
 	}
 }

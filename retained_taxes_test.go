@@ -11,7 +11,7 @@ import (
 func TestDatiRitenuta(t *testing.T) {
 	t.Run("when retained taxes are NOT present", func(t *testing.T) {
 		t.Run("should be empty", func(t *testing.T) {
-			env := test.LoadTestFile("invoice-simple.json")
+			env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 			doc, err := test.ConvertFromGOBL(env)
 			require.NoError(t, err)
 
@@ -23,7 +23,7 @@ func TestDatiRitenuta(t *testing.T) {
 
 	t.Run("when retained taxes are present", func(t *testing.T) {
 		t.Run("should contain the correct retainted taxes", func(t *testing.T) {
-			env := test.LoadTestFile("invoice-irpef.json")
+			env := test.LoadTestFile("invoice-irpef.json", test.PathGOBLFatturaPA)
 			doc, err := test.ConvertFromGOBL(env)
 			require.NoError(t, err)
 

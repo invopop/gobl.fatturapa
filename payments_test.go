@@ -10,7 +10,7 @@ import (
 
 func TestPaymentsSimple(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-simple.json")
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
@@ -26,7 +26,7 @@ func TestPaymentsSimple(t *testing.T) {
 
 func TestPaymentsSimpleIBAN(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-simple-iban.json")
+		env := test.LoadTestFile("invoice-simple-iban.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
@@ -44,7 +44,7 @@ func TestPaymentsSimpleIBAN(t *testing.T) {
 
 func TestPayments(t *testing.T) {
 	t.Run("multiple due dates", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-irpef.json")
+		env := test.LoadTestFile("invoice-irpef.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
@@ -62,7 +62,7 @@ func TestPayments(t *testing.T) {
 	})
 
 	t.Run("advance payment", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-hotel-private.json")
+		env := test.LoadTestFile("invoice-hotel-private.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
@@ -76,7 +76,7 @@ func TestPayments(t *testing.T) {
 	})
 
 	t.Run("prepaid", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-hotel.json")
+		env := test.LoadTestFile("invoice-hotel.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 

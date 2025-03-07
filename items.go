@@ -20,6 +20,7 @@ type LineDetail struct {
 	LineNumber       string             `xml:"NumeroLinea"`
 	Description      string             `xml:"Descrizione"`
 	Quantity         string             `xml:"Quantita"`
+	Unit             string             `xml:"UnitaMisura,omitempty"`
 	UnitPrice        string             `xml:"PrezzoUnitario"`
 	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
 	TotalPrice       string             `xml:"PrezzoTotale"`
@@ -52,6 +53,7 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 			LineNumber:       strconv.Itoa(line.Index),
 			Description:      line.Item.Name,
 			Quantity:         formatAmount8(&line.Quantity),
+			Unit:             string(line.Item.Unit),
 			UnitPrice:        formatAmount8(&line.Item.Price),
 			TotalPrice:       formatAmount8(&line.Total),
 			PriceAdjustments: extractLinePriceAdjustments(line),

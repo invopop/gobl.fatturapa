@@ -11,7 +11,7 @@ import (
 func TestTransmissionData(t *testing.T) {
 	t.Run("should contain transmitting subject info", func(t *testing.T) {
 		converter := test.NewConverter()
-		env := test.LoadTestFile("invoice-simple.json")
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env, converter)
 		require.NoError(t, err)
 
@@ -28,7 +28,7 @@ func TestTransmissionData(t *testing.T) {
 		converter := test.NewConverter()
 		converter.Config.Transmitter = nil
 
-		env := test.LoadTestFile("invoice-simple.json")
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env, converter)
 		require.NoError(t, err)
 
@@ -43,7 +43,7 @@ func TestTransmissionData(t *testing.T) {
 	t.Run("should set codice destinatario to 0000000 if customer is Italian with PEC", func(t *testing.T) {
 		converter := test.NewConverter()
 
-		env := test.LoadTestFile("invoice-simple-with-pec.json")
+		env := test.LoadTestFile("invoice-simple-with-pec.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env, converter)
 		require.NoError(t, err)
 

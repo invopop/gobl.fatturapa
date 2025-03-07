@@ -84,6 +84,7 @@
 				<NumeroLinea>1</NumeroLinea>
 				<Descrizione>Development services</Descrizione>
 				<Quantita>20.00</Quantita>
+				<UnitaMisura>h</UnitaMisura>
 				<PrezzoUnitario>90.00</PrezzoUnitario>
 				<ScontoMaggiorazione>
 					<Tipo>SC</Tipo>
@@ -97,6 +98,7 @@
 				<NumeroLinea>2</NumeroLinea>
 				<Descrizione>Special Untaxed Work</Descrizione>
 				<Quantita>1.00</Quantita>
+				<UnitaMisura>h</UnitaMisura>
 				<PrezzoUnitario>100.00</PrezzoUnitario>
 				<PrezzoTotale>100.00</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
@@ -133,7 +135,7 @@
 					<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
 				</ds:Transforms>
 				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></ds:DigestMethod>
-				<ds:DigestValue>nB3baoH96GRJYujC5pByXmCuvoZcvaex+lAgMqHZR2WkUjPliguWvEi0ChP+2XU1iTWf0Gdqaah4x212XQqgxQ==</ds:DigestValue>
+				<ds:DigestValue>p1A1Rn9Wyyga5Oy7nxcLfA/vCJ2G8u3q1dqDjyNcJffltnas4xPsDbsaZBMEHXcqXX4Z9odR9iWWDNj2/IqdIA==</ds:DigestValue>
 			</ds:Reference>
 			<ds:Reference URI="#Certificate-679a2f25-7483-11ec-9722-7ea2cb436ff6">
 				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></ds:DigestMethod>
@@ -144,7 +146,7 @@
 				<ds:DigestValue>7Tj/Vr2iDe5KuUvZfrT8ntgjkAtz6zIeztpC/liVkbigGbZLGFHcMpSsVtsRc+WIqqwsB7AwFVjqjSIKIDI3uw==</ds:DigestValue>
 			</ds:Reference>
 		</ds:SignedInfo>
-		<ds:SignatureValue Id="Signature-679a2f25-7483-11ec-9722-7ea2cb436ff6-SignatureValue">BDkaOoLAkkq5QUvibjsidAyB4bITNJQcE7sqjsJlKCLY+N4m1DSRGU4uMKDvnzR6ZKronzWJsg7HAIizsqj9hpZZvJ5OvsTZ4skQ+9tOWCgbInR+gCXn9UYBJ03NnCgrsKcCWJ/I6qGqC/tmi50YiXC4ApQFfQ0GeOtqnrCB4UIBzT5LOh2JnMGntOcvyiRNRM/YlMVLDNa/cHX1P00n2QriRKz4AeyYAhuT/gPZkx7Wb9e9ylaHxmVFV7nE0y9+YXRWVWb9PUUfTbRgZfKthyi8NvOvmvAw+K0yY/z+Qv6Txws+uAz4UhYxLj8LXZ5aKQzWvGk/GMf5pZLe4LeDig==</ds:SignatureValue>
+		<ds:SignatureValue Id="Signature-679a2f25-7483-11ec-9722-7ea2cb436ff6-SignatureValue">j1YBZTrNPEeIEmsTjl9k09+9D9CCtZ4piXu/p6C7eHnGTYrW8l2FgTe93msNaFDGo+cImC+8bLOSUiqmcHBWMwzlVSZbtnOeGAbR+qj5raU01nzyE9QqrtjufYYZt0xK87BICCgAxps8fv1FBqJaiLvy20QRpvJBTi/nxkm7GZDKrVW2wqbWdNqEXv+wHIs6m/kWQ8/Mm8Ly5WgIvz1gFlxSUtwVPrz/85k2q5ZmuSN86gpqA/UldFHH1ZIKWT0ad24sB0U5iynsQFrhqS3LPJfiW/Otpg5dpggqR3v7wSNAT6z1IB/4NgfCsyV4KOA4OYEzflUGgJLPkUY9LFNY3Q==</ds:SignatureValue>
 		<ds:KeyInfo Id="Certificate-679a2f25-7483-11ec-9722-7ea2cb436ff6">
 			<ds:X509Data>
 				<ds:X509Certificate>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</ds:X509Certificate>

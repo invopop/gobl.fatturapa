@@ -19,6 +19,10 @@ func goblBillInvoiceAddTransmission(inv *bill.Invoice, dt *TransmissionData) {
 
 	inv.Tax.Ext[sdi.ExtKeyFormat] = cbc.Code(dt.TransmissionFormat)
 
+	if dt.TransmissionFormat == "FPA12" {
+		inv.Tags.SetTags(tax.TagB2G)
+	}
+
 	if inv.Customer == nil {
 		inv.Customer = &org.Party{}
 	}
@@ -27,7 +31,7 @@ func goblBillInvoiceAddTransmission(inv *bill.Invoice, dt *TransmissionData) {
 		inv.Customer.Inboxes = []*org.Inbox{}
 	}
 
-	if dt.RecipientCode != "" && dt.RecipientCode != "XXXXXXX" && dt.RecipientCode != "000000" {
+	if dt.RecipientCode != "" && dt.RecipientCode != "XXXXXXX" && dt.RecipientCode != "0000000" {
 		inv.Customer.Inboxes = append(inv.Customer.Inboxes,
 			&org.Inbox{
 				Key:  sdi.KeyInboxCode,

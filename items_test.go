@@ -10,7 +10,7 @@ import (
 
 func TestDettaglioLinee(t *testing.T) {
 	t.Run("should contain the line info", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-simple.json")
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
@@ -39,7 +39,7 @@ func TestDettaglioLinee(t *testing.T) {
 
 func TestDatiRiepilogo(t *testing.T) {
 	t.Run("should contain the tax summary info", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-simple.json")
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 

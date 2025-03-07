@@ -1,10 +1,10 @@
 {
 	"$schema": "https://gobl.org/draft-0/envelope",
 	"head": {
-		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
+		"uuid": "01957104-0f5d-7be8-8d50-6ad1942562e2",
 		"dig": {
 			"alg": "sha256",
-			"val": "1718e6ada52f6443dc8831d38f556267fe1f2ffe94aceffd510d689b63a2cdbd"
+			"val": "ff5d7900367e72dd18c2a74da7eab8b377cd39302d767ea03df0d58d81f41a87"
 		}
 	},
 	"doc": {
@@ -13,14 +13,13 @@
 		"$addons": [
 			"it-sdi-v1"
 		],
-		"uuid": "0190caea-c344-7afa-a530-252b67108175",
+		"uuid": "01957104-0f5d-7c03-8316-02c1a2da15cb",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
 		"issue_date": "2023-05-21",
 		"currency": "EUR",
 		"tax": {
-			"prices_include": "VAT",
 			"ext": {
 				"it-sdi-document-type": "TD01",
 				"it-sdi-format": "FPR12"
@@ -43,7 +42,6 @@
 				}
 			],
 			"registration": {
-				"currency": "EUR",
 				"office": "RM",
 				"entry": "123456"
 			},
@@ -77,7 +75,7 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "1",
+				"quantity": "1.00",
 				"item": {
 					"name": "Tassa di Soggiorno",
 					"price": "1.00"
@@ -86,7 +84,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"percent": "0.00%",
 						"ext": {
 							"it-sdi-exempt": "N1"
 						}
@@ -96,35 +94,35 @@
 			},
 			{
 				"i": 2,
-				"quantity": "2",
+				"quantity": "2.00",
 				"item": {
 					"name": "Camera Matrimoniale",
-					"price": "125.00"
+					"price": "113.6364"
 				},
-				"sum": "250.00",
+				"sum": "227.2728",
 				"discounts": [
 					{
-						"reason": "Sconto",
-						"amount": "10.00"
+						"amount": "9.0910"
 					}
 				],
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "intermediate",
-						"percent": "10.0%"
+						"percent": "10.00%"
 					}
 				],
-				"total": "240.00"
+				"total": "218.1818"
 			}
 		],
 		"payment": {
+			"terms": {
+				"key": "advanced"
+			},
 			"advances": [
 				{
 					"date": "2023-05-01",
 					"key": "card",
-					"description": "deposit",
-					"percent": "100%",
+					"description": "Advance payment",
 					"amount": "241.00",
 					"ext": {
 						"it-sdi-payment-means": "MP08"
@@ -133,8 +131,7 @@
 			]
 		},
 		"totals": {
-			"sum": "241.00",
-			"tax_included": "21.82",
+			"sum": "219.18",
 			"total": "219.18",
 			"taxes": {
 				"categories": [
@@ -142,17 +139,16 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "exempt",
 								"ext": {
 									"it-sdi-exempt": "N1"
 								},
 								"base": "1.00",
+								"percent": "0.00%",
 								"amount": "0.00"
 							},
 							{
-								"key": "intermediate",
 								"base": "218.18",
-								"percent": "10.0%",
+								"percent": "10.00%",
 								"amount": "21.82"
 							}
 						],

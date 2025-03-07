@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/invopop/gobl/addons/it/sdi"
@@ -11,6 +12,54 @@ import (
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 )
+
+// Map of document types to their corresponding tags
+var documentTypeTags = map[string][]cbc.Key{
+	// Standard invoices
+	"TD01": {},
+	// Advance or down payment
+	"TD02": {tax.TagPartial},
+	// Advance or down payment on freelance invoice
+	"TD03": {tax.TagPartial, sdi.TagFreelance},
+	// Credit notes
+	"TD04": {},
+	// Debit notes
+	"TD05": {},
+	// Freelancer invoice
+	"TD06": {sdi.TagFreelance},
+	// Simplified invoice
+	"TD07": {tax.TagSimplified},
+	// Simplified credit note
+	"TD08": {tax.TagSimplified},
+	// Simplified debit note
+	"TD09": {tax.TagSimplified},
+	// Reverse charge
+	"TD16": {tax.TagSelfBilled, tax.TagReverseCharge},
+	// Self-billed import
+	"TD17": {tax.TagSelfBilled, sdi.TagImport},
+	// Self-billed EU goods import
+	"TD18": {tax.TagSelfBilled, sdi.TagImport, sdi.TagGoodsEU},
+	// Self-billed goods import
+	"TD19": {tax.TagSelfBilled, sdi.TagImport, sdi.TagGoods},
+	// Self-billed regularization
+	"TD20": {tax.TagSelfBilled, sdi.TagRegularization},
+	// Self-billed ceiling exceeded
+	"TD21": {tax.TagSelfBilled, sdi.TagCeilingExceeded},
+	// Self-billed goods extracted
+	"TD22": {tax.TagSelfBilled, sdi.TagGoodsExtracted},
+	// Self-billed goods with tax
+	"TD23": {tax.TagSelfBilled, sdi.TagGoodsWithTax},
+	// Deferred invoice
+	"TD24": {sdi.TagDeferred},
+	// Deferred invoice third period
+	"TD25": {sdi.TagDeferred, sdi.TagThirdPeriod},
+	// Depreciable assets
+	"TD26": {sdi.TagDepreciableAssets},
+	// Self-billed for self consumption
+	"TD27": {tax.TagSelfBilled},
+	// Self-billed San Marino paper
+	"TD28": {tax.TagSelfBilled, sdi.TagSanMarinoPaper},
+}
 
 // goblBillInvoiceAddBody adds a body to the GOBL invoice
 func goblBillInvoiceAddBody(inv *bill.Invoice, body *Body) error {
@@ -67,14 +116,8 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 		return nil
 	}
 
-	// Add tax extension key
-	if inv.Tax == nil {
-		inv.Tax = new(bill.Tax)
-	}
-	if inv.Tax.Ext == nil {
-		inv.Tax.Ext = tax.Extensions{}
-	}
-	inv.Tax.Ext[sdi.ExtKeyDocumentType] = cbc.Code(doc.DocumentType)
+	// Set invoice type based on document type
+	goblBillInvoiceAddDocumentType(inv, doc.DocumentType)
 
 	// Add currency
 	inv.Currency = currency.Code(doc.Currency)
@@ -88,13 +131,8 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 
 	// Add number
 	// Check if the number contains a series (format: "SERIES-CODE")
-	parts := strings.Split(doc.Number, "-")
-	if len(parts) > 1 {
-		inv.Series = cbc.Code(parts[0])
-		inv.Code = cbc.Code(parts[1])
-	} else {
-		inv.Code = cbc.Code(doc.Number)
-	}
+	fmt.Printf("doc.Number: %v\n", doc.Number)
+	parseSeriesAndCode(doc.Number, &inv.Series, &inv.Code)
 
 	// Add totals payable
 	if inv.Totals == nil {
@@ -119,6 +157,51 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	goblBillTotalsAddRetainedTaxes(inv.Totals, doc.RetainedTaxes)
 
 	return nil
+}
+
+// goblBillInvoiceAddDocumentType adds document type information to the GOBL invoice
+func goblBillInvoiceAddDocumentType(inv *bill.Invoice, documentType string) {
+	if inv == nil || documentType == "" {
+		return
+	}
+
+	// Add tax extension key
+	if inv.Tax == nil {
+		inv.Tax = new(bill.Tax)
+	}
+	if inv.Tax.Ext == nil {
+		inv.Tax.Ext = tax.Extensions{}
+	}
+	inv.Tax.Ext[sdi.ExtKeyDocumentType] = cbc.Code(documentType)
+
+	// Set invoice type based on document type
+	switch documentType {
+	case "TD01", "TD02", "TD03", "TD06", "TD07", "TD16", "TD17", "TD18", "TD19", "TD20", "TD21", "TD22", "TD23", "TD24", "TD25", "TD26", "TD27", "TD28":
+		inv.Type = bill.InvoiceTypeStandard
+	case "TD04", "TD08":
+		inv.Type = bill.InvoiceTypeCreditNote
+	case "TD05", "TD09":
+		inv.Type = bill.InvoiceTypeDebitNote
+	default:
+		// Default to standard if not recognized
+		inv.Type = bill.InvoiceTypeStandard
+	}
+
+	// Get tags for the document type
+	if tags, ok := documentTypeTags[documentType]; ok && len(tags) > 0 {
+		// Get existing tags
+		existingTags := inv.GetTags()
+
+		// Add new tags
+		for _, tag := range tags {
+			if !tag.In(existingTags...) {
+				existingTags = append(existingTags, tag)
+			}
+		}
+
+		// Set the updated tags
+		inv.SetTags(existingTags...)
+	}
 }
 
 // goblBillInvoiceAddStampDuty adds stamp duty information from the FatturaPA document to the GOBL invoice
@@ -147,7 +230,8 @@ func goblBillInvoiceAddPriceAdjustments(inv *bill.Invoice, adjustments []*PriceA
 
 	for _, adj := range adjustments {
 		amount, err1 := num.AmountFromString(adj.Amount)
-		percent, err2 := num.PercentageFromString(adj.Percent)
+		// FatturaPA stores the percentage as a string without the % symbol so we add it so that the conversion works
+		percent, err2 := num.PercentageFromString(adj.Percent + "%")
 
 		if err1 != nil && err2 != nil {
 			// Skip if both amount and percent are invalid
@@ -216,14 +300,19 @@ func goblOrgDocumentRefFromDocumentRef(ref *DocumentRef) *org.DocumentRef {
 		return nil
 	}
 
-	orgRef := &org.DocumentRef{
-		Code: cbc.Code(ref.Code),
+	orgRef := &org.DocumentRef{}
+
+	// Parse series and code
+	parseSeriesAndCode(ref.Code, &orgRef.Series, &orgRef.Code)
+
+	// Add issue date
+	if ref.IssueDate != "" {
+		date, err := parseDate(ref.IssueDate)
+		if err != nil {
+			return nil
+		}
+		orgRef.IssueDate = &date
 	}
-	date, err := parseDate(ref.IssueDate)
-	if err != nil {
-		return nil
-	}
-	orgRef.IssueDate = &date
 
 	// Add identities
 	if ref.LineCode != "" {
@@ -255,4 +344,19 @@ func goblOrgDocumentRefFromDocumentRef(ref *DocumentRef) *org.DocumentRef {
 	}
 
 	return orgRef
+}
+
+// parseSeriesAndCode parses a document number into series and code components
+// If the number contains a hyphen (format: "SERIES-CODE"), it will split the string
+// and set the series and code accordingly. Otherwise, it will set only the code.
+func parseSeriesAndCode(number string, series *cbc.Code, code *cbc.Code) {
+	if code != nil {
+		*code = cbc.Code(number)
+	}
+
+	parts := strings.Split(number, "-")
+	if len(parts) > 1 && series != nil && code != nil {
+		*series = cbc.Code(parts[0])
+		*code = cbc.Code(parts[1])
+	}
 }

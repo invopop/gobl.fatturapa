@@ -1,0 +1,241 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "01957104-0f49-734a-b497-b494a4c44974",
+		"dig": {
+			"alg": "sha256",
+			"val": "f80615521ce292614f019e9835fe753bc06ea26d61d184726d445ed759c1db9c"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"uuid": "01957104-0f49-738d-b60a-df866e009265",
+		"type": "standard",
+		"series": "INV4",
+		"code": "000008",
+		"issue_date": "2025-02-06",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
+		},
+		"supplier": {
+			"name": "Luxury Apartments",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"street": "Via Roma 15",
+					"locality": "Milano",
+					"code": "20124",
+					"country": "IT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "luxuryapartments@example.com"
+				}
+			],
+			"telephones": [
+				{
+					"num": "1234567890"
+				}
+			],
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
+		},
+		"customer": {
+			"name": "ABC SRL",
+			"tax_id": {
+				"country": "IT",
+				"code": "09876543217"
+			},
+			"addresses": [
+				{
+					"street": "Via Verdi 14",
+					"locality": "TRUCCAZZANO",
+					"code": "20060",
+					"country": "IT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2.00",
+				"item": {
+					"name": "22/01/2025 - 23/01/2025: (2) Suite Topazio - Luxury Apartment in Via Roma",
+					"price": "76.69"
+				},
+				"sum": "153.38",
+				"discounts": [
+					{
+						"percent": "50.00%",
+						"amount": "76.69"
+					},
+					{
+						"percent": "50.00%",
+						"amount": "76.69"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "0.00%",
+						"ext": {
+							"it-sdi-exempt": "N1"
+						}
+					}
+				],
+				"total": "0.00"
+			},
+			{
+				"i": 2,
+				"quantity": "2.00",
+				"item": {
+					"name": "23/01/2025: ACCOMMODATION",
+					"price": "69.7182"
+				},
+				"sum": "139.4364",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "10.00%"
+					}
+				],
+				"total": "139.4364"
+			},
+			{
+				"i": 3,
+				"quantity": "1.00",
+				"item": {
+					"name": "15/01/2025: cleaning cost",
+					"price": "70.00"
+				},
+				"sum": "70.00",
+				"discounts": [
+					{
+						"percent": "10.00%",
+						"amount": "7.00"
+					},
+					{
+						"percent": "90.00%",
+						"amount": "63.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "0.00%",
+						"ext": {
+							"it-sdi-exempt": "N1"
+						}
+					}
+				],
+				"total": "0.00"
+			},
+			{
+				"i": 4,
+				"quantity": "1.00",
+				"item": {
+					"name": "03/02/2025: cleaning",
+					"price": "63.6364"
+				},
+				"sum": "63.6364",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "10.00%"
+					}
+				],
+				"total": "63.6364"
+			},
+			{
+				"i": 5,
+				"quantity": "4.00",
+				"item": {
+					"name": "22/01/2025 - 23/01/2025: Tourist tax",
+					"price": "6.30"
+				},
+				"sum": "25.20",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"percent": "0.00%",
+						"ext": {
+							"it-sdi-exempt": "N1"
+						}
+					}
+				],
+				"total": "25.20"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "advanced"
+			},
+			"advances": [
+				{
+					"date": "2025-01-15",
+					"key": "cash",
+					"description": "Advance payment",
+					"amount": "223.38",
+					"ext": {
+						"it-sdi-payment-means": "MP01"
+					}
+				},
+				{
+					"date": "2025-02-02",
+					"key": "cash",
+					"description": "Advance payment",
+					"amount": "25.20",
+					"ext": {
+						"it-sdi-payment-means": "MP01"
+					}
+				}
+			]
+		},
+		"totals": {
+			"sum": "228.27",
+			"total": "228.27",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"ext": {
+									"it-sdi-exempt": "N1"
+								},
+								"base": "25.20",
+								"percent": "0.00%",
+								"amount": "0.00"
+							},
+							{
+								"base": "203.07",
+								"percent": "10.00%",
+								"amount": "20.31"
+							}
+						],
+						"amount": "20.31"
+					}
+				],
+				"sum": "20.31"
+			},
+			"tax": "20.31",
+			"total_with_tax": "248.58",
+			"payable": "248.58",
+			"advance": "248.58",
+			"due": "0.00"
+		}
+	}
+}

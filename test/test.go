@@ -95,8 +95,8 @@ func ConvertToGOBL(doc []byte, converter ...*fatturapa.Converter) (*gobl.Envelop
 
 // GetDataPath returns the path where test can find data files
 // to be used in tests
-func GetDataPath() string {
-	return getRootFolder() + "/test/data/"
+func GetDataPath(path string) string {
+	return getRootFolder() + "/test/data/" + "/" + path + "/"
 }
 
 // ModifyInvoice takes a GOBL envelope and modifies the invoice
@@ -117,8 +117,8 @@ func ModifyInvoice(env *gobl.Envelope, modifyFunc func(*bill.Invoice)) {
 }
 
 // LoadTestFile loads a test file from the test/data folder as a GOBL envelope
-func LoadTestFile(file string) *gobl.Envelope {
-	path := filepath.Join(GetDataPath(), file)
+func LoadTestFile(file string, testPath string) *gobl.Envelope {
+	path := filepath.Join(GetDataPath(testPath), file)
 	f, err := os.Open(path)
 	if err != nil {
 		panic(err)
