@@ -1,7 +1,6 @@
 package fatturapa
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/invopop/gobl/addons/it/sdi"
@@ -67,14 +66,23 @@ func goblBillInvoiceAddBody(inv *bill.Invoice, body *Body) error {
 		return nil
 	}
 
+	// Add general data
 	if err := goblBillInvoiceAddGeneralData(inv, body.GeneralData); err != nil {
 		return err
 	}
 
-	if err := goblBillInvoiceAddGoodsServices(inv, body.GoodsServices); err != nil {
+	// Extract retained taxes from the general data
+	var retainedTaxes []*RetainedTax
+	if body.GeneralData != nil && body.GeneralData.Document != nil {
+		retainedTaxes = body.GeneralData.Document.RetainedTaxes
+	}
+
+	// Add goods and services, passing the retained taxes
+	if err := goblBillInvoiceAddGoodsServices(inv, body.GoodsServices, retainedTaxes); err != nil {
 		return err
 	}
 
+	// Add payment data
 	goblBillInvoiceAddPaymentsData(inv, body.PaymentsData)
 
 	return nil
@@ -86,7 +94,7 @@ func goblBillInvoiceAddGeneralData(inv *bill.Invoice, generalData *GeneralData) 
 		return nil
 	}
 
-	// Add document data
+	// Add general document data
 	if err := goblBillInvoiceAddGeneralDocumentData(inv, generalData.Document); err != nil {
 		return err
 	}
@@ -131,7 +139,6 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 
 	// Add number
 	// Check if the number contains a series (format: "SERIES-CODE")
-	fmt.Printf("doc.Number: %v\n", doc.Number)
 	parseSeriesAndCode(doc.Number, &inv.Series, &inv.Code)
 
 	// Add totals payable
@@ -153,8 +160,8 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	// Add invoice reasons
 	goblBillInvoiceAddReasons(inv, doc.Reasons)
 
-	// Add retained taxes
-	goblBillTotalsAddRetainedTaxes(inv.Totals, doc.RetainedTaxes)
+	// Add retained taxes to totals
+	// goblBillInvoiceAddRetainedTaxes(inv, doc.RetainedTaxes)
 
 	return nil
 }

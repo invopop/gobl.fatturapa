@@ -3,22 +3,18 @@
 	"$addons": [
 		"it-sdi-v1"
 	],
-	"uuid": "00000000-0000-0000-0000-000000000000",
-	"type": "credit-note",
-	"series": "CN",
-	"code": "001",
-	"issue_date": "2024-10-09",
-	"currency": "EUR",
-	"preceding": [
-		{
-			"issue_date": "2023-03-02",
-			"series": "SAMPLE",
-			"code": "001"
-		}
+	"$tags": [
+		"freelance"
 	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"series": "SAMPLE",
+	"code": "001",
+	"issue_date": "2023-03-02",
+	"currency": "EUR",
 	"tax": {
 		"ext": {
-			"it-sdi-document-type": "TD04",
+			"it-sdi-document-type": "TD06",
 			"it-sdi-format": "FPR12"
 		}
 	},
@@ -54,7 +50,7 @@
 			"entry": "123456"
 		},
 		"ext": {
-			"it-sdi-fiscal-regime": "RF02"
+			"it-sdi-fiscal-regime": "RF01"
 		}
 	},
 	"customer": {
@@ -65,8 +61,8 @@
 		},
 		"inboxes": [
 			{
-				"key": "it-sdi-code",
-				"code": "ABCDEF1"
+				"key": "it-sdi-pec",
+				"email": "fooo@inbox.com"
 			}
 		],
 		"addresses": [

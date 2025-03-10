@@ -25,6 +25,7 @@ type LineDetail struct {
 	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
 	TotalPrice       string             `xml:"PrezzoTotale"`
 	TaxRate          string             `xml:"AliquotaIVA"`
+	Retained         string             `xml:"Ritenuta,omitempty"`
 	TaxNature        string             `xml:"Natura,omitempty"`
 }
 
@@ -58,11 +59,19 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 			TotalPrice:       formatAmount8(&line.Total),
 			PriceAdjustments: extractLinePriceAdjustments(line),
 		}
+
+		// Process taxes
 		if len(line.Taxes) > 0 {
-			vatTax := line.Taxes.Get(tax.CategoryVAT)
-			if vatTax != nil {
-				d.TaxRate = formatPercentageWithZero(vatTax.Percent)
-				d.TaxNature = exemptExtensionCode(vatTax.Ext)
+			// Process all taxes in a single loop
+			for _, t := range line.Taxes {
+				// Handle VAT tax
+				if t.Category == tax.CategoryVAT {
+					d.TaxRate = formatPercentageWithZero(t.Percent)
+					d.TaxNature = exemptExtensionCode(t.Ext)
+				} else if t.Ext != nil && t.Ext.Has(sdi.ExtKeyRetained) {
+					// Check for retained taxes
+					d.Retained = "SI"
+				}
 			}
 		}
 
@@ -94,12 +103,18 @@ func generateTaxSummary(inv *bill.Invoice) []*TaxSummary {
 	}
 
 	for _, rateTotal := range vatRateTotals {
+		// Get tax liability from extensions if present
+		var taxLiability string
+		if rateTotal.Ext != nil && rateTotal.Ext.Has(sdi.ExtKeyVATLiability) {
+			taxLiability = rateTotal.Ext[sdi.ExtKeyVATLiability].String()
+		}
+
 		dr = append(dr, &TaxSummary{
 			TaxRate:        formatPercentageWithZero(rateTotal.Percent),
 			TaxNature:      exemptExtensionCode(rateTotal.Ext),
 			TaxableAmount:  formatAmount2(&rateTotal.Base),
 			TaxAmount:      formatAmount2(&rateTotal.Amount),
-			TaxLiability:   rateTotal.Ext[sdi.ExtKeyVATLiability].String(),
+			TaxLiability:   taxLiability,
 			LegalReference: findRiferimentoNormativo(rateTotal),
 		})
 	}

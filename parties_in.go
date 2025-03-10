@@ -6,6 +6,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
 )
 
@@ -51,7 +52,9 @@ func goblOrgPartyAddIdentity(party *org.Party, identity *Identity) {
 	}
 
 	if party.TaxID == nil {
-		party.TaxID = &tax.Identity{}
+		party.TaxID = &tax.Identity{
+			Country: l10n.TaxCountryCode(l10n.IT),
+		}
 	}
 
 	if identity.TaxID != nil {
@@ -59,6 +62,16 @@ func goblOrgPartyAddIdentity(party *org.Party, identity *Identity) {
 		if identity.TaxID.Code != "" && identity.TaxID.Code != "0000000" {
 			party.TaxID.Code = cbc.Code(identity.TaxID.Code)
 		}
+	}
+
+	if identity.FiscalCode != "" {
+		if party.Identities == nil {
+			party.Identities = []*org.Identity{}
+		}
+		party.Identities = append(party.Identities, &org.Identity{
+			Key:  it.IdentityKeyFiscalCode,
+			Code: cbc.Code(identity.FiscalCode),
+		})
 	}
 
 	if identity.FiscalRegime != "" {

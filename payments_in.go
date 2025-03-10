@@ -79,9 +79,9 @@ func goblBillInvoiceAddPaymentsData(inv *bill.Invoice, paymentsData []*PaymentDa
 	if hasInstallments {
 		inv.Payment.Terms.Key = pay.TermKeyDueDate
 	} else if hasFull {
-		// If it has full but the days is 0, then it's instant, otherwise it's still due date
+		// If it has full but the days is 0, then we do not know so we set pending, otherwise it's still due date
 		if hasZeroDays {
-			inv.Payment.Terms.Key = pay.TermKeyInstant
+			inv.Payment.Terms.Key = pay.TermKeyPending
 		} else {
 			inv.Payment.Terms.Key = pay.TermKeyDueDate
 		}

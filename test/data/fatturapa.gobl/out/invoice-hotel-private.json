@@ -1,200 +1,189 @@
 {
-	"$schema": "https://gobl.org/draft-0/envelope",
-	"head": {
-		"uuid": "01957104-0f54-7bfb-91cb-191cd5fc5f36",
-		"dig": {
-			"alg": "sha256",
-			"val": "e57b310d80d6fbd87974f12b9b6aa571ffc32de257d3d02df7c516d28a10ee17"
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"series": "SAMPLE",
+	"code": "003",
+	"issue_date": "2023-05-21",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD01",
+			"it-sdi-format": "FPR12"
 		}
 	},
-	"doc": {
-		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"$regime": "IT",
-		"$addons": [
-			"it-sdi-v1"
+	"supplier": {
+		"name": "Hotel California",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"addresses": [
+			{
+				"num": "102",
+				"street": "Via California",
+				"locality": "Palermo",
+				"region": "PA",
+				"code": "33213",
+				"country": "IT"
+			}
 		],
-		"uuid": "01957104-0f54-7c17-a0b2-0fe4cb7793bc",
-		"type": "standard",
-		"series": "SAMPLE",
-		"code": "003",
-		"issue_date": "2023-05-21",
-		"currency": "EUR",
-		"tax": {
-			"ext": {
-				"it-sdi-document-type": "TD01",
-				"it-sdi-format": "FPR12"
-			}
+		"registration": {
+			"office": "RM",
+			"entry": "123456"
 		},
-		"supplier": {
-			"name": "Hotel California",
-			"tax_id": {
-				"country": "IT",
-				"code": "12345678903"
-			},
-			"addresses": [
-				{
-					"num": "102",
-					"street": "Via California",
-					"locality": "Palermo",
-					"region": "PA",
-					"code": "33213",
-					"country": "IT"
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
+		}
+	},
+	"customer": {
+		"name": "John Doe",
+		"tax_id": {
+			"country": "GB"
+		},
+		"people": [
+			{
+				"name": {
+					"given": "John",
+					"surname": "Doe"
 				}
-			],
-			"registration": {
-				"office": "RM",
-				"entry": "123456"
-			},
-			"ext": {
-				"it-sdi-fiscal-regime": "RF01"
 			}
-		},
-		"customer": {
-			"name": "John Doe",
-			"tax_id": {
+		],
+		"addresses": [
+			{
+				"num": "23",
+				"street": "Main Street",
+				"locality": "London",
 				"country": "GB"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1.00",
+			"item": {
+				"name": "Tassa di Soggiorno",
+				"price": "1.00"
 			},
-			"people": [
+			"sum": "1.00",
+			"taxes": [
 				{
-					"name": {
-						"given": "John",
-						"surname": "Doe"
+					"cat": "VAT",
+					"percent": "0.00%",
+					"ext": {
+						"it-sdi-exempt": "N1"
 					}
 				}
 			],
-			"addresses": [
+			"total": "1.00"
+		},
+		{
+			"i": 2,
+			"quantity": "1.00",
+			"item": {
+				"name": "Camera Matrimoniale",
+				"price": "113.6364"
+			},
+			"sum": "113.6364",
+			"taxes": [
 				{
-					"num": "23",
-					"street": "Main Street",
-					"locality": "London",
-					"country": "GB"
+					"cat": "VAT",
+					"percent": "10.00%"
+				}
+			],
+			"total": "113.6364"
+		},
+		{
+			"i": 3,
+			"quantity": "10.00",
+			"item": {
+				"name": "Camera Matrimoniale",
+				"price": "68.1818"
+			},
+			"sum": "681.8180",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "10.00%"
+				}
+			],
+			"total": "681.8180"
+		}
+	],
+	"payment": {
+		"terms": {
+			"key": "due-date",
+			"due_dates": [
+				{
+					"date": "2023-03-02",
+					"amount": "200.00"
+				},
+				{
+					"date": "2023-04-02",
+					"amount": "200.00"
 				}
 			]
 		},
-		"lines": [
+		"advances": [
 			{
-				"i": 1,
-				"quantity": "1.00",
-				"item": {
-					"name": "Tassa di Soggiorno",
-					"price": "1.00"
-				},
-				"sum": "1.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"percent": "0.00%",
-						"ext": {
-							"it-sdi-exempt": "N1"
-						}
-					}
-				],
-				"total": "1.00"
-			},
-			{
-				"i": 2,
-				"quantity": "1.00",
-				"item": {
-					"name": "Camera Matrimoniale",
-					"price": "113.6364"
-				},
-				"sum": "113.6364",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"percent": "10.00%"
-					}
-				],
-				"total": "113.6364"
-			},
-			{
-				"i": 3,
-				"quantity": "10.00",
-				"item": {
-					"name": "Camera Matrimoniale",
-					"price": "68.1818"
-				},
-				"sum": "681.8180",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"percent": "10.00%"
-					}
-				],
-				"total": "681.8180"
+				"date": "2023-05-01",
+				"key": "card",
+				"description": "Advance payment",
+				"amount": "29.00",
+				"ext": {
+					"it-sdi-payment-means": "MP08"
+				}
 			}
 		],
-		"payment": {
-			"terms": {
-				"key": "due-date",
-				"due_dates": [
-					{
-						"date": "2023-03-02",
-						"amount": "200.00"
-					},
-					{
-						"date": "2023-04-02",
-						"amount": "200.00"
-					}
-				]
-			},
-			"advances": [
+		"instructions": {
+			"key": "credit-transfer",
+			"credit_transfer": [
 				{
-					"date": "2023-05-01",
-					"key": "card",
-					"description": "Advance payment",
-					"amount": "29.00",
-					"ext": {
-						"it-sdi-payment-means": "MP08"
-					}
+					"iban": "IT60X0542811101000000123456",
+					"bic": "BCITITMM",
+					"name": "BANCA POPOLARE DI MILANO"
 				}
 			],
-			"instructions": {
-				"key": "credit-transfer",
-				"credit_transfer": [
-					{
-						"iban": "IT60X0542811101000000123456",
-						"bic": "BCITITMM",
-						"name": "BANCA POPOLARE DI MILANO"
-					}
-				],
-				"ext": {
-					"it-sdi-payment-means": "MP05"
-				}
+			"ext": {
+				"it-sdi-payment-means": "MP05"
 			}
-		},
-		"totals": {
-			"sum": "796.45",
-			"total": "796.45",
-			"taxes": {
-				"categories": [
-					{
-						"code": "VAT",
-						"rates": [
-							{
-								"ext": {
-									"it-sdi-exempt": "N1"
-								},
-								"base": "1.00",
-								"percent": "0.00%",
-								"amount": "0.00"
-							},
-							{
-								"base": "795.45",
-								"percent": "10.00%",
-								"amount": "79.55"
-							}
-						],
-						"amount": "79.55"
-					}
-				],
-				"sum": "79.55"
-			},
-			"tax": "79.55",
-			"total_with_tax": "876.00",
-			"payable": "876.00",
-			"advance": "29.00",
-			"due": "847.00"
 		}
+	},
+	"totals": {
+		"sum": "796.45",
+		"total": "796.45",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"ext": {
+								"it-sdi-exempt": "N1"
+							},
+							"base": "1.00",
+							"percent": "0.00%",
+							"amount": "0.00"
+						},
+						{
+							"base": "795.45",
+							"percent": "10.00%",
+							"amount": "79.55"
+						}
+					],
+					"amount": "79.55"
+				}
+			],
+			"sum": "79.55"
+		},
+		"tax": "79.55",
+		"total_with_tax": "876.00",
+		"payable": "876.00",
+		"advance": "29.00",
+		"due": "847.00"
 	}
 }

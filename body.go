@@ -223,11 +223,13 @@ func extractPriceAdjustments(inv *bill.Invoice) []*PriceAdjustment {
 	}
 
 	for _, charge := range inv.Charges {
-		priceAdjustments = append(priceAdjustments, &PriceAdjustment{
-			Type:    scontoMaggiorazioneTypeCharge,
-			Percent: formatPercentage(charge.Percent),
-			Amount:  formatAmount8(&charge.Amount),
-		})
+		if charge.Key != bill.ChargeKeyStampDuty {
+			priceAdjustments = append(priceAdjustments, &PriceAdjustment{
+				Type:    scontoMaggiorazioneTypeCharge,
+				Percent: formatPercentage(charge.Percent),
+				Amount:  formatAmount8(&charge.Amount),
+			})
+		}
 	}
 
 	return priceAdjustments

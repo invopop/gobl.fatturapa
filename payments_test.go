@@ -69,7 +69,7 @@ func TestPayments(t *testing.T) {
 		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
-		assert.Equal(t, "TP01", dp.Conditions)
+		assert.Equal(t, "TP03", dp.Conditions)
 		assert.Len(t, dp.Payments, 1)
 		assert.Equal(t, "MP08", dp.Payments[0].Method)
 		assert.Equal(t, "29.00", dp.Payments[0].Amount)

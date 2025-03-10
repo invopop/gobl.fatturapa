@@ -11,6 +11,7 @@ import (
 	"encoding/xml"
 
 	"github.com/invopop/gobl.fatturapa/test"
+	"github.com/invopop/gobl/bill"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -93,7 +94,17 @@ func TestXMLToGOBLExamples(t *testing.T) {
 
 		require.NoError(t, env.Calculate())
 
-		data, err = json.MarshalIndent(env, "", "\t")
+		// Extract the invoice from the envelope
+		doc := env.Extract().(*bill.Invoice)
+
+		// Create a copy of the invoice to avoid modifying the original
+		invCopy := *doc
+
+		// Set a fixed UUID for consistent test output
+		invCopy.UUID = "00000000-0000-0000-0000-000000000000"
+		inv := &invCopy
+
+		data, err = json.MarshalIndent(inv, "", "\t")
 		require.NoError(t, err)
 
 		np := strings.TrimSuffix(file, filepath.Ext(file)) + ".json"
@@ -110,6 +121,7 @@ func TestXMLToGOBLExamples(t *testing.T) {
 		expected, err := os.ReadFile(outPath)
 		require.False(t, os.IsNotExist(err), "output file %s missing, run tests with `--update` flag to create", filepath.Base(outPath))
 		require.NoError(t, err)
+
 		assert.Equal(t, string(expected), string(data), "output file %s does not match, run tests with `--update` flag to update", filepath.Base(outPath))
 	}
 }

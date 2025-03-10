@@ -1,167 +1,156 @@
 {
-	"$schema": "https://gobl.org/draft-0/envelope",
-	"head": {
-		"uuid": "01957104-0f5d-7be8-8d50-6ad1942562e2",
-		"dig": {
-			"alg": "sha256",
-			"val": "ff5d7900367e72dd18c2a74da7eab8b377cd39302d767ea03df0d58d81f41a87"
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"series": "SAMPLE",
+	"code": "002",
+	"issue_date": "2023-05-21",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD01",
+			"it-sdi-format": "FPR12"
 		}
 	},
-	"doc": {
-		"$schema": "https://gobl.org/draft-0/bill/invoice",
-		"$regime": "IT",
-		"$addons": [
-			"it-sdi-v1"
-		],
-		"uuid": "01957104-0f5d-7c03-8316-02c1a2da15cb",
-		"type": "standard",
-		"series": "SAMPLE",
-		"code": "002",
-		"issue_date": "2023-05-21",
-		"currency": "EUR",
-		"tax": {
-			"ext": {
-				"it-sdi-document-type": "TD01",
-				"it-sdi-format": "FPR12"
-			}
+	"supplier": {
+		"name": "Hotel California",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
 		},
-		"supplier": {
-			"name": "Hotel California",
-			"tax_id": {
-				"country": "IT",
-				"code": "12345678903"
-			},
-			"addresses": [
-				{
-					"num": "102",
-					"street": "Via California",
-					"locality": "Palermo",
-					"region": "PA",
-					"code": "33213",
-					"country": "IT"
-				}
-			],
-			"registration": {
-				"office": "RM",
-				"entry": "123456"
-			},
-			"ext": {
-				"it-sdi-fiscal-regime": "RF01"
-			}
-		},
-		"customer": {
-			"name": "Mela S.r.l.",
-			"tax_id": {
-				"country": "IT",
-				"code": "13029381004"
-			},
-			"inboxes": [
-				{
-					"key": "it-sdi-code",
-					"code": "M5UXCR5"
-				}
-			],
-			"addresses": [
-				{
-					"num": "23",
-					"street": "Via dei Mille",
-					"locality": "Firenze",
-					"region": "FI",
-					"code": "00100",
-					"country": "IT"
-				}
-			]
-		},
-		"lines": [
+		"addresses": [
 			{
-				"i": 1,
-				"quantity": "1.00",
-				"item": {
-					"name": "Tassa di Soggiorno",
-					"price": "1.00"
-				},
-				"sum": "1.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"percent": "0.00%",
-						"ext": {
-							"it-sdi-exempt": "N1"
-						}
-					}
-				],
-				"total": "1.00"
-			},
-			{
-				"i": 2,
-				"quantity": "2.00",
-				"item": {
-					"name": "Camera Matrimoniale",
-					"price": "113.6364"
-				},
-				"sum": "227.2728",
-				"discounts": [
-					{
-						"amount": "9.0910"
-					}
-				],
-				"taxes": [
-					{
-						"cat": "VAT",
-						"percent": "10.00%"
-					}
-				],
-				"total": "218.1818"
+				"num": "102",
+				"street": "Via California",
+				"locality": "Palermo",
+				"region": "PA",
+				"code": "33213",
+				"country": "IT"
 			}
 		],
-		"payment": {
-			"terms": {
-				"key": "advanced"
-			},
-			"advances": [
-				{
-					"date": "2023-05-01",
-					"key": "card",
-					"description": "Advance payment",
-					"amount": "241.00",
-					"ext": {
-						"it-sdi-payment-means": "MP08"
-					}
-				}
-			]
+		"registration": {
+			"office": "RM",
+			"entry": "123456"
 		},
-		"totals": {
-			"sum": "219.18",
-			"total": "219.18",
-			"taxes": {
-				"categories": [
-					{
-						"code": "VAT",
-						"rates": [
-							{
-								"ext": {
-									"it-sdi-exempt": "N1"
-								},
-								"base": "1.00",
-								"percent": "0.00%",
-								"amount": "0.00"
-							},
-							{
-								"base": "218.18",
-								"percent": "10.00%",
-								"amount": "21.82"
-							}
-						],
-						"amount": "21.82"
-					}
-				],
-				"sum": "21.82"
-			},
-			"tax": "21.82",
-			"total_with_tax": "241.00",
-			"payable": "241.00",
-			"advance": "241.00",
-			"due": "0.00"
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
 		}
+	},
+	"customer": {
+		"name": "Mela S.r.l.",
+		"tax_id": {
+			"country": "IT",
+			"code": "13029381004"
+		},
+		"inboxes": [
+			{
+				"key": "it-sdi-code",
+				"code": "M5UXCR5"
+			}
+		],
+		"addresses": [
+			{
+				"num": "23",
+				"street": "Via dei Mille",
+				"locality": "Firenze",
+				"region": "FI",
+				"code": "00100",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1.00",
+			"item": {
+				"name": "Tassa di Soggiorno",
+				"price": "1.00"
+			},
+			"sum": "1.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "0.00%",
+					"ext": {
+						"it-sdi-exempt": "N1"
+					}
+				}
+			],
+			"total": "1.00"
+		},
+		{
+			"i": 2,
+			"quantity": "2.00",
+			"item": {
+				"name": "Camera Matrimoniale",
+				"price": "113.6364"
+			},
+			"sum": "227.2728",
+			"discounts": [
+				{
+					"amount": "9.0910"
+				}
+			],
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "10.00%"
+				}
+			],
+			"total": "218.1818"
+		}
+	],
+	"payment": {
+		"terms": {
+			"key": "advanced"
+		},
+		"advances": [
+			{
+				"date": "2023-05-01",
+				"key": "card",
+				"description": "Advance payment",
+				"amount": "241.00",
+				"ext": {
+					"it-sdi-payment-means": "MP08"
+				}
+			}
+		]
+	},
+	"totals": {
+		"sum": "219.18",
+		"total": "219.18",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"ext": {
+								"it-sdi-exempt": "N1"
+							},
+							"base": "1.00",
+							"percent": "0.00%",
+							"amount": "0.00"
+						},
+						{
+							"base": "218.18",
+							"percent": "10.00%",
+							"amount": "21.82"
+						}
+					],
+					"amount": "21.82"
+				}
+			],
+			"sum": "21.82"
+		},
+		"tax": "21.82",
+		"total_with_tax": "241.00",
+		"payable": "241.00",
+		"advance": "241.00",
+		"due": "0.00"
 	}
 }

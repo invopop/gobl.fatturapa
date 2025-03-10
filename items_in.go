@@ -12,24 +12,21 @@ import (
 )
 
 // goblBillInvoiceAddGoodsServices adds goods and services from the FatturaPA document to the GOBL invoice
-func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServices) error {
+func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServices, retainedTaxes []*RetainedTax) error {
 	if inv == nil || goodsServices == nil {
 		return nil
 	}
 
-	// Add line details
-	if err := goblBillInvoiceAddLineDetails(inv, goodsServices.LineDetails); err != nil {
+	// Add line details, passing the retained taxes and tax summaries
+	if err := goblBillInvoiceAddLineDetails(inv, goodsServices.LineDetails, retainedTaxes, goodsServices.TaxSummary); err != nil {
 		return err
 	}
-
-	// Add tax summary
-	goblBillInvoiceAddTaxSummary(inv, goodsServices.TaxSummary)
 
 	return nil
 }
 
 // goblBillInvoiceAddLineDetails adds line details from the FatturaPA document to the GOBL invoice
-func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail) error {
+func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail, retainedTaxes []*RetainedTax, taxSummaries []*TaxSummary) error {
 	if inv == nil || len(lineDetails) == 0 {
 		return nil
 	}
@@ -42,7 +39,6 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail)
 	// Process each line detail
 	for _, detail := range lineDetails {
 		// Parse line number, quantity, unit price, and total price
-		// returns errors as they are required fields
 		index, err := strconv.Atoi(detail.LineNumber)
 		if err != nil {
 			return err
@@ -84,10 +80,10 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail)
 			// Create tax
 			taxCombo := &tax.Combo{
 				Category: tax.CategoryVAT,
+				Ext:      tax.Extensions{},
 			}
 
 			// Add tax rate if it's not zero
-			// FatturaPA stores the tax rate as a percentage without the % symbol so we add it so that the conversion works
 			taxRate, _ := num.PercentageFromString(detail.TaxRate + "%")
 			if taxRate != num.PercentageZero {
 				taxCombo.Percent = &taxRate
@@ -95,9 +91,6 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail)
 
 			// Add exempt extension if nature is provided
 			if detail.TaxNature != "" {
-				if taxCombo.Ext == nil {
-					taxCombo.Ext = tax.Extensions{}
-				}
 				taxCombo.Ext[sdi.ExtKeyExempt] = cbc.Code(detail.TaxNature)
 			}
 
@@ -109,7 +102,61 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail)
 		inv.Lines = append(inv.Lines, line)
 	}
 
+	// Process retained taxes
+	if err := processRetainedTaxes(inv, lineDetails, retainedTaxes); err != nil {
+		return err
+	}
+
+	// Match tax summary liability information with line items
+	if len(inv.Lines) > 0 && len(taxSummaries) > 0 {
+		goblBillLinesAddTaxSummary(inv.Lines, lineDetails, taxSummaries)
+	}
+
 	return nil
+}
+
+// goblBillLinesAddTaxSummary matches tax summary liability information with line items
+func goblBillLinesAddTaxSummary(lines []*bill.Line, lineDetails []*LineDetail, taxSummaries []*TaxSummary) {
+	// Process each line
+	for i, line := range lines {
+		// Skip if line has no taxes
+		if len(line.Taxes) == 0 {
+			continue
+		}
+
+		// Get the VAT tax for this line
+		var vatTax *tax.Combo
+		for _, t := range line.Taxes {
+			if t.Category == tax.CategoryVAT {
+				vatTax = t
+				break
+			}
+		}
+
+		// Skip if no VAT tax found
+		if vatTax == nil {
+			continue
+		}
+
+		// Get the line detail for this line
+		detail := lineDetails[i]
+
+		// Find a matching tax summary
+		for _, summary := range taxSummaries {
+			// Match by tax rate or nature
+			rateMatches := detail.TaxRate == summary.TaxRate
+			natureMatches := detail.TaxNature != "" && detail.TaxNature == summary.TaxNature
+
+			if (rateMatches || natureMatches) && summary.TaxLiability != "" {
+				// Add the tax liability to the VAT tax extensions
+				if vatTax.Ext == nil {
+					vatTax.Ext = tax.Extensions{}
+				}
+				vatTax.Ext[sdi.ExtKeyVATLiability] = cbc.Code(summary.TaxLiability)
+				break
+			}
+		}
+	}
 }
 
 // goblBillLineAddPriceAdjustments adds price adjustments to a line
@@ -157,72 +204,5 @@ func goblBillLineAddPriceAdjustments(line *bill.Line, adjustments []*PriceAdjust
 				Percent: percentPtr,
 			})
 		}
-	}
-}
-
-// goblBillInvoiceAddTaxSummary adds tax summary from the FatturaPA document to the GOBL invoice
-func goblBillInvoiceAddTaxSummary(inv *bill.Invoice, taxSummaries []*TaxSummary) {
-	if inv == nil || len(taxSummaries) == 0 {
-		return
-	}
-
-	// Initialize totals if needed
-	if inv.Totals == nil {
-		inv.Totals = new(bill.Totals)
-	}
-	if inv.Totals.Taxes == nil {
-		inv.Totals.Taxes = new(tax.Total)
-	}
-
-	// Find or create VAT category
-	var vatCategory *tax.CategoryTotal
-	for _, cat := range inv.Totals.Taxes.Categories {
-		if cat.Code == tax.CategoryVAT {
-			vatCategory = cat
-			break
-		}
-	}
-
-	if vatCategory == nil {
-		vatCategory = &tax.CategoryTotal{
-			Code:  tax.CategoryVAT,
-			Rates: make([]*tax.RateTotal, 0),
-		}
-		inv.Totals.Taxes.Categories = append(inv.Totals.Taxes.Categories, vatCategory)
-	}
-
-	// Process each tax summary
-	for _, summary := range taxSummaries {
-		// Parse tax rate, taxable amount, and tax amount
-		// FatturaPA stores the tax rate as a percentage without the % symbol so we add it so that the conversion works
-		taxRate, err1 := num.PercentageFromString(summary.TaxRate + "%")
-		taxableAmount, err2 := num.AmountFromString(summary.TaxableAmount)
-		taxAmount, err3 := num.AmountFromString(summary.TaxAmount)
-
-		if err1 != nil || err2 != nil || err3 != nil {
-			// Skip if any of the values are invalid
-			continue
-		}
-
-		// Create rate total
-		rateTotal := &tax.RateTotal{
-			Percent: &taxRate,
-			Base:    taxableAmount,
-			Amount:  taxAmount,
-			Ext:     make(tax.Extensions),
-		}
-
-		// Add exempt extension if nature is provided
-		if summary.TaxNature != "" {
-			rateTotal.Ext[sdi.ExtKeyExempt] = cbc.Code(summary.TaxNature)
-		}
-
-		// Add VAT liability if provided
-		if summary.TaxLiability != "" {
-			rateTotal.Ext[sdi.ExtKeyVATLiability] = cbc.Code(summary.TaxLiability)
-		}
-
-		// Add rate total to VAT category
-		vatCategory.Rates = append(vatCategory.Rates, rateTotal)
 	}
 }

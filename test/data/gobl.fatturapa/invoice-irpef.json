@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "1a7ebf9bcec0525294d085a246c528304ed1317e52652e1e17f37fb4f12a7271"
+			"val": "f09feeee5ab38f0eeb74dcdf680b897f042583fe49231c2f0f2dc59251da5ed4"
 		}
 	},
 	"doc": {
@@ -83,7 +83,7 @@
 			],
 			"inboxes": [
 				{
-					"key": "codice-destinatario",
+					"key": "it-sdi-code",
 					"code": "ABCDEF1"
 				}
 			],
