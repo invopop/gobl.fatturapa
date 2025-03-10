@@ -117,7 +117,7 @@ func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 	goblBillInvoiceAddHeader(inv, d.Header)
 
 	// Retrieves information from the body and adds it to the invoice
-	// TODO: add support for multiple bodiesß
+	// TODO: add support for multiple bodies
 	goblBillInvoiceAddBody(inv, d.Body[0])
 
 	// Generate envelope
@@ -154,8 +154,7 @@ func (d *Document) Bytes() ([]byte, error) {
 
 func (d *Document) buffer(base string) (*bytes.Buffer, error) {
 	buf := bytes.NewBufferString(base)
-	// data, err := xml.MarshalIndent(d, "", "  ") // not compatible with certificates
-	data, err := xml.Marshal(d)
+	data, err := xml.MarshalIndent(d, "", "  ")
 	if err != nil {
 		return nil, fmt.Errorf("marshal document: %w", err)
 	}

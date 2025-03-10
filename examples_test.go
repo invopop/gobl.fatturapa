@@ -31,8 +31,6 @@ func TestGOBLToXMLExamples(t *testing.T) {
 	})
 	require.NoError(t, err)
 
-	fmt.Printf("files: %v\n", files)
-
 	for _, file := range files {
 		fmt.Printf("processing file: %v\n", file)
 
@@ -50,10 +48,10 @@ func TestGOBLToXMLExamples(t *testing.T) {
 		if *test.UpdateOut {
 			errs := test.ValidateXML(schema, data)
 			for _, e := range errs {
-				assert.NoError(t, e)
+				require.NoError(t, e)
 			}
 			if len(errs) > 0 {
-				assert.Fail(t, "Invalid XML:\n"+string(data))
+				require.Fail(t, "Invalid XML:\n"+string(data))
 			}
 
 			err = os.WriteFile(outPath, data, 0644)
