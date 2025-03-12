@@ -154,7 +154,8 @@ func (d *Document) Bytes() ([]byte, error) {
 
 func (d *Document) buffer(base string) (*bytes.Buffer, error) {
 	buf := bytes.NewBufferString(base)
-	data, err := xml.MarshalIndent(d, "", "  ")
+	//data, err := xml.MarshalIndent(d, "", "  ")
+	data, err := xml.Marshal(d)
 	if err != nil {
 		return nil, fmt.Errorf("marshal document: %w", err)
 	}
