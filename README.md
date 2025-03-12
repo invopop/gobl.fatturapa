@@ -1,6 +1,6 @@
-# GOBL to FatturaPA Tools
+# GOBL - FatturaPA Tools
 
-Convert GOBL into the Italy's FatturaPA format.
+Convert GOBL documents to and from Italy's FatturaPA format.
 
 Copyright [Invopop Ltd.](https://invopop.com) 2023. Released publicly under the [Apache License Version 2.0](LICENSE). For commercial licenses please contact the [dev team at invopop](mailto:dev@invopop.com). In order to accept contributions to this library we will require transferring copyrights to Invopop Ltd.
 
@@ -15,9 +15,9 @@ Copyright [Invopop Ltd.](https://invopop.com) 2023. Released publicly under the 
 FatturaPA defines two versions of invoices:
 
 - Ordinary invoices, `FatturaElettronica` types `FPA12` and `FPR12` defined in the v1.2 schema, usable for all sales.
-- Simplified invoices, `FatturaElettronicaSemplificata` type `FSM10` defined in the v1.0 schema, with a reduced set of requirements but can only be used for sales of less then €400, as of writing. **Currently not supported!**
+- Simplified invoices, `FatturaElettronicaSemplificata` type `FSM10` defined in the v1.0 schema, with a reduced set of requirements but can only be used for sales of less then €400, as of writing.
 
-Unlike other tax regimes, Italy requires simplified invoices to include the customer's tax ID. For "cash register" style receipts locally called "Scontrinos", another format and API is used for this from approved hardware.
+Unlike other tax regimes, Italy requires simplified invoices to include the customer's tax ID. For "cash register" style receipts locally called "Scontrinos", another format and API is used.
 
 ## Sources
 
@@ -38,6 +38,8 @@ Useful files:
 
 ## Limitations
 
+### To FatturaPA
+
 The FatturaPA XML schema is quite large and complex. This library is not complete and only supports a subset of the schema. The current implementation is focused on the most common use cases.
 
 - Simplified invoices are not currently supported (please get in touch if you need this).
@@ -47,11 +49,19 @@ The FatturaPA XML schema is quite large and complex. This library is not complet
 Some of the optional elements currently not supported include:
 
 - `Allegati` (attachments)
-- `DatiBollo` (data related to duty stamps)
+
+### From FatturaPA
+
+Converting from FatturaPA to GOBL has some limitations:
+
+- Currently, only one invoice per XML file is supported. FatturaPA allows multiple invoices in a single transmission, but this library only processes the first one.
+- Digital signature validation is not fully implemented. While the library can parse signed documents, it does not currently validate all aspects of the signature.
 
 ## Usage
 
 ### Go
+
+#### To FatturaPA
 
 There are a couple of entry points to build a new Fatturapa document. If you already have a GOBL Envelope available in Go, you could convert and output to a data file like this:
 
@@ -71,16 +81,6 @@ if err != nil {
 if err = os.WriteFile("./test.xml", data, 0644); err != nil {
     panic(err)
 }
-```
-
-If you're loading from a file, you can use the `LoadGOBL` convenience method:
-
-```golang
-doc, err := fatturapa.LoadGOBL(file)
-if err != nil {
-    panic(err)
-}
-// do something with doc
 ```
 
 See the following example for signing the XML with a certificate:
@@ -117,6 +117,55 @@ converter := fatturapa.NewConverter(
 )
 ```
 
+#### From FatturaPA
+
+Converting from FatturaPA XML to GOBL is also straightforward. You can use the `ConvertToGOBL` method to transform a FatturaPA XML document into a GOBL Envelope:
+
+```golang
+// Import the XML data from a file or other source
+xmlData, err := os.ReadFile("./invoice.xml")
+if err != nil {
+    panic(err)
+}
+
+// Create a converter
+converter := fatturapa.NewConverter()
+
+// Convert the XML to a GOBL Envelope
+env, err := converter.ConvertToGOBL(xmlData)
+if err != nil {
+    panic(err)
+}
+
+// The envelope now contains a GOBL invoice
+invoice, ok := env.Extract().(*bill.Invoice)
+if !ok {
+    panic("expected an invoice")
+}
+
+// You can now work with the GOBL invoice
+// For example, validate it
+if err = env.Validate(); err != nil {
+    panic(err)
+}
+
+// Or convert it to JSON
+jsonData, err := json.MarshalIndent(env, "", "  ")
+if err != nil {
+    panic(err)
+}
+
+if err = os.WriteFile("./invoice.json", jsonData, 0644); err != nil {
+    panic(err)
+}
+```
+
+Note that when converting from FatturaPA to GOBL:
+
+1. The XML document must contain a valid digital signature. The library will check for the presence of a signature but does not currently perform full signature validation.
+2. Only the first invoice in the XML file will be processed if the document contains multiple invoices.
+3. The resulting GOBL invoice will include the Italian SDI addon (`sdi.V1`) to maintain compatibility with FatturaPA-specific fields.
+
 ### CLI
 
 The command line interface can be useful for situations when you're using a language other than Golang in your application. Download one of the [pre-compiled `gobl.fatturapa` releases](https://github.com/invopop/gobl.fatturapa/releases) or install with:
@@ -125,28 +174,50 @@ The command line interface can be useful for situations when you're using a lang
 go install github.com/invopop/gobl.fatturapa/cmd/gobl.fatturapa
 ```
 
-Simply provide the input GOBL JSON file and output to a file or another application:
+#### Converting GOBL to FatturaPA
+
+To convert from GOBL JSON to FatturaPA XML:
 
 ```bash
-gobl.fatturapa convert input.json output.xml
+gobl.fatturapa convert to-xml input.json output.xml
 ```
 
 If you have a digital certificate, run with:
 
 ```bash
-gobl.fatturapa convert -c cert.p12 -p password input.json output.xml
+gobl.fatturapa convert to-xml -c cert.p12 -p password input.json output.xml
 ```
 
 To include the transmitter information, add the `-T` flag and provide the _country code_ and the _tax ID_:
 
 ```bash
-gobl.fatturapa convert -T ES12345678 input.json output.xml
+gobl.fatturapa convert to-xml -T ES12345678 input.json output.xml
 ```
 
-The command also supports pipes:
+#### Converting FatturaPA to GOBL
+
+To convert from FatturaPA XML to GOBL JSON:
 
 ```bash
-cat input.json > ./gobl.fatturapa output.xml
+gobl.fatturapa convert from-xml input.xml output.json
+```
+
+By default, the JSON output is pretty-printed. To disable this, use the `--pretty=false` flag:
+
+```bash
+gobl.fatturapa convert from-xml --pretty=false input.xml output.json
+```
+
+#### Piping
+
+The command also supports pipes for both conversion directions:
+
+```bash
+# GOBL to FatturaPA
+cat input.json | gobl.fatturapa convert to-xml > output.xml
+
+# FatturaPA to GOBL
+cat input.xml | gobl.fatturapa convert from-xml > output.json
 ```
 
 ## Notes
