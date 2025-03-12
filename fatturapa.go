@@ -51,7 +51,7 @@ type Document struct {
 // containing the XML version.
 func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	invoice, ok := env.Extract().(*bill.Invoice)
-	if !ok {
+	if !ok || invoice == nil {
 		return nil, errors.New("expected an invoice")
 	}
 
