@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// RetainedTax represents a retained tax.
 type RetainedTax struct {
 	Type   string `xml:"TipoRitenuta"`
 	Amount string `xml:"ImportoRitenuta"`

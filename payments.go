@@ -27,9 +27,9 @@ type PaymentDetailRow struct {
 	Code                 string `xml:"CodicePagamento,omitempty"`
 }
 
-func newPaymentData(inv *bill.Invoice) ([]*PaymentData, error) {
+func newPaymentData(inv *bill.Invoice) []*PaymentData {
 	if inv.Payment == nil {
-		return nil, nil
+		return nil
 	}
 
 	paymentData := []*PaymentData{}
@@ -42,7 +42,7 @@ func newPaymentData(inv *bill.Invoice) ([]*PaymentData, error) {
 	}
 
 	if inv.Payment.Instructions == nil {
-		return paymentData, nil
+		return paymentData
 	}
 
 	// Determine payment condition based on number of due dates
@@ -53,7 +53,7 @@ func newPaymentData(inv *bill.Invoice) ([]*PaymentData, error) {
 
 	paymentDetails := preparePaymentDetails(inv)
 	if len(paymentDetails) == 0 {
-		return paymentData, nil
+		return paymentData
 	}
 
 	paymentData = append(paymentData, &PaymentData{
@@ -61,7 +61,7 @@ func newPaymentData(inv *bill.Invoice) ([]*PaymentData, error) {
 		Payments:   paymentDetails,
 	})
 
-	return paymentData, nil
+	return paymentData
 }
 
 func prepareAdvancePaymentDetails(inv *bill.Invoice) []*PaymentDetailRow {

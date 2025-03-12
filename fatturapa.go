@@ -118,7 +118,10 @@ func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 
 	// Retrieves information from the body and adds it to the invoice
 	// TODO: add support for multiple bodies
-	goblBillInvoiceAddBody(inv, d.Body[0])
+	err := goblBillInvoiceAddBody(inv, d.Body[0])
+	if err != nil {
+		return nil, err
+	}
 
 	// Generate envelope
 	env, err := gobl.Envelop(inv)

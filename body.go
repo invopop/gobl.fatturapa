@@ -53,6 +53,7 @@ type DocumentRef struct {
 	CIGCode   string `xml:"CodiceCIG,omitempty"`                 // Tender procedure identification code
 }
 
+// GeneralDocumentData contains data about the general document
 type GeneralDocumentData struct {
 	DocumentType     string             `xml:"TipoDocumento"`
 	Currency         string             `xml:"Divisa"`
@@ -82,10 +83,7 @@ type PriceAdjustment struct {
 func newBody(inv *bill.Invoice) (*Body, error) {
 	dbs := newGoodsServices(inv)
 
-	dp, err := newPaymentData(inv)
-	if err != nil {
-		return nil, err
-	}
+	dp := newPaymentData(inv)
 
 	dg, err := newGeneralData(inv)
 	if err != nil {

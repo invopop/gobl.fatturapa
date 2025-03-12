@@ -25,8 +25,12 @@ import (
 const (
 	certificateFile     = "test.p12"
 	certificatePassword = "invopop"
-	PathGOBLFatturaPA   = "gobl.fatturapa"
-	PathFatturaPAGOBL   = "fatturapa.gobl"
+
+	// PathGOBLFatturaPA is the path to the test data for the GOBL FatturaPA
+	PathGOBLFatturaPA = "gobl.fatturapa"
+
+	// PathFatturaPAGOBL is the path to the test data for the FatturaPA GOBL
+	PathFatturaPAGOBL = "fatturapa.gobl"
 )
 
 // UpdateOut is a flag that can be set to update example files

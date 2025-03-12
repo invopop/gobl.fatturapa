@@ -4,7 +4,7 @@ Convert GOBL into the Italy's FatturaPA format.
 
 Copyright [Invopop Ltd.](https://invopop.com) 2023. Released publicly under the [Apache License Version 2.0](LICENSE). For commercial licenses please contact the [dev team at invopop](mailto:dev@invopop.com). In order to accept contributions to this library we will require transferring copyrights to Invopop Ltd.
 
-[![Lint](https://github.com/invopop/gobl.factturapa/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl.fatturapa/actions/workflows/lint.yaml)
+[![Lint](https://github.com/invopop/gobl.fatturapa/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl.fatturapa/actions/workflows/lint.yaml)
 [![Test Go](https://github.com/invopop/gobl.fatturapa/actions/workflows/test.yaml/badge.svg)](https://github.com/invopop/gobl.fatturapa/actions/workflows/test.yaml)
 [![Go Report Card](https://goreportcard.com/badge/github.com/invopop/gobl.fatturapa)](https://goreportcard.com/report/github.com/invopop/gobl.fatturapa)
 [![GoDoc](https://godoc.org/github.com/invopop/gobl.fatturapa?status.svg)](https://godoc.org/github.com/invopop/gobl.fatturapa)

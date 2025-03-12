@@ -21,7 +21,7 @@ const (
 	defaultCodiceDestinatarioForeignBusiness = "XXXXXXX"
 )
 
-// Data related to the transmission of the invoice
+// TransmissionData contains data related to the transmission of the invoice
 type TransmissionData struct {
 	TransmitterID      *TaxID `xml:"IdTrasmittente,omitempty"` // nolint:revive
 	ProgressiveNumber  string `xml:"ProgressivoInvio,omitempty"`
