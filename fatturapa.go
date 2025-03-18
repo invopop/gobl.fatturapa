@@ -50,9 +50,7 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	}
 
 	// Make sure we're dealing with raw data
-	var err error
-	err = invoice.RemoveIncludedTaxes()
-	if err != nil {
+	if err := invoice.RemoveIncludedTaxes(); err != nil {
 		return nil, err
 	}
 
@@ -78,9 +76,7 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	}
 
 	if c.Config.Certificate != nil {
-		err = d.sign(c.Config)
-
-		if err != nil {
+		if err := d.sign(c.Config); err != nil {
 			return nil, err
 		}
 	}
