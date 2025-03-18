@@ -52,11 +52,11 @@ func generateLineDetails(inv *bill.Invoice) []*dettaglioLinee {
 			NumeroLinea:         strconv.Itoa(line.Index),
 			Descrizione:         line.Item.Name,
 			Quantita:            formatAmount8(&line.Quantity),
-			PrezzoUnitario:      formatAmount8(&line.Item.Price),
-			PrezzoTotale:        formatAmount8(&line.Total),
+			PrezzoUnitario:      formatAmount8(line.Item.Price),
+			PrezzoTotale:        formatAmount8(line.Total),
 			ScontoMaggiorazione: extractLinePriceAdjustments(line),
 		}
-		if line.Taxes != nil && len(line.Taxes) > 0 {
+		if len(line.Taxes) > 0 {
 			vatTax := line.Taxes.Get(tax.CategoryVAT)
 			if vatTax != nil {
 				d.AliquotaIVA = formatPercentageWithZero(vatTax.Percent)
