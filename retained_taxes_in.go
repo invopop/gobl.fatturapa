@@ -38,7 +38,7 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 			// Only consider lines marked with Ritenuta="SI"
 			if detail.Retained == "SI" {
 				line := inv.Lines[i]
-				expectedAmount := rtRate.Of(line.Total)
+				expectedAmount := rtRate.Of(*line.Total)
 
 				// Check if this matches the retained tax amount exactly
 				if expectedAmount.Equals(rtAmount) {

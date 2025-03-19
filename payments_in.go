@@ -17,7 +17,7 @@ func goblBillInvoiceAddPaymentsData(inv *bill.Invoice, paymentsData []*PaymentDa
 
 	// Initialize payment if needed
 	if inv.Payment == nil {
-		inv.Payment = new(bill.Payment)
+		inv.Payment = new(bill.PaymentDetails)
 	}
 
 	// Track payment conditions
@@ -92,7 +92,7 @@ func goblBillInvoiceAddPaymentsData(inv *bill.Invoice, paymentsData []*PaymentDa
 }
 
 // goblBillPaymentAddAdvancePayment adds an advance payment from the FatturaPA document to the GOBL invoice
-func goblBillPaymentAddAdvancePayment(payment *bill.Payment, paymentDetail *PaymentDetailRow) {
+func goblBillPaymentAddAdvancePayment(payment *bill.PaymentDetails, paymentDetail *PaymentDetailRow) {
 	if payment == nil || paymentDetail == nil {
 		return
 	}
@@ -128,7 +128,7 @@ func goblBillPaymentAddAdvancePayment(payment *bill.Payment, paymentDetail *Paym
 }
 
 // goblBillPaymentAddDueDate adds a due date from the FatturaPA document to the GOBL invoice
-func goblBillPaymentAddDueDate(payment *bill.Payment, paymentDetail *PaymentDetailRow) {
+func goblBillPaymentAddDueDate(payment *bill.PaymentDetails, paymentDetail *PaymentDetailRow) {
 	if payment == nil || paymentDetail == nil || paymentDetail.DueDate == "" {
 		return
 	}
@@ -161,7 +161,7 @@ func goblBillPaymentAddDueDate(payment *bill.Payment, paymentDetail *PaymentDeta
 }
 
 // goblBillPaymentAddPaymentInstructions adds payment instructions from the FatturaPA document to the GOBL invoice
-func goblBillPaymentAddPaymentInstructions(payment *bill.Payment, paymentDetail *PaymentDetailRow) {
+func goblBillPaymentAddPaymentInstructions(payment *bill.PaymentDetails, paymentDetail *PaymentDetailRow) {
 	if payment == nil || paymentDetail == nil {
 		return
 	}

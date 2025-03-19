@@ -55,8 +55,8 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 			Description:      line.Item.Name,
 			Quantity:         formatAmount8(&line.Quantity),
 			Unit:             string(line.Item.Unit),
-			UnitPrice:        formatAmount8(&line.Item.Price),
-			TotalPrice:       formatAmount8(&line.Total),
+			UnitPrice:        formatAmount8(line.Item.Price),
+			TotalPrice:       formatAmount8(line.Total),
 			PriceAdjustments: extractLinePriceAdjustments(line),
 		}
 
