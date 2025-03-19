@@ -60,10 +60,10 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 		line := &bill.Line{
 			Index:    index,
 			Quantity: quantity,
-			Total:    totalPrice,
+			Total:    &totalPrice,
 			Item: &org.Item{
 				Name:  detail.Description,
-				Price: unitPrice,
+				Price: &unitPrice,
 			},
 		}
 
