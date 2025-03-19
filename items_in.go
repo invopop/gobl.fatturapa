@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/invopop/gobl/addons/it/sdi"
@@ -19,7 +20,7 @@ func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServ
 
 	// Add line details, passing the retained taxes and tax summaries
 	if err := goblBillInvoiceAddLineDetails(inv, goodsServices.LineDetails, retainedTaxes, goodsServices.TaxSummary); err != nil {
-		return err
+		return fmt.Errorf("adding line details: %w", err)
 	}
 
 	return nil
@@ -41,19 +42,28 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 		// Parse line number, quantity, unit price, and total price
 		index, err := strconv.Atoi(detail.LineNumber)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing line number: %w", err)
 		}
-		quantity, err := num.AmountFromString(detail.Quantity)
-		if err != nil {
-			return err
-		}
+
+		// Parse total price and unit price first
 		unitPrice, err := num.AmountFromString(detail.UnitPrice)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing unit price: %w", err)
 		}
 		totalPrice, err := num.AmountFromString(detail.TotalPrice)
 		if err != nil {
-			return err
+			return fmt.Errorf("parsing total price: %w", err)
+		}
+
+		// Handle quantity parsing/calculation
+		var quantity num.Amount
+		if detail.Quantity != "" {
+			quantity, err = num.AmountFromString(detail.Quantity)
+			if err != nil {
+				return fmt.Errorf("parsing quantity: %w", err)
+			}
+		} else {
+			quantity = totalPrice.Divide(unitPrice)
 		}
 
 		// Create a new line
@@ -104,7 +114,7 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 
 	// Process retained taxes
 	if err := processRetainedTaxes(inv, lineDetails, retainedTaxes); err != nil {
-		return err
+		return fmt.Errorf("processing retained taxes: %w", err)
 	}
 
 	// Match tax summary liability information with line items

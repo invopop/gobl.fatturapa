@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/invopop/gobl/addons/it/sdi"
@@ -68,7 +69,7 @@ func goblBillInvoiceAddBody(inv *bill.Invoice, body *Body) error {
 
 	// Add general data
 	if err := goblBillInvoiceAddGeneralData(inv, body.GeneralData); err != nil {
-		return err
+		return fmt.Errorf("adding general data: %w", err)
 	}
 
 	// Extract retained taxes from the general data
@@ -79,7 +80,7 @@ func goblBillInvoiceAddBody(inv *bill.Invoice, body *Body) error {
 
 	// Add goods and services, passing the retained taxes
 	if err := goblBillInvoiceAddGoodsServices(inv, body.GoodsServices, retainedTaxes); err != nil {
-		return err
+		return fmt.Errorf("adding goods and services: %w", err)
 	}
 
 	// Add payment data
@@ -96,7 +97,7 @@ func goblBillInvoiceAddGeneralData(inv *bill.Invoice, generalData *GeneralData) 
 
 	// Add general document data
 	if err := goblBillInvoiceAddGeneralDocumentData(inv, generalData.Document); err != nil {
-		return err
+		return fmt.Errorf("adding general document data: %w", err)
 	}
 
 	// Add document references
@@ -133,7 +134,7 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	// Add issue date
 	date, err := parseDate(doc.IssueDate)
 	if err != nil {
-		return err
+		return fmt.Errorf("adding issue date: %w", err)
 	}
 	inv.IssueDate = date
 
@@ -142,14 +143,16 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	parseSeriesAndCode(doc.Number, &inv.Series, &inv.Code)
 
 	// Add totals payable
-	if inv.Totals == nil {
-		inv.Totals = new(bill.Totals)
+	if doc.TotalAmount != "" {
+		payable, err := num.AmountFromString(doc.TotalAmount)
+		if err != nil {
+			return fmt.Errorf("adding totals payable: %w", err)
+		}
+		if inv.Totals == nil {
+			inv.Totals = new(bill.Totals)
+		}
+		inv.Totals.Payable = payable
 	}
-	payable, err := num.AmountFromString(doc.TotalAmount)
-	if err != nil {
-		return err
-	}
-	inv.Totals.Payable = payable
 
 	// Add stamp duty
 	goblBillInvoiceAddStampDuty(inv, doc.StampDuty)

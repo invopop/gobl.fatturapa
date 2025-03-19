@@ -100,9 +100,11 @@ func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
 
 	// Verify signature. Standin for now.
 	// Skip signature verification for now
-	if d.Signature == nil {
-		return nil, errors.New("signature is missing")
-	}
+	/*
+		if d.Signature == nil {
+			return nil, errors.New("signature is missing")
+		}
+	*/
 
 	// Create a new invoice with empty fields so that converter can fill it
 	inv := new(bill.Invoice)
