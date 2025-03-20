@@ -199,27 +199,14 @@ gobl.fatturapa convert to-xml -T ES12345678 input.json output.xml
 To convert from FatturaPA XML to GOBL JSON:
 
 ```bash
-gobl.fatturapa convert from-xml input.xml output.json
+gobl.fatturapa convert to-gobl input.xml output.json
 ```
 
 By default, the JSON output is pretty-printed. To disable this, use the `--pretty=false` flag:
 
 ```bash
-gobl.fatturapa convert from-xml --pretty=false input.xml output.json
+gobl.fatturapa convert to-gobl --pretty=false input.xml output.json
 ```
-
-#### Piping
-
-The command also supports pipes for both conversion directions:
-
-```bash
-# GOBL to FatturaPA
-cat input.json | gobl.fatturapa convert to-xml > output.xml
-
-# FatturaPA to GOBL
-cat input.xml | gobl.fatturapa convert from-xml > output.json
-```
-
 ## Notes
 
 - In all cases Go structures have been written using the same naming from the XML style document. This means names are not repeated in tags and generally makes it a bit easier to map the XML output to the internal structures.

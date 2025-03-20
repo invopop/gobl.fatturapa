@@ -3,8 +3,9 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"os"
 
 	"github.com/invopop/gobl"
 	fatturapa "github.com/invopop/gobl.fatturapa"
@@ -19,6 +20,7 @@ type toXMLOpts struct {
 	password      string
 	transmitter   string
 	withTimestamp bool
+	pretty        bool
 }
 
 func toXML(c *convertOpts) *toXMLOpts {
@@ -34,10 +36,10 @@ func (t *toXMLOpts) cmd() *cobra.Command {
 	}
 	f := cmd.Flags()
 	f.StringVarP(&t.cert, "cert", "c", "", "Certificate for signing in pkcs12 format")
-	f.StringVarP(&t.password, "password", "p", "", "Password of the certificate")
+	f.StringVarP(&t.password, "password", "x", "", "Password of the certificate")
 	f.StringVarP(&t.transmitter, "transmitter", "T", "", "Tax ID of the transmitter. Must be prefixed by the country code")
 	f.BoolVarP(&t.withTimestamp, "with-timestamp", "t", false, "Add timestamp to the output file")
-
+	f.BoolVarP(&t.pretty, "pretty", "p", true, "Output pretty-printed XML")
 	return cmd
 }
 
@@ -48,23 +50,31 @@ func (t *toXMLOpts) runE(cmd *cobra.Command, args []string) error {
 	}
 	defer input.Close() // nolint:errcheck
 
-	out, err := t.openOutput(cmd, args)
-	if err != nil {
-		return err
-	}
-	defer out.Close() // nolint:errcheck
-
-	converter, err := t.loadConverterFromConfig()
-	if err != nil {
-		return err
-	}
-
 	buf := new(bytes.Buffer)
 	if _, err := buf.ReadFrom(input); err != nil {
 		panic(err)
 	}
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(buf.Bytes(), env); err != nil {
+
+	out, err := gobl.Parse(buf.Bytes())
+	if err != nil {
+		panic(err)
+	}
+
+	var env *gobl.Envelope
+	switch doc := out.(type) {
+	case *gobl.Envelope:
+		env = doc
+	default:
+		env = gobl.NewEnvelope()
+		if err := env.Insert(doc); err != nil {
+			panic(err)
+		}
+	}
+
+	outFile := outputFilename(args)
+
+	converter, err := t.loadConverterFromConfig()
+	if err != nil {
 		return err
 	}
 
@@ -73,12 +83,18 @@ func (t *toXMLOpts) runE(cmd *cobra.Command, args []string) error {
 		return err
 	}
 
-	data, err := doc.Bytes()
+	// Marshal to JSON
+	var data []byte
+	if t.pretty {
+		data, err = xml.MarshalIndent(doc, "", "\t")
+	} else {
+		data, err = xml.Marshal(doc)
+	}
 	if err != nil {
-		return fmt.Errorf("generating fatturapa xml: %w", err)
+		return fmt.Errorf("marshaling to JSON: %w", err)
 	}
 
-	if _, err = out.Write(data); err != nil {
+	if err = os.WriteFile(outFile, data, 0644); err != nil {
 		return fmt.Errorf("writing fatturapa xml: %w", err)
 	}
 

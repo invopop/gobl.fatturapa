@@ -2,69 +2,57 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
+	"os"
 
 	fatturapa "github.com/invopop/gobl.fatturapa"
 	"github.com/spf13/cobra"
 )
 
-type fromXMLOpts struct {
+type toGOBLOpts struct {
 	*convertOpts
 	// Add any specific options for XML-to-GOBL conversion here
-	prettyJSON bool
+	pretty bool
 }
 
-func fromXML(c *convertOpts) *fromXMLOpts {
-	return &fromXMLOpts{convertOpts: c}
+func toGOBL(c *convertOpts) *toGOBLOpts {
+	return &toGOBLOpts{convertOpts: c}
 }
 
-func (f *fromXMLOpts) cmd() *cobra.Command {
+func (t *toGOBLOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "from-xml [infile] [outfile]",
+		Use:   "to-gobl [infile] [outfile]",
 		Short: "Convert a FatturaPA XML into a GOBL JSON",
 		Long:  `Convert from FatturaPA XML format to GOBL JSON format.`,
-		RunE:  f.runE,
+		RunE:  t.runE,
 	}
 
 	// Add any specific flags for XML-to-GOBL conversion
-	cmd.Flags().BoolVarP(&f.prettyJSON, "pretty", "p", true, "Output pretty-printed JSON")
+	cmd.Flags().BoolVarP(&t.pretty, "pretty", "p", true, "Output pretty-printed JSON")
 
 	return cmd
 }
 
-func (f *fromXMLOpts) runE(cmd *cobra.Command, args []string) error {
-	input, err := openInput(cmd, args)
-	if err != nil {
-		return err
-	}
-	defer input.Close() // nolint:errcheck
+func (t *toGOBLOpts) runE(cmd *cobra.Command, args []string) error {
+	input := inputFilename(args)
 
-	out, err := f.openOutput(cmd, args)
+	data, err := os.ReadFile(input)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading input: %w", err)
 	}
-	defer out.Close() // nolint:errcheck
 
 	// Create a new converter
 	converter := fatturapa.NewConverter()
 
-	// Read the XML input
-	buf := new(bytes.Buffer)
-	if _, err := buf.ReadFrom(input); err != nil {
-		return fmt.Errorf("reading input: %w", err)
-	}
-
 	// Convert from XML to GOBL
-	env, err := converter.ConvertToGOBL(buf.Bytes())
+	env, err := converter.ConvertToGOBL(data)
 	if err != nil {
 		return fmt.Errorf("converting from FatturaPA to GOBL: %w", err)
 	}
 
 	// Marshal to JSON
-	var data []byte
-	if f.prettyJSON {
+	if t.pretty {
 		data, err = json.MarshalIndent(env, "", "  ")
 	} else {
 		data, err = json.Marshal(env)
@@ -73,8 +61,9 @@ func (f *fromXMLOpts) runE(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("marshaling to JSON: %w", err)
 	}
 
+	outFile := outputFilename(args)
 	// Write the output
-	if _, err = out.Write(data); err != nil {
+	if err = os.WriteFile(outFile, data, 0644); err != nil {
 		return fmt.Errorf("writing JSON output: %w", err)
 	}
 

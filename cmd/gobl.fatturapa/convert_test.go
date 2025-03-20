@@ -12,17 +12,17 @@ func Test_convert(t *testing.T) {
 	assert.Equal(t, 2, len(cmd.Commands()))
 
 	// Check that both subcommands are registered
-	var hasToXML, hasFromXML bool
+	var hasToXML, hasToGOBL bool
 	for _, subcmd := range cmd.Commands() {
 		switch subcmd.Use {
 		case "to-xml [infile] [outfile]":
 			hasToXML = true
-		case "from-xml [infile] [outfile]":
-			hasFromXML = true
+		case "to-gobl [infile] [outfile]":
+			hasToGOBL = true
 		}
 	}
 	assert.True(t, hasToXML, "to-xml subcommand should be registered")
-	assert.True(t, hasFromXML, "from-xml subcommand should be registered")
+	assert.True(t, hasToGOBL, "to-gobl subcommand should be registered")
 }
 
 func Test_toXML(t *testing.T) {
@@ -44,9 +44,9 @@ func Test_toXML(t *testing.T) {
 	assert.NotNil(t, timestampFlag, "with-timestamp flag should be registered")
 }
 
-func Test_fromXML(t *testing.T) {
-	cmd := fromXML(convert(root())).cmd()
-	assert.Equal(t, "from-xml [infile] [outfile]", cmd.Use)
+func Test_toGOBL(t *testing.T) {
+	cmd := toGOBL(convert(root())).cmd()
+	assert.Equal(t, "to-gobl [infile] [outfile]", cmd.Use)
 
 	// Check that all flags are registered
 	flags := cmd.Flags()

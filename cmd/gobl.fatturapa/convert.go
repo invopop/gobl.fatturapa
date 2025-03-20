@@ -22,7 +22,7 @@ func (c *convertOpts) cmd() *cobra.Command {
 
 	// Add subcommands
 	cmd.AddCommand(toXML(c).cmd())
-	cmd.AddCommand(fromXML(c).cmd())
+	cmd.AddCommand(toGOBL(c).cmd())
 
 	return cmd
 }
