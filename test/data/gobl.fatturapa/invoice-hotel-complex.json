@@ -1,0 +1,259 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "0194d756-898f-73e9-a175-5cf0fb9a374a",
+		"dig": {
+			"alg": "sha256",
+			"val": "7f81b4b56ee0d1078cc4cd2472b26424b60784a96cbe8e4e84e350dbe256cf04"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"uuid": "73207bb0-e3ed-11ef-b1c5-8ba932e0fc94",
+		"type": "standard",
+		"series": "INV4",
+		"code": "000008",
+		"issue_date": "2025-02-06",
+		"currency": "EUR",
+		"tax": {
+			"prices_include": "VAT",
+			"ext": {
+				"it-sdi-document-type": "TD01",
+				"it-sdi-format": "FPR12"
+			}
+		},
+		"supplier": {
+			"$regime": "IT",
+			"uuid": "5d9bd63c-b62e-11ef-a710-bfc98ab749c0",
+			"name": "Luxury Apartments",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"addresses": [
+				{
+					"street": "Via Roma 15",
+					"locality": "Milano",
+					"code": "20124",
+					"country": "IT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "luxuryapartments@example.com"
+				}
+			],
+			"telephones": [
+				{
+					"num": "1234567890"
+				}
+			],
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
+		},
+		"customer": {
+			"$regime": "IT",
+			"name": "ABC SRL",
+			"tax_id": {
+				"country": "IT",
+				"code": "09876543217"
+			},
+			"addresses": [
+				{
+					"street": "Via Verdi 14",
+					"locality": "TRUCCAZZANO",
+					"code": "20060",
+					"country": "IT"
+				}
+			],
+			"emails": [
+				{
+					"addr": "abc@example.com"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "2",
+				"item": {
+					"name": "22/01/2025 - 23/01/2025: (2) Suite Topazio - Luxury Apartment in Via Roma",
+					"price": "76.69"
+				},
+				"sum": "153.38",
+				"discounts": [
+					{
+						"percent": "50.00000%",
+						"amount": "76.69"
+					},
+					{
+						"percent": "50.00000%",
+						"amount": "76.69"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-exempt": "N1"
+						}
+					}
+				],
+				"total": "0.00"
+			},
+			{
+				"i": 2,
+				"quantity": "2",
+				"item": {
+					"name": "23/01/2025: ACCOMMODATION",
+					"price": "76.69"
+				},
+				"sum": "153.38",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "intermediate",
+						"percent": "10.0%"
+					}
+				],
+				"total": "153.38"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "15/01/2025: cleaning cost",
+					"price": "70.00"
+				},
+				"sum": "70.00",
+				"discounts": [
+					{
+						"percent": "10.00000%",
+						"amount": "7.00"
+					},
+					{
+						"percent": "90.00000%",
+						"amount": "63.00"
+					}
+				],
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-exempt": "N1"
+						}
+					}
+				],
+				"total": "0.00"
+			},
+			{
+				"i": 4,
+				"quantity": "1",
+				"item": {
+					"name": "03/02/2025: cleaning",
+					"price": "70.00"
+				},
+				"sum": "70.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "intermediate",
+						"percent": "10.0%"
+					}
+				],
+				"total": "70.00"
+			},
+			{
+				"i": 5,
+				"quantity": "4",
+				"item": {
+					"name": "22/01/2025 - 23/01/2025: Tourist tax",
+					"price": "6.30"
+				},
+				"sum": "25.20",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-exempt": "N1"
+						}
+					}
+				],
+				"total": "25.20"
+			}
+		],
+		"payment": {
+			"terms": {
+				"key": "advanced"
+			},
+			"advances": [
+				{
+					"date": "2025-01-15",
+					"key": "cash",
+					"description": "Booking.com",
+					"amount": "223.38",
+					"ext": {
+						"it-sdi-payment-means": "MP01"
+					}
+				},
+				{
+					"date": "2025-02-02",
+					"key": "cash",
+					"description": "Credit card",
+					"amount": "25.20",
+					"ext": {
+						"it-sdi-payment-means": "MP01"
+					}
+				}
+			]
+		},
+		"totals": {
+			"sum": "248.58",
+			"tax_included": "20.31",
+			"total": "228.27",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "exempt",
+								"ext": {
+									"it-sdi-exempt": "N1"
+								},
+								"base": "25.20",
+								"amount": "0.00"
+							},
+							{
+								"key": "intermediate",
+								"base": "203.07",
+								"percent": "10.0%",
+								"amount": "20.31"
+							}
+						],
+						"amount": "20.31"
+					}
+				],
+				"sum": "20.31"
+			},
+			"tax": "20.31",
+			"total_with_tax": "248.58",
+			"payable": "248.58",
+			"advance": "248.58",
+			"due": "0.00"
+		},
+		"notes": [
+			{
+				"text": "\u003cp\u003eInvoice for stay at Luxury Apartments Suite\u003c/p\u003e"
+			}
+		]
+	}
+}

@@ -1,6 +1,9 @@
 package fatturapa
 
-import "github.com/invopop/gobl/num"
+import (
+	"github.com/invopop/gobl/cal"
+	"github.com/invopop/gobl/num"
+)
 
 func formatPercentage(p *num.Percentage) string {
 	if p == nil {
@@ -31,4 +34,16 @@ func formatAmount8(a *num.Amount) string {
 		return ""
 	}
 	return a.RescaleRange(2, 8).String()
+}
+
+// parseDate will parse a date string and return a cal.Date
+func parseDate(date string) (cal.Date, error) {
+	if date == "" {
+		return cal.Date{}, nil
+	}
+	var d cal.Date
+	if err := d.UnmarshalJSON([]byte(`"` + date + `"`)); err != nil {
+		return cal.Date{}, err
+	}
+	return d, nil
 }

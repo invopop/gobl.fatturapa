@@ -10,11 +10,11 @@ import (
 
 func TestPaymentsSimple(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-simple.json")
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.FatturaElettronicaBody[0].DatiPagamento
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP02", dp.Conditions)
@@ -26,11 +26,11 @@ func TestPaymentsSimple(t *testing.T) {
 
 func TestPaymentsSimpleIBAN(t *testing.T) {
 	t.Run("should contain the supplier party info", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-simple-iban.json")
+		env := test.LoadTestFile("invoice-simple-iban.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.FatturaElettronicaBody[0].DatiPagamento
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP02", dp.Conditions)
@@ -44,11 +44,11 @@ func TestPaymentsSimpleIBAN(t *testing.T) {
 
 func TestPayments(t *testing.T) {
 	t.Run("multiple due dates", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-irpef.json")
+		env := test.LoadTestFile("invoice-irpef.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.FatturaElettronicaBody[0].DatiPagamento
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP01", dp.Conditions)
@@ -62,25 +62,25 @@ func TestPayments(t *testing.T) {
 	})
 
 	t.Run("advance payment", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-hotel-private.json")
+		env := test.LoadTestFile("invoice-hotel-private.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.FatturaElettronicaBody[0].DatiPagamento
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
-		assert.Equal(t, "TP01", dp.Conditions)
+		assert.Equal(t, "TP03", dp.Conditions)
 		assert.Len(t, dp.Payments, 1)
 		assert.Equal(t, "MP08", dp.Payments[0].Method)
 		assert.Equal(t, "29.00", dp.Payments[0].Amount)
 	})
 
 	t.Run("prepaid", func(t *testing.T) {
-		env := test.LoadTestFile("invoice-hotel.json")
+		env := test.LoadTestFile("invoice-hotel.json", test.PathGOBLFatturaPA)
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 
-		dp := doc.FatturaElettronicaBody[0].DatiPagamento
+		dp := doc.Body[0].PaymentsData[0]
 
 		require.NotNil(t, dp)
 		assert.Equal(t, "TP03", dp.Conditions)

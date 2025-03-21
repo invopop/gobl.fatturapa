@@ -25,6 +25,12 @@ import (
 const (
 	certificateFile     = "test.p12"
 	certificatePassword = "invopop"
+
+	// PathGOBLFatturaPA is the path to the test data for the GOBL FatturaPA
+	PathGOBLFatturaPA = "gobl.fatturapa"
+
+	// PathFatturaPAGOBL is the path to the test data for the FatturaPA GOBL
+	PathFatturaPAGOBL = "fatturapa.gobl"
 )
 
 // UpdateOut is a flag that can be set to update example files
@@ -73,10 +79,28 @@ func ConvertFromGOBL(env *gobl.Envelope, converter ...*fatturapa.Converter) (*fa
 	return doc, nil
 }
 
+// ConvertToGOBL takes the XML test data and converts into a GOBL envelope
+func ConvertToGOBL(doc []byte, converter ...*fatturapa.Converter) (*gobl.Envelope, error) {
+	var c *fatturapa.Converter
+
+	if len(converter) == 0 {
+		c = NewConverter()
+	} else {
+		c = converter[0]
+	}
+
+	env, err := c.ConvertToGOBL(doc)
+	if err != nil {
+		return nil, err
+	}
+
+	return env, nil
+}
+
 // GetDataPath returns the path where test can find data files
 // to be used in tests
-func GetDataPath() string {
-	return getRootFolder() + "/test/data/"
+func GetDataPath(path string) string {
+	return getRootFolder() + "/test/data/" + "/" + path + "/"
 }
 
 // ModifyInvoice takes a GOBL envelope and modifies the invoice
@@ -97,8 +121,8 @@ func ModifyInvoice(env *gobl.Envelope, modifyFunc func(*bill.Invoice)) {
 }
 
 // LoadTestFile loads a test file from the test/data folder as a GOBL envelope
-func LoadTestFile(file string) *gobl.Envelope {
-	path := filepath.Join(GetDataPath(), file)
+func LoadTestFile(file string, testPath string) *gobl.Envelope {
+	path := filepath.Join(GetDataPath(testPath), file)
 	f, err := os.Open(path)
 	if err != nil {
 		panic(err)
