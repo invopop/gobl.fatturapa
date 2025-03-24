@@ -21,7 +21,7 @@ func TestPartiesInConversion(t *testing.T) {
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
-		env, err := test.ConvertToGOBL(data, test.NewConverter())
+		env, err := test.ConvertToGOBL(data)
 		require.NoError(t, err)
 		require.NotNil(t, env)
 
@@ -63,7 +63,7 @@ func TestPartiesInConversion(t *testing.T) {
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
-		env, err := test.ConvertToGOBL(data, test.NewConverter())
+		env, err := test.ConvertToGOBL(data)
 		require.NoError(t, err)
 		require.NotNil(t, env)
 
@@ -100,7 +100,7 @@ func TestPartiesInConversion(t *testing.T) {
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
-		env, err := test.ConvertToGOBL(data, test.NewConverter())
+		env, err := test.ConvertToGOBL(data)
 		require.NoError(t, err)
 		require.NotNil(t, env)
 
@@ -124,7 +124,7 @@ func TestPartiesInConversion(t *testing.T) {
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
-		env, err := test.ConvertToGOBL(data, test.NewConverter())
+		env, err := test.ConvertToGOBL(data)
 		require.NoError(t, err)
 		require.NotNil(t, env)
 

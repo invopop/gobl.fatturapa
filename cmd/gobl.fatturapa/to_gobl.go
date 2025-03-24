@@ -42,11 +42,8 @@ func (t *toGOBLOpts) runE(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("reading input: %w", err)
 	}
 
-	// Create a new converter
-	converter := fatturapa.NewConverter()
-
 	// Convert from XML to GOBL
-	env, err := converter.ConvertToGOBL(data)
+	env, err := fatturapa.Parse(data)
 	if err != nil {
 		return fmt.Errorf("converting from FatturaPA to GOBL: %w", err)
 	}

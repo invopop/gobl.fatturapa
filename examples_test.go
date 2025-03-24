@@ -36,7 +36,7 @@ func TestGOBLToXMLExamples(t *testing.T) {
 
 		env := test.LoadTestFile(file, test.PathGOBLFatturaPA)
 
-		doc, err := test.ConvertFromGOBL(env, test.NewConverter())
+		doc, err := test.ConvertFromGOBL(env, test.LoadOptions()...)
 		require.NoError(t, err)
 
 		data, err := xml.MarshalIndent(doc, "", "\t")
@@ -86,7 +86,7 @@ func TestXMLToGOBLExamples(t *testing.T) {
 		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), file))
 		require.NoError(t, err)
 
-		env, err := test.ConvertToGOBL(data, test.NewConverter())
+		env, err := test.ConvertToGOBL(data)
 		require.NoError(t, err)
 		require.NotNil(t, env)
 

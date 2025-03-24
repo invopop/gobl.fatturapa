@@ -30,17 +30,17 @@ type TransmissionData struct {
 	RecipientPEC       string `xml:"PECDestinatario,omitempty"`
 }
 
-func (c *Converter) newTransmissionData(inv *bill.Invoice, env *gobl.Envelope) *TransmissionData {
+func newTransmissionData(inv *bill.Invoice, env *gobl.Envelope, transmitter *Transmitter) *TransmissionData {
 	dt := &TransmissionData{
 		RecipientCode: codiceDestinatario(inv.Customer),
 		RecipientPEC:  pecDestinatario(inv.Customer),
 	}
 
 	// Do we need to add the transmitter info?
-	if c.Config.Transmitter != nil {
+	if transmitter != nil {
 		dt.TransmitterID = &TaxID{
-			Country: c.Config.Transmitter.CountryCode,
-			Code:    c.Config.Transmitter.TaxID,
+			Country: transmitter.CountryCode,
+			Code:    transmitter.TaxID,
 		}
 		dt.ProgressiveNumber = env.Head.UUID.String()[:8]
 		dt.TransmissionFormat = formatoTransmissione(inv)

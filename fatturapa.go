@@ -47,9 +47,9 @@ type Document struct {
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
 }
 
-// ConvertFromGOBL expects the base envelope and provides a new Document
+// Convert expects the base envelope and provides a new Document
 // containing the XML version.
-func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
+func Convert(env *gobl.Envelope, opts ...Option) (*Document, error) {
 	invoice, ok := env.Extract().(*bill.Invoice)
 	if !ok || invoice == nil {
 		return nil, errors.New("expected an invoice")
@@ -60,7 +60,9 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 		return nil, err
 	}
 
-	TransmissionData := c.newTransmissionData(invoice, env)
+	config := parseOptions(opts...)
+
+	TransmissionData := newTransmissionData(invoice, env, config.Transmitter)
 
 	header := newHeader(invoice, TransmissionData)
 
@@ -81,8 +83,8 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 		Body:           []*Body{body},
 	}
 
-	if c.Config.Certificate != nil {
-		if err := d.sign(c.Config); err != nil {
+	if config.Certificate != nil {
+		if err := d.sign(config); err != nil {
 			return nil, err
 		}
 	}
@@ -90,9 +92,9 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 	return d, nil
 }
 
-// ConvertToGOBL expects the XML document bytes and provides a new GOBL
+// Parse expects the XML document bytes and provides a new GOBL
 // envelope containing the invoice.
-func (c *Converter) ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
+func Parse(doc []byte) (*gobl.Envelope, error) {
 	d := &Document{}
 	if err := nbioXML.Unmarshal(doc, d); err != nil {
 		return nil, fmt.Errorf("unmarshal document: %w", err)

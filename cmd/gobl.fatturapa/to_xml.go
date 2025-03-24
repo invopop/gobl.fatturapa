@@ -73,12 +73,12 @@ func (t *toXMLOpts) runE(cmd *cobra.Command, args []string) error {
 
 	outFile := outputFilename(args)
 
-	converter, err := t.loadConverterFromConfig()
+	opts, err := t.loadConfigOptions()
 	if err != nil {
 		return err
 	}
 
-	doc, err := converter.ConvertFromGOBL(env)
+	doc, err := fatturapa.Convert(env, opts...)
 	if err != nil {
 		return err
 	}
@@ -101,7 +101,7 @@ func (t *toXMLOpts) runE(cmd *cobra.Command, args []string) error {
 	return nil
 }
 
-func (t *toXMLOpts) loadConverterFromConfig() (*fatturapa.Converter, error) {
+func (t *toXMLOpts) loadConfigOptions() ([]fatturapa.Option, error) {
 	var opts []fatturapa.Option
 
 	if t.transmitter != "" {
@@ -135,9 +135,7 @@ func (t *toXMLOpts) loadConverterFromConfig() (*fatturapa.Converter, error) {
 		opts = append(opts, fatturapa.WithTimestamp())
 	}
 
-	return fatturapa.NewConverter(
-		opts...,
-	), nil
+	return opts, nil
 }
 
 func (t *toXMLOpts) loadCertificate() (*xmldsig.Certificate, error) {
