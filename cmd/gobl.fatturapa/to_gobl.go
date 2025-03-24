@@ -34,7 +34,7 @@ func (t *toGOBLOpts) cmd() *cobra.Command {
 	return cmd
 }
 
-func (t *toGOBLOpts) runE(cmd *cobra.Command, args []string) error {
+func (t *toGOBLOpts) runE(_ *cobra.Command, args []string) error {
 	input := inputFilename(args)
 
 	data, err := os.ReadFile(input)

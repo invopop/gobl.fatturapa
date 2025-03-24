@@ -141,6 +141,7 @@ func LoadSchema() (*xsd.Schema, error) {
 	return schema, nil
 }
 
+// LoadOptions loads the options for the test
 func LoadOptions() []fatturapa.Option {
 	cert, err := loadCertificate()
 	if err != nil {
@@ -160,6 +161,7 @@ func LoadOptions() []fatturapa.Option {
 	}
 }
 
+// LoadOptionsWithoutTransmitter loads the options for the test without a transmitter
 func LoadOptionsWithoutTransmitter() []fatturapa.Option {
 	cert, err := loadCertificate()
 	if err != nil {
