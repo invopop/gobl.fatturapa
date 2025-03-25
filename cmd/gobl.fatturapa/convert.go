@@ -82,7 +82,7 @@ func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
 		}
 	case FormatTypeXML:
 		// Convert XML to JSON
-		outputData, err = convertXMLToJSON(data, c.pretty, opts...)
+		outputData, err = convertXMLToJSON(data, c.pretty)
 		if err != nil {
 			return err
 		}
@@ -145,7 +145,7 @@ func convertJSONToXML(data []byte, pretty bool, opts ...fatturapa.Option) ([]byt
 }
 
 // convertXMLToJSON converts FatturaPA XML to GOBL JSON
-func convertXMLToJSON(data []byte, pretty bool, opts ...fatturapa.Option) ([]byte, error) {
+func convertXMLToJSON(data []byte, pretty bool) ([]byte, error) {
 	// Parse FatturaPA data
 	env, err := fatturapa.Parse(data)
 	if err != nil {
