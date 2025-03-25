@@ -11,7 +11,7 @@ import (
 	"github.com/invopop/gobl"
 )
 
-func Test_root(t *testing.T) {
+func TestRoot(t *testing.T) {
 	tests := []struct {
 		name  string
 		args  []string
@@ -50,7 +50,7 @@ func Test_root(t *testing.T) {
 	}
 }
 
-func Test_version(t *testing.T) {
+func TestVersion(t *testing.T) {
 	cmd := versionCmd()
 	stdout, stderr := testy.RedirIO(nil, func() {
 		err := cmd.Execute()

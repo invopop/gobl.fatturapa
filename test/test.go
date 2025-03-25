@@ -25,58 +25,41 @@ import (
 const (
 	certificateFile     = "test.p12"
 	certificatePassword = "invopop"
+
+	// PathGOBLFatturaPA is the path to the test data for the GOBL FatturaPA
+	PathGOBLFatturaPA = "gobl.fatturapa"
+
+	// PathFatturaPAGOBL is the path to the test data for the FatturaPA GOBL
+	PathFatturaPAGOBL = "fatturapa.gobl"
 )
 
-// UpdateOut is a flag that can be set to update example files
+// UpdateOut is a flag that can be set to update example files in test/data and test/data/out
 var UpdateOut = flag.Bool("update", false, "Update the example files in test/data and test/data/out")
 
-// NewConverter returns a fatturapa.Converter with the test certificate and
-// transmitter data.
-func NewConverter() *fatturapa.Converter {
-	cert, err := loadCertificate()
-
-	if err != nil {
-		panic(err)
-	}
-
-	transmitter := &fatturapa.Transmitter{
-		CountryCode: string(l10n.IT),
-		TaxID:       "01234567890",
-	}
-
-	// Set a fixed time to get deterministic signatures
-	ts, _ := time.Parse(time.RFC3339, "2022-02-01T04:00:00Z")
-
-	converter := fatturapa.NewConverter(
-		fatturapa.WithTransmitterData(transmitter),
-		fatturapa.WithCertificate(cert),
-		fatturapa.WithCurrentTime(ts),
-	)
-
-	return converter
-}
-
 // ConvertFromGOBL takes the GOBL test data and converts into XML
-func ConvertFromGOBL(env *gobl.Envelope, converter ...*fatturapa.Converter) (*fatturapa.Document, error) {
-	var c *fatturapa.Converter
-
-	if len(converter) == 0 {
-		c = NewConverter()
-	} else {
-		c = converter[0]
-	}
-
-	doc, err := c.ConvertFromGOBL(env)
+func ConvertFromGOBL(env *gobl.Envelope, opts ...fatturapa.Option) (*fatturapa.Document, error) {
+	doc, err := fatturapa.Convert(env, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return doc, nil
 }
 
+// ConvertToGOBL takes the XML test data and converts into a GOBL envelope
+func ConvertToGOBL(doc []byte) (*gobl.Envelope, error) {
+
+	env, err := fatturapa.Parse(doc)
+	if err != nil {
+		return nil, err
+	}
+
+	return env, nil
+}
+
 // GetDataPath returns the path where test can find data files
 // to be used in tests
-func GetDataPath() string {
-	return getRootFolder() + "/test/data/"
+func GetDataPath(path string) string {
+	return getRootFolder() + "/test/data/" + "/" + path + "/"
 }
 
 // ModifyInvoice takes a GOBL envelope and modifies the invoice
@@ -97,8 +80,8 @@ func ModifyInvoice(env *gobl.Envelope, modifyFunc func(*bill.Invoice)) {
 }
 
 // LoadTestFile loads a test file from the test/data folder as a GOBL envelope
-func LoadTestFile(file string) *gobl.Envelope {
-	path := filepath.Join(GetDataPath(), file)
+func LoadTestFile(file string, testPath string) *gobl.Envelope {
+	path := filepath.Join(GetDataPath(testPath), file)
 	f, err := os.Open(path)
 	if err != nil {
 		panic(err)
@@ -156,6 +139,41 @@ func LoadSchema() (*xsd.Schema, error) {
 	}
 
 	return schema, nil
+}
+
+// LoadOptions loads the options for the test
+func LoadOptions() []fatturapa.Option {
+	cert, err := loadCertificate()
+	if err != nil {
+		panic(err)
+	}
+	transmitter := &fatturapa.Transmitter{
+		CountryCode: string(l10n.IT),
+		TaxID:       "01234567890",
+	}
+
+	// Set a fixed time to get deterministic signatures
+	ts, _ := time.Parse(time.RFC3339, "2022-02-01T04:00:00Z")
+	return []fatturapa.Option{
+		fatturapa.WithCertificate(cert),
+		fatturapa.WithTransmitterData(transmitter),
+		fatturapa.WithCurrentTime(ts),
+	}
+}
+
+// LoadOptionsWithoutTransmitter loads the options for the test without a transmitter
+func LoadOptionsWithoutTransmitter() []fatturapa.Option {
+	cert, err := loadCertificate()
+	if err != nil {
+		panic(err)
+	}
+
+	// Set a fixed time to get deterministic signatures
+	ts, _ := time.Parse(time.RFC3339, "2022-02-01T04:00:00Z")
+	return []fatturapa.Option{
+		fatturapa.WithCertificate(cert),
+		fatturapa.WithCurrentTime(ts),
+	}
 }
 
 // ValidateXML validates an XML document against a XSD schema

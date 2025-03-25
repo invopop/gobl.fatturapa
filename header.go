@@ -1,20 +1,17 @@
 package fatturapa
 
-import (
-	"github.com/invopop/gobl/bill"
-)
+import "github.com/invopop/gobl/bill"
 
-// fatturaElettronicaHeader contains all data related to the parties involved
-// in the document.
-type fatturaElettronicaHeader struct {
-	DatiTrasmissione *datiTrasmissione `xml:"DatiTrasmissione,omitempty"`
+// Header contains all data related to the parties involved in the document.
+type Header struct {
+	TransmissionData *TransmissionData `xml:"DatiTrasmissione,omitempty"`
 	Supplier         *Supplier         `xml:"CedentePrestatore,omitempty"`
 	Customer         *Customer         `xml:"CessionarioCommittente,omitempty"`
 }
 
-func newFatturaElettronicaHeader(inv *bill.Invoice, datiTrasmissione *datiTrasmissione) *fatturaElettronicaHeader {
-	return &fatturaElettronicaHeader{
-		DatiTrasmissione: datiTrasmissione,
+func newHeader(inv *bill.Invoice, TransmissionData *TransmissionData) *Header {
+	return &Header{
+		TransmissionData: TransmissionData,
 		Supplier:         newSupplier(inv.Supplier),
 		Customer:         newCustomer(inv.Customer),
 	}

@@ -1,0 +1,99 @@
+{
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"code": "1",
+	"issue_date": "2018-07-10",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD01",
+			"it-sdi-format": "FPR12"
+		}
+	},
+	"supplier": {
+		"name": "John Doe",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"addresses": [
+			{
+				"street": "Via di Qua, 1",
+				"locality": "Milano",
+				"region": "MI",
+				"code": "20145",
+				"country": "IT"
+			}
+		],
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
+		}
+	},
+	"customer": {
+		"name": "Jane Doe",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"inboxes": [
+			{
+				"key": "it-sdi-code",
+				"code": "1234567"
+			}
+		],
+		"addresses": [
+			{
+				"street": "Via di La, 2",
+				"locality": "Milano",
+				"region": "MI",
+				"code": "20145",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1.00",
+			"item": {
+				"name": "Descrizione articolo",
+				"price": "10.00"
+			},
+			"sum": "10.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "22.00%"
+				}
+			],
+			"total": "10.00"
+		}
+	],
+	"totals": {
+		"sum": "10.00",
+		"total": "10.00",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"base": "10.00",
+							"percent": "22.00%",
+							"amount": "2.20"
+						}
+					],
+					"amount": "2.20"
+				}
+			],
+			"sum": "2.20"
+		},
+		"tax": "2.20",
+		"total_with_tax": "12.20",
+		"payable": "12.20"
+	}
+}

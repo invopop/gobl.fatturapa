@@ -11,7 +11,7 @@ var xadesConfig = &xmldsig.XAdESConfig{
 	Description: "Fattura PA",
 }
 
-func (d *Document) sign(config *Config) error {
+func (d *Document) sign(config *config) error {
 	data, err := d.canonical()
 	if err != nil {
 		return fmt.Errorf("converting to canonincal format: %w", err)

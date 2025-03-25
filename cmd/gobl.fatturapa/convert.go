@@ -2,9 +2,11 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"github.com/invopop/gobl"
 	fatturapa "github.com/invopop/gobl.fatturapa"
@@ -13,12 +15,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+const (
+	// FormatTypeXML represents XML format (FatturaPA)
+	FormatTypeXML string = ".xml"
+	// FormatTypeJSON represents JSON format (GOBL)
+	FormatTypeJSON string = ".json"
+)
+
 type convertOpts struct {
 	*rootOpts
 	cert          string
 	password      string
 	transmitter   string
 	withTimestamp bool
+	pretty        bool
 }
 
 func convert(o *rootOpts) *convertOpts {
@@ -28,68 +38,145 @@ func convert(o *rootOpts) *convertOpts {
 func (c *convertOpts) cmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "convert [infile] [outfile]",
-		Short: "Convert a GOBL JSON into a FatturaPA XML",
+		Short: "Convert between GOBL and FatturaPA formats",
+		Long:  `Auto-detect input format and convert between GOBL JSON and FatturaPA XML formats.`,
 		RunE:  c.runE,
 	}
+
+	// Add flags for both conversion directions
 	f := cmd.Flags()
-	f.StringVarP(&c.cert, "cert", "c", "", "Certificate for signing in pkcs12 format")
-	f.StringVarP(&c.password, "password", "p", "", "Password of the certificate")
-	f.StringVarP(&c.transmitter, "transmitter", "T", "", "Tax ID of the transmitter. Must be prefixed by the country code")
-	f.BoolVarP(&c.withTimestamp, "with-timestamp", "t", false, "Add timestamp to the output file")
+	f.StringVarP(&c.cert, "cert", "c", "", "Certificate for signing in pkcs12 format (for XML output)")
+	f.StringVarP(&c.password, "password", "x", "", "Password of the certificate (for XML output)")
+	f.StringVarP(&c.transmitter, "transmitter", "T", "", "Tax ID of the transmitter. Must be prefixed by the country code (for XML output)")
+	f.BoolVarP(&c.withTimestamp, "with-timestamp", "t", false, "Add timestamp to the output file (for XML output)")
+	f.BoolVarP(&c.pretty, "pretty", "p", true, "Output pretty-printed result")
 
 	return cmd
 }
 
 func (c *convertOpts) runE(cmd *cobra.Command, args []string) error {
-	input, err := openInput(cmd, args)
-	if err != nil {
-		return err
-	}
-	defer input.Close() // nolint:errcheck
+	// Read input file
+	input := inputFilename(args)
 
-	out, err := c.openOutput(cmd, args)
+	data, err := os.ReadFile(input)
 	if err != nil {
-		return err
+		return fmt.Errorf("reading input: %w", err)
 	}
-	defer out.Close() // nolint:errcheck
 
-	converter, err := loadConverterFromConfig(c)
+	opts, err := loadFatturaPAOptions(c)
 	if err != nil {
 		return err
 	}
 
-	buf := new(bytes.Buffer)
-	if _, err := buf.ReadFrom(input); err != nil {
-		panic(err)
+	// Detect format
+	ext := filepath.Ext(input)
+
+	// Process based on detected format
+	var outputData []byte
+	switch ext {
+	case FormatTypeJSON:
+		// Convert JSON to XML
+		outputData, err = convertJSONToXML(data, c.pretty, opts...)
+		if err != nil {
+			return err
+		}
+	case FormatTypeXML:
+		// Convert XML to JSON
+		outputData, err = convertXMLToJSON(data, c.pretty)
+		if err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("unable to determine input format, please use .json or .xml")
 	}
-	env := new(gobl.Envelope)
-	if err := json.Unmarshal(buf.Bytes(), env); err != nil {
+
+	// Write output
+	outFile := outputFilename(args)
+	if outFile == "" {
+		// Write to stdout if no output file specified
+		_, err = cmd.OutOrStdout().Write(outputData)
 		return err
 	}
 
-	doc, err := converter.ConvertFromGOBL(env)
-	if err != nil {
-		return err
-	}
-
-	data, err := doc.Bytes()
-	if err != nil {
-		return fmt.Errorf("generating fatturapa xml: %w", err)
-	}
-
-	if _, err = out.Write(data); err != nil {
-		return fmt.Errorf("writing fatturapa xml: %w", err)
+	if err = os.WriteFile(outFile, outputData, 0644); err != nil {
+		return fmt.Errorf("writing output: %w", err)
 	}
 
 	return nil
 }
 
-func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
-	var opts []fatturapa.Option
+// convertJSONToXML converts GOBL JSON to FatturaPA XML
+func convertJSONToXML(data []byte, pretty bool, opts ...fatturapa.Option) ([]byte, error) {
+	// Parse GOBL data
+	out, err := gobl.Parse(data)
+	if err != nil {
+		return nil, fmt.Errorf("parsing GOBL: %w", err)
+	}
 
-	if c.transmitter != "" {
-		countryCode := c.transmitter[:2]
-		taxID := c.transmitter[2:]
+	var env *gobl.Envelope
+	switch doc := out.(type) {
+	case *gobl.Envelope:
+		env = doc
+	default:
+		env = gobl.NewEnvelope()
+		if err := env.Insert(doc); err != nil {
+			return nil, fmt.Errorf("inserting document into envelope: %w", err)
+		}
+	}
+
+	// Convert to FatturaPA
+	doc, err := fatturapa.Convert(env, opts...)
+	if err != nil {
+		return nil, fmt.Errorf("converting to FatturaPA: %w", err)
+	}
+
+	// Marshal to XML
+	var result []byte
+	if pretty {
+		result, err = xml.MarshalIndent(doc, "", "\t")
+	} else {
+		result, err = xml.Marshal(doc)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("marshaling to XML: %w", err)
+	}
+
+	return result, nil
+}
+
+// convertXMLToJSON converts FatturaPA XML to GOBL JSON
+func convertXMLToJSON(data []byte, pretty bool) ([]byte, error) {
+	// Parse FatturaPA data
+	env, err := fatturapa.Parse(data)
+	if err != nil {
+		return nil, fmt.Errorf("converting from FatturaPA to GOBL: %w", err)
+	}
+
+	// Marshal to JSON
+	var result []byte
+	if pretty {
+		result, err = json.MarshalIndent(env, "", "  ")
+	} else {
+		result, err = json.Marshal(env)
+	}
+	if err != nil {
+		return nil, fmt.Errorf("marshaling to JSON: %w", err)
+	}
+
+	return result, nil
+}
+
+// loadFatturaPAOptions builds the FatturaPA options from the conversion options
+func loadFatturaPAOptions(opts *convertOpts) ([]fatturapa.Option, error) {
+	var fatturapOpts []fatturapa.Option
+
+	if opts.transmitter != "" {
+		if len(opts.transmitter) < 3 {
+			return nil, fmt.Errorf("tax ID must be prefixed by a valid country code")
+		}
+
+		countryCode := opts.transmitter[:2]
+		taxID := opts.transmitter[2:]
 
 		code := l10n.TaxCountryCode(countryCode)
 		err := code.Validate()
@@ -102,31 +189,30 @@ func loadConverterFromConfig(c *convertOpts) (*fatturapa.Converter, error) {
 			TaxID:       taxID,
 		}
 
-		opts = append(opts, fatturapa.WithTransmitterData(&transmitter))
+		fatturapOpts = append(fatturapOpts, fatturapa.WithTransmitterData(&transmitter))
 	}
 
-	if c.cert != "" {
-		cert, err := loadCertificate(c.cert, c.password)
+	if opts.cert != "" {
+		cert, err := loadCertificate(opts.cert, opts.password)
 		if err != nil {
 			return nil, err
 		}
 
-		opts = append(opts, fatturapa.WithCertificate(cert))
+		fatturapOpts = append(fatturapOpts, fatturapa.WithCertificate(cert))
 	}
 
-	if c.withTimestamp {
-		opts = append(opts, fatturapa.WithTimestamp())
+	if opts.withTimestamp {
+		fatturapOpts = append(fatturapOpts, fatturapa.WithTimestamp())
 	}
 
-	return fatturapa.NewConverter(
-		opts...,
-	), nil
+	return fatturapOpts, nil
 }
 
-func loadCertificate(certPath, password string) (*xmldsig.Certificate, error) {
-	cert, err := xmldsig.LoadCertificate(certPath, password)
+// loadCertificate loads a certificate from the given file with password
+func loadCertificate(certFile, password string) (*xmldsig.Certificate, error) {
+	cert, err := xmldsig.LoadCertificate(certFile, password)
 	if err != nil {
-		return nil, fmt.Errorf("loading certificate %s: %w", certPath, err)
+		return nil, fmt.Errorf("loading certificate %s: %w", certFile, err)
 	}
 
 	return cert, nil

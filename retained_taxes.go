@@ -10,20 +10,21 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
-type datiRitenuta struct {
-	TipoRitenuta     string
-	ImportoRitenuta  string
-	AliquotaRitenuta string
-	CausalePagamento string
+// RetainedTax represents a retained tax.
+type RetainedTax struct {
+	Type   string `xml:"TipoRitenuta"`
+	Amount string `xml:"ImportoRitenuta"`
+	Rate   string `xml:"AliquotaRitenuta"`
+	Reason string `xml:"CausalePagamento"`
 }
 
-func extractRetainedTaxes(inv *bill.Invoice) ([]*datiRitenuta, error) {
+func extractRetainedTaxes(inv *bill.Invoice) ([]*RetainedTax, error) {
 	catTotals := findRetainedCategories(inv.Totals)
-	var dr []*datiRitenuta
+	var dr []*RetainedTax
 
 	for _, catTotal := range catTotals {
 		for _, rateTotal := range catTotal.Rates {
-			drElem, err := newDatiRitenuta(catTotal.Code, rateTotal)
+			drElem, err := newRetainedTax(catTotal.Code, rateTotal)
 			if err != nil {
 				return nil, err
 			}
@@ -46,20 +47,20 @@ func findRetainedCategories(totals *bill.Totals) []*tax.CategoryTotal {
 	return catTotals
 }
 
-func newDatiRitenuta(cat cbc.Code, rateTotal *tax.RateTotal) (*datiRitenuta, error) {
+func newRetainedTax(cat cbc.Code, rateTotal *tax.RateTotal) (*RetainedTax, error) {
 	rate := formatPercentage(rateTotal.Percent)
 	amount := formatAmount2(&rateTotal.Amount)
 
-	codeTR, err := findCodeTipoRitenuta(cat)
+	codeTR, err := findCodeTaxType(cat)
 	if err != nil {
 		return nil, err
 	}
 
-	return &datiRitenuta{
-		TipoRitenuta:     codeTR,
-		ImportoRitenuta:  amount,
-		AliquotaRitenuta: rate,
-		CausalePagamento: retainedExtensionCode(rateTotal.Ext),
+	return &RetainedTax{
+		Type:   codeTR,
+		Amount: amount,
+		Rate:   rate,
+		Reason: retainedExtensionCode(rateTotal.Ext),
 	}, nil
 }
 
@@ -73,7 +74,7 @@ func retainedExtensionCode(ext tax.Extensions) string {
 	return ""
 }
 
-func findCodeTipoRitenuta(cat cbc.Code) (string, error) {
+func findCodeTaxType(cat cbc.Code) (string, error) {
 	switch cat {
 	case it.TaxCategoryIRPEF:
 		return "RT01", nil

@@ -3,12 +3,18 @@ package fatturapa
 
 import (
 	"bytes"
-	"encoding/xml"
 	"errors"
 	"fmt"
 
+	// Momentary fix for nbio/xml library not properly handling namespace attributes but still needed for unmarshalling
+	"encoding/xml"
+
+	nbioXML "github.com/nbio/xml"
+
 	"github.com/invopop/gobl"
+	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/tax"
 	"github.com/invopop/xmldsig"
 )
 
@@ -35,17 +41,17 @@ type Document struct {
 	Versione       string   `xml:"versione,attr"`
 	SchemaLocation string   `xml:"xsi:schemaLocation,attr"`
 
-	FatturaElettronicaHeader *fatturaElettronicaHeader
-	FatturaElettronicaBody   []*fatturaElettronicaBody
+	Header *Header `xml:"FatturaElettronicaHeader"`
+	Body   []*Body `xml:"FatturaElettronicaBody"`
 
 	Signature *xmldsig.Signature `xml:"ds:Signature,omitempty"`
 }
 
-// ConvertFromGOBL expects the base envelope and provides a new Document
+// Convert expects the base envelope and provides a new Document
 // containing the XML version.
-func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
+func Convert(env *gobl.Envelope, opts ...Option) (*Document, error) {
 	invoice, ok := env.Extract().(*bill.Invoice)
-	if !ok {
+	if !ok || invoice == nil {
 		return nil, errors.New("expected an invoice")
 	}
 
@@ -54,34 +60,80 @@ func (c *Converter) ConvertFromGOBL(env *gobl.Envelope) (*Document, error) {
 		return nil, err
 	}
 
-	datiTrasmissione := c.newDatiTrasmissione(invoice, env)
+	config := parseOptions(opts...)
 
-	header := newFatturaElettronicaHeader(invoice, datiTrasmissione)
+	TransmissionData := newTransmissionData(invoice, env, config.Transmitter)
 
-	body, err := newFatturaElettronicaBody(invoice)
+	header := newHeader(invoice, TransmissionData)
+
+	body, err := newBody(invoice)
 	if err != nil {
 		return nil, err
 	}
 
 	// Basic document headers
 	d := &Document{
-		env:                      env,
-		FPANamespace:             namespaceFatturaPA,
-		DSigNamespace:            namespaceDSig,
-		XSINamespace:             namespaceXSI,
-		Versione:                 formatoTransmissione(invoice),
-		SchemaLocation:           schemaLocation,
-		FatturaElettronicaHeader: header,
-		FatturaElettronicaBody:   []*fatturaElettronicaBody{body},
+		env:            env,
+		FPANamespace:   namespaceFatturaPA,
+		DSigNamespace:  namespaceDSig,
+		XSINamespace:   namespaceXSI,
+		Versione:       formatoTransmissione(invoice),
+		SchemaLocation: schemaLocation,
+		Header:         header,
+		Body:           []*Body{body},
 	}
 
-	if c.Config.Certificate != nil {
-		if err := d.sign(c.Config); err != nil {
+	if config.Certificate != nil {
+		if err := d.sign(config); err != nil {
 			return nil, err
 		}
 	}
 
 	return d, nil
+}
+
+// Parse expects the XML document bytes and provides a new GOBL
+// envelope containing the invoice.
+func Parse(doc []byte) (*gobl.Envelope, error) {
+	d := &Document{}
+	if err := nbioXML.Unmarshal(doc, d); err != nil {
+		return nil, fmt.Errorf("unmarshal document: %w", err)
+	}
+
+	// Verify signature. Standin for now.
+	// Skip signature verification for now
+	/*
+		if d.Signature == nil {
+			return nil, errors.New("signature is missing")
+		}
+	*/
+
+	// Create a new invoice with empty fields so that converter can fill it
+	inv := new(bill.Invoice)
+
+	inv.Addons = tax.WithAddons(sdi.V1)
+
+	// Retrieves information from the header and adds it to the invoice
+	goblBillInvoiceAddHeader(inv, d.Header)
+
+	// Retrieves information from the body and adds it to the invoice
+	// TODO: add support for multiple bodies
+	err := goblBillInvoiceAddBody(inv, d.Body[0])
+	if err != nil {
+		return nil, err
+	}
+
+	// Generate envelope
+	env, err := gobl.Envelop(inv)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := env.Validate(); err != nil {
+		return nil, err
+	}
+
+	return env, nil
 }
 
 // Buffer returns a byte buffer representation of the complete XML document.
@@ -109,7 +161,7 @@ func (d *Document) Bytes() ([]byte, error) {
 
 func (d *Document) buffer(base string) (*bytes.Buffer, error) {
 	buf := bytes.NewBufferString(base)
-	// data, err := xml.MarshalIndent(d, "", "  ") // not compatible with certificates
+	//data, err := xml.MarshalIndent(d, "", "  ")
 	data, err := xml.Marshal(d)
 	if err != nil {
 		return nil, fmt.Errorf("marshal document: %w", err)

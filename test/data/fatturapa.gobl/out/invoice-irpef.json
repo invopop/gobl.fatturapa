@@ -1,0 +1,245 @@
+{
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"$tags": [
+		"freelance"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"series": "SAMPLE",
+	"code": "001",
+	"issue_date": "2023-03-02",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD06",
+			"it-sdi-format": "FPR12"
+		}
+	},
+	"supplier": {
+		"name": "Rossi Digital Services",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"addresses": [
+			{
+				"num": "1",
+				"street": "VIALE DELLA LIBERTÀ",
+				"locality": "ROMA",
+				"region": "RM",
+				"code": "00100",
+				"country": "IT"
+			}
+		],
+		"emails": [
+			{
+				"addr": "billing@example.com"
+			}
+		],
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
+		}
+	},
+	"customer": {
+		"name": "MARIO LEONI",
+		"tax_id": {
+			"country": "IT"
+		},
+		"identities": [
+			{
+				"key": "it-fiscal-code",
+				"code": "MRALNE80E05H501C"
+			}
+		],
+		"people": [
+			{
+				"name": {
+					"prefix": "Dott.",
+					"given": "MARIO",
+					"surname": "LEONI"
+				}
+			}
+		],
+		"inboxes": [
+			{
+				"key": "it-sdi-code",
+				"code": "ABCDEF1"
+			}
+		],
+		"addresses": [
+			{
+				"num": "32",
+				"street": "VIALE DELI LAVORATORI",
+				"locality": "FIRENZE",
+				"region": "FI",
+				"code": "50100",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "20.00",
+			"item": {
+				"name": "Development services",
+				"price": "90.00",
+				"unit": "h"
+			},
+			"sum": "1800.00",
+			"discounts": [
+				{
+					"percent": "10.00%",
+					"amount": "180.00"
+				}
+			],
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "22.00%"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20.00%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
+				}
+			],
+			"total": "1620.00"
+		},
+		{
+			"i": 2,
+			"quantity": "1.00",
+			"item": {
+				"name": "Truffle Gathering",
+				"price": "100.00",
+				"unit": "h"
+			},
+			"sum": "100.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "0.00%",
+					"ext": {
+						"it-sdi-exempt": "N2.2"
+					}
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "50.00%",
+					"ext": {
+						"it-sdi-retained": "I"
+					}
+				}
+			],
+			"total": "100.00"
+		}
+	],
+	"discounts": [
+		{
+			"i": 1,
+			"percent": "50.00%",
+			"amount": "860.00"
+		}
+	],
+	"charges": [
+		{
+			"i": 1,
+			"key": "stamp-duty",
+			"amount": "12.34"
+		},
+		{
+			"i": 2,
+			"percent": "10.00%",
+			"amount": "172.00"
+		}
+	],
+	"payment": {
+		"terms": {
+			"key": "due-date",
+			"due_dates": [
+				{
+					"date": "2023-03-02",
+					"amount": "500.00"
+				},
+				{
+					"date": "2023-04-02",
+					"amount": "544.40"
+				}
+			]
+		},
+		"instructions": {
+			"key": "credit-transfer",
+			"credit_transfer": [
+				{
+					"iban": "IT60X0542811101000000123456",
+					"bic": "BCITITMM",
+					"name": "BANCA POPOLARE DI MILANO"
+				}
+			],
+			"ext": {
+				"it-sdi-payment-means": "MP05"
+			}
+		}
+	},
+	"totals": {
+		"sum": "1720.00",
+		"discount": "860.00",
+		"charge": "184.34",
+		"total": "1044.34",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"base": "1620.00",
+							"percent": "22.00%",
+							"amount": "356.40"
+						},
+						{
+							"ext": {
+								"it-sdi-exempt": "N2.2"
+							},
+							"base": "100.00",
+							"percent": "0.00%",
+							"amount": "0.00"
+						}
+					],
+					"amount": "356.40"
+				},
+				{
+					"code": "IRPEF",
+					"retained": true,
+					"rates": [
+						{
+							"ext": {
+								"it-sdi-retained": "A"
+							},
+							"base": "1620.00",
+							"percent": "20.00%",
+							"amount": "324.00"
+						},
+						{
+							"ext": {
+								"it-sdi-retained": "I"
+							},
+							"base": "100.00",
+							"percent": "50.00%",
+							"amount": "50.00"
+						}
+					],
+					"amount": "374.00"
+				}
+			],
+			"sum": "-17.60"
+		},
+		"tax": "-17.60",
+		"total_with_tax": "1026.74",
+		"payable": "1026.74"
+	}
+}
