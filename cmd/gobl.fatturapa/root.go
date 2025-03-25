@@ -1,9 +1,6 @@
 package main
 
 import (
-	"io"
-	"os"
-
 	"github.com/spf13/cobra"
 )
 
@@ -24,11 +21,4 @@ func (o *rootOpts) cmd() *cobra.Command {
 	cmd.AddCommand(convert(o).cmd())
 
 	return cmd
-}
-
-func openInput(cmd *cobra.Command, args []string) (io.ReadCloser, error) {
-	if inFile := inputFilename(args); inFile != "" {
-		return os.Open(inFile)
-	}
-	return io.NopCloser(cmd.InOrStdin()), nil
 }

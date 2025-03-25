@@ -179,19 +179,19 @@ go install github.com/invopop/gobl.fatturapa/cmd/gobl.fatturapa
 To convert from GOBL JSON to FatturaPA XML:
 
 ```bash
-gobl.fatturapa convert to-xml input.json output.xml
+gobl.fatturapa convert input.json output.xml
 ```
 
 If you have a digital certificate, run with:
 
 ```bash
-gobl.fatturapa convert to-xml -c cert.p12 -p password input.json output.xml
+gobl.fatturapa convert -c cert.p12 -p password input.json output.xml
 ```
 
 To include the transmitter information, add the `-T` flag and provide the _country code_ and the _tax ID_:
 
 ```bash
-gobl.fatturapa convert to-xml -T ES12345678 input.json output.xml
+gobl.fatturapa convert -T ES12345678 input.json output.xml
 ```
 
 #### Converting FatturaPA to GOBL
@@ -199,14 +199,11 @@ gobl.fatturapa convert to-xml -T ES12345678 input.json output.xml
 To convert from FatturaPA XML to GOBL JSON:
 
 ```bash
-gobl.fatturapa convert to-gobl input.xml output.json
+gobl.fatturapa convert input.xml output.json
 ```
 
 By default, the JSON output is pretty-printed. To disable this, use the `--pretty=false` flag:
 
 ```bash
-gobl.fatturapa convert to-gobl --pretty=false input.xml output.json
+gobl.fatturapa convert --pretty=false input.xml output.json
 ```
-## Notes
-
-- In all cases Go structures have been written using the same naming from the XML style document. This means names are not repeated in tags and generally makes it a bit easier to map the XML output to the internal structures.
