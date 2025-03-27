@@ -1,6 +1,7 @@
 package fatturapa
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -369,4 +370,23 @@ func parseSeriesAndCode(number string, series *cbc.Code, code *cbc.Code) {
 		*series = cbc.Code(parts[0])
 		*code = cbc.Code(parts[1])
 	}
+}
+
+// compareTotals compares the totals of the invoice with the totals of the FatturaPA document
+func compareTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
+	if inv == nil || doc == nil {
+		return nil
+	}
+	if doc.TotalAmount != "" {
+		fatturapaTotal, err := num.AmountFromString(doc.TotalAmount)
+		if err != nil {
+			return err
+		}
+
+		if fatturapaTotal.Compare(inv.Totals.Payable) != 0 {
+			return errors.New("totals do not match")
+		}
+	}
+
+	return nil
 }

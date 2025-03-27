@@ -14,7 +14,6 @@ import (
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/tax"
 	"github.com/invopop/xmldsig"
 )
@@ -135,13 +134,8 @@ func Parse(doc []byte) (*gobl.Envelope, error) {
 	}
 
 	// Final totals check
-	fatturapaTotal, err := num.AmountFromString(d.Body[0].GeneralData.Document.TotalAmount)
-	if err != nil {
+	if err := compareTotals(inv, d.Body[0].GeneralData.Document); err != nil {
 		return nil, err
-	}
-
-	if fatturapaTotal.Compare(inv.Totals.Payable) != 0 {
-		return nil, errors.New("totals do not match")
 	}
 
 	return env, nil
