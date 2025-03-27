@@ -133,6 +133,11 @@ func Parse(doc []byte) (*gobl.Envelope, error) {
 		return nil, err
 	}
 
+	// Final totals check
+	if err := compareTotals(inv, d.Body[0].GeneralData.Document); err != nil {
+		return nil, err
+	}
+
 	return env, nil
 }
 

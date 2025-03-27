@@ -133,4 +133,15 @@ func TestBodyInConversion(t *testing.T) {
 			assert.Equal(t, cbc.Code("SI"), stampDuty)
 		}
 	})
+
+	t.Run("should check totals are correct", func(t *testing.T) {
+		// Load the XML file
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathInvalid), "incorrect-total.xml"))
+		require.NoError(t, err)
+
+		// Convert XML to GOBL
+		env, err := test.ConvertToGOBL(data)
+		require.Error(t, err, "totals do not match")
+		require.Nil(t, env)
+	})
 }
