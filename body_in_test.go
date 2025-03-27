@@ -10,6 +10,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
@@ -132,5 +133,24 @@ func TestBodyInConversion(t *testing.T) {
 		if stampDuty, ok := invoice.Tax.Ext["it-sdi-stamp-duty"]; ok {
 			assert.Equal(t, cbc.Code("SI"), stampDuty)
 		}
+	})
+
+	t.Run("should check totals are correct", func(t *testing.T) {
+		// Load the XML file
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-simple.xml"))
+		require.NoError(t, err)
+
+		// Convert XML to GOBL
+		env, err := test.ConvertToGOBL(data)
+		require.NoError(t, err)
+		require.NotNil(t, env)
+
+		// Extract the invoice
+		invoice, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+		require.NotNil(t, invoice)
+
+		// Check totals
+		assert.Equal(t, num.MakeAmount(138840, 2), invoice.Totals.Payable)
 	})
 }
