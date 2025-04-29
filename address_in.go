@@ -18,7 +18,7 @@ func goblOrgAddressFromAddress(address *Address) *org.Address {
 	addr.Country = l10n.ISOCountryCode(address.Country)
 
 	// Handle region based on country
-	if address.Country == l10n.IT.String() && provinceRegexp.MatchString(address.Region) {
+	if address.Country == l10n.IT.String() {
 		addr.Region = address.Region
 	}
 
