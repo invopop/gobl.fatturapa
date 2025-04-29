@@ -45,6 +45,7 @@ func TestAddressInConversion(t *testing.T) {
 	})
 
 	t.Run("should handle non-Italian address correctly", func(t *testing.T) {
+		// TODO: update xml file with --update flag
 		// Load the XML file with a non-Italian address
 		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-b2g.xml"))
 		require.NoError(t, err)
@@ -64,13 +65,10 @@ func TestAddressInConversion(t *testing.T) {
 		address := invoice.Customer.Addresses[0]
 		require.NotNil(t, address)
 
-		// Verify address fields for a non-Italian address
-		// Note: Based on the test results, it seems the customer in invoice-b2g.xml is Italian
-		// Let's adjust our assertions accordingly
-		assert.NotEmpty(t, address.Street)
+		// Verify address fields for a non-Italian address and a PO Box
+		assert.NotEmpty(t, address.PostOfficeBox)
 		assert.NotEmpty(t, address.Locality)
-		assert.Equal(t, l10n.ISOCountryCode("IT"), address.Country)
-		// For Italian addresses, code should not be empty
+		assert.Equal(t, l10n.ES.ISO(), address.Country)
 		assert.NotEmpty(t, address.Code)
 	})
 }

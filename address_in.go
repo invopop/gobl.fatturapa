@@ -10,6 +10,7 @@ func goblOrgAddressFromAddress(address *Address) *org.Address {
 	addr := &org.Address{
 		Locality: address.Locality,
 		Number:   address.Number,
+		Code:     cbc.Code(address.Code),
 		Street:   address.Street,
 	}
 
@@ -19,17 +20,10 @@ func goblOrgAddressFromAddress(address *Address) *org.Address {
 	// Handle region based on country
 	if address.Country == l10n.IT.String() {
 		addr.Region = address.Region
-		addr.Code = cbc.Code(address.Code)
-	} else {
-		// Only use region if it matches the province pattern for Italy
-		if provinceRegexp.MatchString(address.Region) {
-			addr.Region = address.Region
-		}
-		// For non-Italian addresses, we don't set the code
 	}
 
 	// Handle street vs post office box
-	if address.Street != "" && isPostOfficeBox(address.Street) {
+	if isPostOfficeBox(address.Street) {
 		addr.PostOfficeBox = address.Street
 		addr.Street = ""
 	}
@@ -39,6 +33,12 @@ func goblOrgAddressFromAddress(address *Address) *org.Address {
 
 // isPostOfficeBox is a helper function to determine if a street address is actually a PO Box
 func isPostOfficeBox(street string) bool {
-	// Simple implementation - could be expanded with regex patterns
-	return len(street) >= 5 && (street[:5] == "P.O. " || street[:7] == "PO Box ")
+	// Simple implementation using prefix search
+	poBoxPrefixes := []string{"P.O. ", "PO Box ", "P.O.Box", "P.O Box", "PO BOX"}
+	for _, prefix := range poBoxPrefixes {
+		if len(street) >= len(prefix) && street[:len(prefix)] == prefix {
+			return true
+		}
+	}
+	return false
 }
