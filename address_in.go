@@ -39,6 +39,12 @@ func goblOrgAddressFromAddress(address *Address) *org.Address {
 
 // isPostOfficeBox is a helper function to determine if a street address is actually a PO Box
 func isPostOfficeBox(street string) bool {
-	// Simple implementation - could be expanded with regex patterns
-	return len(street) >= 5 && (street[:5] == "P.O. " || street[:7] == "PO Box ")
+	// Simple implementation using prefix search
+	poBoxPrefixes := []string{"P.O. ", "PO Box ", "P.O.Box", "P.O Box", "PO BOX"}
+	for _, prefix := range poBoxPrefixes {
+		if len(street) >= len(prefix) && street[:len(prefix)] == prefix {
+			return true
+		}
+	}
+	return false
 }
