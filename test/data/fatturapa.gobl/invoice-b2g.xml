@@ -46,12 +46,10 @@
 				</Anagrafica>
 			</DatiAnagrafici>
 			<Sede>
-				<Indirizzo>Via dei Mille</Indirizzo>
-				<NumeroCivico>23</NumeroCivico>
-				<CAP>00100</CAP>
-				<Comune>Firenze</Comune>
-				<Provincia>FI</Provincia>
-				<Nazione>IT</Nazione>
+				<Indirizzo>P.O. Box 1234</Indirizzo>
+				<CAP>28006</CAP>
+				<Comune>Madrid</Comune>
+				<Nazione>ES</Nazione>
 			</Sede>
 		</CessionarioCommittente>
 	</FatturaElettronicaHeader>

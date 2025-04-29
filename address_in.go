@@ -10,6 +10,7 @@ func goblOrgAddressFromAddress(address *Address) *org.Address {
 	addr := &org.Address{
 		Locality: address.Locality,
 		Number:   address.Number,
+		Code:     cbc.Code(address.Code),
 		Street:   address.Street,
 	}
 
@@ -17,19 +18,12 @@ func goblOrgAddressFromAddress(address *Address) *org.Address {
 	addr.Country = l10n.ISOCountryCode(address.Country)
 
 	// Handle region based on country
-	if address.Country == l10n.IT.String() {
+	if address.Country == l10n.IT.String() && provinceRegexp.MatchString(address.Region) {
 		addr.Region = address.Region
-		addr.Code = cbc.Code(address.Code)
-	} else {
-		// Only use region if it matches the province pattern for Italy
-		if provinceRegexp.MatchString(address.Region) {
-			addr.Region = address.Region
-		}
-		// For non-Italian addresses, we don't set the code
 	}
 
 	// Handle street vs post office box
-	if address.Street != "" && isPostOfficeBox(address.Street) {
+	if isPostOfficeBox(address.Street) {
 		addr.PostOfficeBox = address.Street
 		addr.Street = ""
 	}
