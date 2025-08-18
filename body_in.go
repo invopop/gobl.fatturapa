@@ -1,7 +1,6 @@
 package fatturapa
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -372,8 +371,8 @@ func parseSeriesAndCode(number string, series *cbc.Code, code *cbc.Code) {
 	}
 }
 
-// compareTotals compares the totals of the invoice with the totals of the FatturaPA document
-func compareTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
+// adjustTotals compares the totals of the invoice with the totals of the FatturaPA document
+func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 	if inv == nil || doc == nil {
 		return nil
 	}
@@ -383,8 +382,15 @@ func compareTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 			return err
 		}
 
-		if fatturapaTotal.Compare(inv.Totals.Payable) != 0 {
-			return errors.New("totals do not match")
+		// Calculate to get totals
+		if err = inv.Calculate(); err != nil {
+			return err
+		}
+
+		r := fatturapaTotal.Subtract(inv.Totals.Payable)
+		if r.Compare(num.AmountZero) != 0 {
+			inv.Totals.Rounding = &r
+			fmt.Println(r.String())
 		}
 	}
 

@@ -136,12 +136,32 @@ func TestBodyInConversion(t *testing.T) {
 
 	t.Run("should check totals are correct", func(t *testing.T) {
 		// Load the XML file
-		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathInvalid), "incorrect-total.xml"))
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-hotel.xml"))
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
 		env, err := test.ConvertToGOBL(data)
-		require.Error(t, err, "totals do not match")
-		require.Nil(t, env)
+		require.NoError(t, err)
+
+		inv, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+		require.NotNil(t, inv)
+
+		require.Nil(t, inv.Totals.Rounding)
+
+		// Load the XML file
+		data, err = os.ReadFile(filepath.Join(test.GetDataPath(test.PathInvalid), "incorrect-total.xml"))
+		require.NoError(t, err)
+
+		// Convert XML to GOBL
+		env, err = test.ConvertToGOBL(data)
+		require.NoError(t, err)
+
+		inv, ok = env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+		require.NotNil(t, inv)
+
+		require.Equal(t, inv.Totals.Rounding.String(), "23.00")
+
 	})
 }
