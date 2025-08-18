@@ -371,7 +371,7 @@ func parseSeriesAndCode(number string, series *cbc.Code, code *cbc.Code) {
 	}
 }
 
-// adjustTotals compares the totals of the invoice with the totals of the FatturaPA document
+// adjustTotals compares the totals of the invoice with the totals of the FatturaPA document and adds rounding if necessary
 func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 	if inv == nil || doc == nil {
 		return nil
