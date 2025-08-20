@@ -134,7 +134,7 @@ func TestBodyInConversion(t *testing.T) {
 		}
 	})
 
-	t.Run("should check totals are correct", func(t *testing.T) {
+	t.Run("should check totals are correct when no rounding is present", func(t *testing.T) {
 		// Load the XML file
 		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-simple.xml"))
 		require.NoError(t, err)
@@ -148,16 +148,36 @@ func TestBodyInConversion(t *testing.T) {
 		require.NotNil(t, inv)
 
 		require.Nil(t, inv.Totals.Rounding)
+	})
 
+	t.Run("should check totals are correct when rounding exists but not defined", func(t *testing.T) {
 		// Load the XML file
-		data, err = os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-simple-rounding.xml"))
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-simple-rounding.xml"))
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
-		env, err = test.ConvertToGOBL(data)
+		env, err := test.ConvertToGOBL(data)
 		require.NoError(t, err)
 
-		inv, ok = env.Extract().(*bill.Invoice)
+		inv, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+		require.NotNil(t, inv)
+		require.NotNil(t, inv.Totals)
+		require.NotNil(t, inv.Totals.Rounding)
+		require.Equal(t, inv.Totals.Rounding.String(), "0.01")
+
+	})
+
+	t.Run("should check totals are correct when rounding exists and defined", func(t *testing.T) {
+		// Load the XML file
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathGOBLFatturaPA), "/out/invoice-simple-rounding.xml"))
+		require.NoError(t, err)
+
+		// Convert XML to GOBL
+		env, err := test.ConvertToGOBL(data)
+		require.NoError(t, err)
+
+		inv, ok := env.Extract().(*bill.Invoice)
 		require.True(t, ok)
 		require.NotNil(t, inv)
 		require.NotNil(t, inv.Totals)
