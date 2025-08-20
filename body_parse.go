@@ -394,7 +394,6 @@ func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 		r := ft.Subtract(inv.Totals.Payable)
 		if r.Compare(num.AmountZero) != 0 {
 			inv.Totals.Rounding = &r
-			fmt.Println(r.String())
 		}
 	}
 
