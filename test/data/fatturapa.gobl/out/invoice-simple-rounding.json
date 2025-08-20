@@ -1,7 +1,11 @@
 {
 	"$regime": "IT",
-	"$addons": ["it-sdi-v1"],
-	"$tags": ["freelance"],
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"$tags": [
+		"freelance"
+	],
 	"uuid": "00000000-0000-0000-0000-000000000000",
 	"type": "standard",
 	"series": "SAMPLE",
