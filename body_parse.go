@@ -392,14 +392,6 @@ func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 		if err != nil {
 			return err
 		}
-		if doc.Rounding != "" {
-			// If rounding is specified, we need to adjust the totals
-			r, err := num.AmountFromString(doc.Rounding)
-			if err != nil {
-				return err
-			}
-			ft = ft.Add(r)
-		}
 
 		// Calculate to get totals
 		if err = inv.Calculate(); err != nil {
