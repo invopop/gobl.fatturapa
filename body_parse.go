@@ -377,7 +377,7 @@ func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 		return nil
 	}
 	if doc.TotalAmount != "" {
-		fatturapaTotal, err := num.AmountFromString(doc.TotalAmount)
+		ft, err := num.AmountFromString(doc.TotalAmount)
 		if err != nil {
 			return err
 		}
@@ -387,7 +387,11 @@ func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 			return err
 		}
 
-		r := fatturapaTotal.Subtract(inv.Totals.Payable)
+		if inv.Totals == nil {
+			return nil
+		}
+
+		r := ft.Subtract(inv.Totals.Payable)
 		if r.Compare(num.AmountZero) != 0 {
 			inv.Totals.Rounding = &r
 			fmt.Println(r.String())

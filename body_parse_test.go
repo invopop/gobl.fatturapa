@@ -136,7 +136,7 @@ func TestBodyInConversion(t *testing.T) {
 
 	t.Run("should check totals are correct", func(t *testing.T) {
 		// Load the XML file
-		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-hotel.xml"))
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-simple.xml"))
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
@@ -150,7 +150,7 @@ func TestBodyInConversion(t *testing.T) {
 		require.Nil(t, inv.Totals.Rounding)
 
 		// Load the XML file
-		data, err = os.ReadFile(filepath.Join(test.GetDataPath(test.PathInvalid), "incorrect-total.xml"))
+		data, err = os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-simple-rounding.xml"))
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
@@ -160,8 +160,9 @@ func TestBodyInConversion(t *testing.T) {
 		inv, ok = env.Extract().(*bill.Invoice)
 		require.True(t, ok)
 		require.NotNil(t, inv)
-
-		require.Equal(t, inv.Totals.Rounding.String(), "23.00")
+		require.NotNil(t, inv.Totals)
+		require.NotNil(t, inv.Totals.Rounding)
+		require.Equal(t, inv.Totals.Rounding.String(), "0.01")
 
 	})
 }
