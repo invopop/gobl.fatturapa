@@ -54,6 +54,7 @@ type DocumentRef struct {
 	CIGCode   string `xml:"CodiceCIG,omitempty"`                 // Tender procedure identification code
 }
 
+// Despatch contains data about a Delivery Document.
 type Despatch struct {
 	Code      string `xml:"NumeroDDT"`                        // document number
 	IssueDate string `xml:"DataDDT"`                          // document date (expressed according to the ISO
