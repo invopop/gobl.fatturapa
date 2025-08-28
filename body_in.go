@@ -112,8 +112,31 @@ func goblBillInvoiceAddGeneralData(inv *bill.Invoice, generalData *GeneralData) 
 		Receiving: goblOrgDocumentRefsFromDocumentRefs(generalData.Receiving),
 	}
 
+	// Add despatch document reference if present
+	if len(generalData.Despatch) > 0 {
+		ordering.Despatch = make([]*org.DocumentRef, len(generalData.Despatch))
+		for i, d := range generalData.Despatch {
+			o := &org.DocumentRef{}
+
+			// Parse series and code
+			parseSeriesAndCode(d.Code, &o.Series, &o.Code)
+
+			// Parse issue date
+			date, err := parseDate(d.IssueDate)
+			if err != nil {
+				return nil
+			}
+			o.IssueDate = &date
+
+			// Add lines
+			o.Lines = d.Lines
+
+			ordering.Despatch[i] = o
+		}
+	}
+
 	// Only set the ordering if at least one of the document reference arrays is not empty
-	if len(ordering.Purchases) > 0 || len(ordering.Contracts) > 0 || len(ordering.Tender) > 0 || len(ordering.Receiving) > 0 {
+	if len(ordering.Purchases) > 0 || len(ordering.Contracts) > 0 || len(ordering.Tender) > 0 || len(ordering.Receiving) > 0 || len(ordering.Despatch) > 0 {
 		inv.Ordering = ordering
 	}
 
@@ -353,6 +376,9 @@ func goblOrgDocumentRefFromDocumentRef(ref *DocumentRef) *org.DocumentRef {
 			Code: cbc.Code(ref.CUPCode),
 		})
 	}
+
+	// Add lines
+	orgRef.Lines = ref.Lines
 
 	return orgRef
 }

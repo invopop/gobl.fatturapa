@@ -40,6 +40,7 @@ type GeneralData struct {
 	Tender    []*DocumentRef       `xml:"DatiConvenzione,omitempty"`
 	Receiving []*DocumentRef       `xml:"DatiRicezione,omitempty"`
 	Preceding []*DocumentRef       `xml:"DatiFattureCollegate,omitempty"`
+	Despatch  []*Despatch          `xml:"DatiDDT,omitempty"`
 }
 
 // DocumentRef contains data about a previous document.
@@ -51,6 +52,12 @@ type DocumentRef struct {
 	OrderCode string `xml:"CodiceCommessaConvenzione,omitempty"` // order or agreement code
 	CUPCode   string `xml:"CodiceCUP,omitempty"`                 // code managed by the CIPE (Interministerial Committee for Economic Planning) which characterises every public investment project (Individual Project Code).
 	CIGCode   string `xml:"CodiceCIG,omitempty"`                 // Tender procedure identification code
+}
+
+type Despatch struct {
+	Code      string `xml:"NumeroDDT"`                        // document number
+	IssueDate string `xml:"DataDDT"`                          // document date (expressed according to the ISO
+	Lines     []int  `xml:"RiferimentoNumeroLinea,omitempty"` // detail row of the invoice referred to (if the reference is to the entire invoice, this is not filled in)
 }
 
 // GeneralDocumentData contains data about the general document
@@ -109,6 +116,16 @@ func newGeneralData(inv *bill.Invoice) (*GeneralData, error) {
 		gd.Contracts = newDocumentRefs(o.Contracts)
 		gd.Tender = newDocumentRefs(o.Tender)
 		gd.Receiving = newDocumentRefs(o.Receiving)
+		gd.Despatch = make([]*Despatch, len(o.Despatch))
+		for i, ref := range o.Despatch {
+			gd.Despatch[i] = &Despatch{
+				Lines: ref.Lines,
+				Code:  ref.Series.Join(ref.Code).String(),
+			}
+			if ref.IssueDate != nil {
+				gd.Despatch[i].IssueDate = ref.IssueDate.String()
+			}
+		}
 	}
 	return gd, nil
 }
