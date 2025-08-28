@@ -124,7 +124,7 @@ func goblBillInvoiceAddGeneralData(inv *bill.Invoice, generalData *GeneralData) 
 			// Parse issue date
 			date, err := parseDate(d.IssueDate)
 			if err != nil {
-				return nil
+				return err
 			}
 			o.IssueDate = &date
 
