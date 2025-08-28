@@ -83,6 +83,8 @@ func convertRetainedTaxType(tipoRitenuta string) (cbc.Code, error) {
 		return it.TaxCategoryENASARCO, nil
 	case "RT05":
 		return it.TaxCategoryENPAM, nil
+	case "RT06":
+		return it.TaxCategoryOTHER, nil
 	default:
 		return "", fmt.Errorf("unknown TipoRitenuta code: %s", tipoRitenuta)
 	}
