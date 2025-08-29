@@ -13,13 +13,13 @@ import (
 )
 
 // goblBillInvoiceAddGoodsServices adds goods and services from the FatturaPA document to the GOBL invoice
-func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServices, retainedTaxes []*RetainedTax) error {
+func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServices, retainedTaxes []*RetainedTax, fundContributions []*FundContribution) error {
 	if inv == nil || goodsServices == nil {
 		return nil
 	}
 
-	// Add line details, passing the retained taxes and tax summaries
-	if err := goblBillInvoiceAddLineDetails(inv, goodsServices.LineDetails, retainedTaxes, goodsServices.TaxSummary); err != nil {
+	// Add line details, passing the retained taxes, fund contributions and tax summaries
+	if err := goblBillInvoiceAddLineDetails(inv, goodsServices.LineDetails, retainedTaxes, fundContributions, goodsServices.TaxSummary); err != nil {
 		return fmt.Errorf("adding line details: %w", err)
 	}
 
@@ -27,7 +27,7 @@ func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServ
 }
 
 // goblBillInvoiceAddLineDetails adds line details from the FatturaPA document to the GOBL invoice
-func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail, retainedTaxes []*RetainedTax, taxSummaries []*TaxSummary) error {
+func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail, retainedTaxes []*RetainedTax, fundContributions []*FundContribution, taxSummaries []*TaxSummary) error {
 	if inv == nil || len(lineDetails) == 0 {
 		return nil
 	}
@@ -113,7 +113,7 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 	}
 
 	// Process retained taxes
-	if err := processRetainedTaxes(inv, lineDetails, retainedTaxes); err != nil {
+	if err := processRetainedTaxes(inv, lineDetails, retainedTaxes, fundContributions); err != nil {
 		return fmt.Errorf("processing retained taxes: %w", err)
 	}
 

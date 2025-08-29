@@ -228,9 +228,9 @@ func newStampDuty(charges []*bill.Charge) *StampDuty {
 func extractFundContributions(inv *bill.Invoice) []*FundContribution {
 	fc := make([]*FundContribution, 0)
 	for _, c := range inv.Charges {
-		if c.Ext.Has(sdi.KeyFundContribution) {
+		if c.Key.Has(sdi.KeyFundContribution) {
 			r := &FundContribution{
-				FundType:          string(c.Key),
+				FundType:          c.Ext[sdi.ExtKeyFundType].String(),
 				Rate:              formatPercentage(c.Percent),
 				Amount:            formatAmount2(&c.Amount),
 				TaxableAmount:     formatAmount2(c.Base),
@@ -263,7 +263,7 @@ func extractPriceAdjustments(inv *bill.Invoice) []*PriceAdjustment {
 	}
 
 	for _, charge := range inv.Charges {
-		if charge.Key != bill.ChargeKeyStampDuty {
+		if !charge.Key.In(bill.ChargeKeyStampDuty, sdi.KeyFundContribution) {
 			priceAdjustments = append(priceAdjustments, &PriceAdjustment{
 				Type:    scontoMaggiorazioneTypeCharge,
 				Percent: formatPercentage(charge.Percent),

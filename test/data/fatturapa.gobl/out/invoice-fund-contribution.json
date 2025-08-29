@@ -1,0 +1,150 @@
+{
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"series": "SAMPLE",
+	"code": "002",
+	"issue_date": "2025-08-21",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD01",
+			"it-sdi-format": "FPR12"
+		}
+	},
+	"supplier": {
+		"name": "ALPHA SRL",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"addresses": [
+			{
+				"num": "102",
+				"street": "Via California",
+				"locality": "Palermo",
+				"region": "PA",
+				"code": "33213",
+				"country": "IT"
+			}
+		],
+		"registration": {
+			"capital": "50000.00",
+			"office": "RM",
+			"entry": "123456"
+		},
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
+		}
+	},
+	"customer": {
+		"name": "Mela S.r.l.",
+		"tax_id": {
+			"country": "IT",
+			"code": "13029381004"
+		},
+		"addresses": [
+			{
+				"num": "23",
+				"street": "Via dei Mille",
+				"locality": "Firenze",
+				"region": "FI",
+				"code": "00100",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1.00",
+			"item": {
+				"name": "IT environment support setup",
+				"price": "1600.00"
+			},
+			"sum": "1600.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "22.00%"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20.00%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
+				}
+			],
+			"total": "1600.00"
+		}
+	],
+	"charges": [
+		{
+			"i": 1,
+			"key": "fund-contribution",
+			"percent": "4.00%",
+			"amount": "64.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"percent": "22.00%"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20.00%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
+				}
+			],
+			"ext": {
+				"it-sdi-fund-type": "TC22"
+			}
+		}
+	],
+	"totals": {
+		"sum": "1600.00",
+		"charge": "64.00",
+		"total": "1664.00",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"base": "1664.00",
+							"percent": "22.00%",
+							"amount": "366.08"
+						}
+					],
+					"amount": "366.08"
+				},
+				{
+					"code": "IRPEF",
+					"retained": true,
+					"rates": [
+						{
+							"ext": {
+								"it-sdi-retained": "A"
+							},
+							"base": "1664.00",
+							"percent": "20.00%",
+							"amount": "332.80"
+						}
+					],
+					"amount": "332.80"
+				}
+			],
+			"sum": "366.08",
+			"retained": "332.80"
+		},
+		"tax": "366.08",
+		"total_with_tax": "2030.08",
+		"retained_tax": "332.80",
+		"payable": "1697.28"
+	}
+}
