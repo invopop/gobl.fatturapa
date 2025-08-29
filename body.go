@@ -70,7 +70,8 @@ type GeneralDocumentData struct {
 	RetainedTaxes    []*RetainedTax     `xml:"DatiRitenuta,omitempty"`
 	StampDuty        *StampDuty         `xml:"DatiBollo,omitempty"`
 	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
-	TotalAmount      string             `xml:"ImportoTotaleDocumento"`
+	TotalAmount      string             `xml:"ImportoTotaleDocumento,omitempty"`
+	Rounding         string             `xml:"Arrotondamento,omitempty"`
 	Reasons          []string           `xml:"Causale,omitempty"`
 }
 
@@ -194,6 +195,7 @@ func newGeneralDocumentData(inv *bill.Invoice) (*GeneralDocumentData, error) {
 		RetainedTaxes:    dr,
 		StampDuty:        newStampDuty(inv.Charges),
 		TotalAmount:      formatAmount2(&inv.Totals.Payable),
+		Rounding:         formatAmount2(inv.Totals.Rounding),
 		PriceAdjustments: extractPriceAdjustments(inv),
 		Reasons:          extractInvoiceReasons(inv),
 	}
