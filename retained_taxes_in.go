@@ -48,16 +48,14 @@ func distributeSingleRetainedTax(inv *bill.Invoice, lineDetails []*LineDetail, r
 	// Collect retainable items and calculate total base
 	var retainableLines []*bill.Line
 	var retainableCharges []*bill.Charge
-	totalBase := num.MakeAmount(0, 2) // Initialize with 2 decimal places for monetary precision
+	totalBase := num.MakeAmount(0, rtAmount.Exp()) // Initialize with 2 decimal places for monetary precision
 
 	// Add lines with Ritenuta="SI"
 	for i, detail := range lineDetails {
 		if detail.Retained == "SI" && i < len(inv.Lines) {
 			line := inv.Lines[i]
 			retainableLines = append(retainableLines, line)
-			// Ensure line total has same precision before adding
-			lineTotal := line.Total.RescaleUp(2)
-			totalBase = totalBase.Add(lineTotal)
+			totalBase = totalBase.Add(*line.Total)
 		}
 	}
 
@@ -68,9 +66,7 @@ func distributeSingleRetainedTax(inv *bill.Invoice, lineDetails []*LineDetail, r
 			for j, charge := range inv.Charges {
 				if charge.Key.Has(sdi.KeyFundContribution) && j >= chargeIndex {
 					retainableCharges = append(retainableCharges, charge)
-					// Ensure charge amount has same precision before adding
-					chargeAmount := charge.Amount.RescaleUp(2)
-					totalBase = totalBase.Add(chargeAmount)
+					totalBase = totalBase.Add(charge.Amount)
 					chargeIndex = j + 1
 					break
 				}
@@ -102,24 +98,6 @@ func distributeSingleRetainedTax(inv *bill.Invoice, lineDetails []*LineDetail, r
 			}
 		}
 		return nil
-	}
-
-	// Try to match with individual lines first
-	for _, line := range retainableLines {
-		expectedAmount := rtRate.Of(*line.Total)
-		if rtAmount.Sub(expectedAmount).Abs().Compare(tolerance) <= 0 {
-			// Exact match - apply to this line only
-			return addRetainedTaxToLine(line, catCode, rtRate, retainedTax.Reason)
-		}
-	}
-
-	// Try to match with fund contributions
-	for _, charge := range retainableCharges {
-		expectedAmount := rtRate.Of(charge.Amount)
-		if rtAmount.Sub(expectedAmount).Abs().Compare(tolerance) <= 0 {
-			// Exact match - apply to this charge only
-			return addRetainedTaxToCharge(charge, catCode, rtRate, retainedTax.Reason)
-		}
 	}
 
 	// If no exact match found, return error
