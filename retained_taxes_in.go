@@ -11,6 +11,8 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+// TODO: Fix this to handle retained taxes split across multiple lines and fund contributions
+
 // processRetainedTaxes processes retained taxes and adds them to the appropriate line items
 func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retainedTaxes []*RetainedTax) error {
 	if len(retainedTaxes) == 0 || len(inv.Lines) == 0 {
