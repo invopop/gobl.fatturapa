@@ -72,14 +72,16 @@ func goblBillInvoiceAddBody(inv *bill.Invoice, body *Body) error {
 		return fmt.Errorf("adding general data: %w", err)
 	}
 
-	// Extract retained taxes from the general data
+	// Extract retained taxes and fund contributions from the general data
 	var retainedTaxes []*RetainedTax
+	var fundContributions []*FundContribution
 	if body.GeneralData != nil && body.GeneralData.Document != nil {
 		retainedTaxes = body.GeneralData.Document.RetainedTaxes
+		fundContributions = body.GeneralData.Document.FundContributions
 	}
 
-	// Add goods and services, passing the retained taxes
-	if err := goblBillInvoiceAddGoodsServices(inv, body.GoodsServices, retainedTaxes); err != nil {
+	// Add goods and services, passing the retained taxes and fund contributions
+	if err := goblBillInvoiceAddGoodsServices(inv, body.GoodsServices, retainedTaxes, fundContributions); err != nil {
 		return fmt.Errorf("adding goods and services: %w", err)
 	}
 
@@ -191,14 +193,14 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	// Add stamp duty
 	goblBillInvoiceAddStampDuty(inv, doc.StampDuty)
 
+	// Add fund contributions as charges
+	goblBillInvoiceAddFundContributions(inv, doc.FundContributions)
+
 	// Add price adjustments
 	goblBillInvoiceAddPriceAdjustments(inv, doc.PriceAdjustments)
 
 	// Add invoice reasons
 	goblBillInvoiceAddReasons(inv, doc.Reasons)
-
-	// Add retained taxes to totals
-	// goblBillInvoiceAddRetainedTaxes(inv, doc.RetainedTaxes)
 
 	return nil
 }
@@ -305,6 +307,68 @@ func goblBillInvoiceAddPriceAdjustments(inv *bill.Invoice, adjustments []*PriceA
 				Percent: percentPtr,
 			})
 		}
+	}
+}
+
+// goblBillInvoiceAddFundContributions adds fund contributions from the FatturaPA document to the GOBL invoice as charges
+func goblBillInvoiceAddFundContributions(inv *bill.Invoice, fundContributions []*FundContribution) {
+	if inv == nil || len(fundContributions) == 0 {
+		return
+	}
+
+	for _, fc := range fundContributions {
+		// Create the charge with fund contribution key
+		charge := &bill.Charge{
+			Key: sdi.KeyFundContribution,
+			Ext: tax.Extensions{
+				sdi.ExtKeyFundType: cbc.Code(fc.FundType),
+			},
+		}
+
+		if amount, err := num.AmountFromString(fc.Amount); err == nil {
+			charge.Amount = amount
+		}
+
+		if percent, err := num.PercentageFromString(fc.Rate + "%"); err == nil {
+			charge.Percent = &percent
+		}
+
+		// Add administration reference as code
+		if fc.AdministrationRef != "" {
+			charge.Code = cbc.Code(fc.AdministrationRef)
+		}
+
+		// Add base amount if present
+		if fc.TaxableAmount != "" {
+			if base, err := num.AmountFromString(fc.TaxableAmount); err == nil {
+				charge.Base = &base
+			}
+		}
+
+		// Add VAT tax
+		if vatPercent, err := num.PercentageFromString(fc.ContributionVAT + "%"); err == nil {
+			vatTax := &tax.Combo{
+				Category: tax.CategoryVAT,
+				Percent:  &vatPercent,
+				Ext:      tax.Extensions{},
+			}
+
+			// Add nature (exemption reason) if present
+			if fc.Nature != "" {
+				vatTax.Ext[sdi.ExtKeyExempt] = cbc.Code(fc.Nature)
+				vatTax.Percent = nil // Exempt taxes do not have a percentage
+			}
+
+			charge.Taxes = append(charge.Taxes, vatTax)
+		}
+
+		// Note: Retained taxes for fund contributions will be handled separately
+		// in the processRetainedTaxes function using the fc.Retained flag
+
+		if inv.Charges == nil {
+			inv.Charges = make([]*bill.Charge, 0)
+		}
+		inv.Charges = append(inv.Charges, charge)
 	}
 }
 

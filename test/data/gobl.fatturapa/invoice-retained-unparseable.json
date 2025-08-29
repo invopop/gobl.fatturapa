@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "ec07ca2a390e909e707140ed63b6f748b67c2a2ff8862bf25ea00eca53655639"
+			"val": "8113237d3ed398288bb1b444c944787923a6ba299d4711670a8c240cbb5b944d"
 		}
 	},
 	"doc": {
@@ -162,6 +162,60 @@
 					}
 				],
 				"total": "100.00"
+			},
+			{
+				"i": 3,
+				"quantity": "1",
+				"item": {
+					"name": "Truffle Gathering",
+					"price": "100.00",
+					"unit": "h"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-exempt": "N2.2"
+						}
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "50.0%",
+						"ext": {
+							"it-sdi-retained": "I"
+						}
+					}
+				],
+				"total": "100.00"
+			},
+			{
+				"i": 4,
+				"quantity": "1",
+				"item": {
+					"name": "Truffle Gathering",
+					"price": "100.00",
+					"unit": "h"
+				},
+				"sum": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"rate": "exempt",
+						"ext": {
+							"it-sdi-exempt": "N2.2"
+						}
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "50.0%",
+						"ext": {
+							"it-sdi-retained": "I"
+						}
+					}
+				],
+				"total": "100.00"
 			}
 		],
 		"discounts": [
@@ -216,10 +270,10 @@
 			}
 		},
 		"totals": {
-			"sum": "1720.00",
+			"sum": "1920.00",
 			"discount": "860.00",
 			"charge": "184.34",
-			"total": "1044.34",
+			"total": "1244.34",
 			"taxes": {
 				"categories": [
 					{
@@ -236,7 +290,7 @@
 								"ext": {
 									"it-sdi-exempt": "N2.2"
 								},
-								"base": "100.00",
+								"base": "300.00",
 								"amount": "0.00"
 							}
 						],
@@ -258,21 +312,21 @@
 								"ext": {
 									"it-sdi-retained": "I"
 								},
-								"base": "100.00",
+								"base": "300.00",
 								"percent": "50.0%",
-								"amount": "50.00"
+								"amount": "150.00"
 							}
 						],
-						"amount": "374.00"
+						"amount": "474.00"
 					}
 				],
 				"sum": "356.40",
-				"retained": "374.00"
+				"retained": "474.00"
 			},
 			"tax": "356.40",
-			"total_with_tax": "1400.74",
-			"retained_tax": "374.00",
-			"payable": "1026.74"
+			"total_with_tax": "1600.74",
+			"retained_tax": "474.00",
+			"payable": "1126.74"
 		}
 	}
 }

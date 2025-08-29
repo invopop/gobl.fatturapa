@@ -236,10 +236,12 @@
 					"amount": "374.00"
 				}
 			],
-			"sum": "-17.60"
+			"sum": "356.40",
+			"retained": "374.00"
 		},
-		"tax": "-17.60",
-		"total_with_tax": "1026.74",
+		"tax": "356.40",
+		"total_with_tax": "1400.74",
+		"retained_tax": "374.00",
 		"payable": "1026.74"
 	}
 }
