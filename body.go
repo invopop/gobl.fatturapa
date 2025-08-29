@@ -42,6 +42,7 @@ type GeneralData struct {
 	Tender    []*DocumentRef       `xml:"DatiConvenzione,omitempty"`
 	Receiving []*DocumentRef       `xml:"DatiRicezione,omitempty"`
 	Preceding []*DocumentRef       `xml:"DatiFattureCollegate,omitempty"`
+	Despatch  []*Despatch          `xml:"DatiDDT,omitempty"`
 }
 
 // DocumentRef contains data about a previous document.
@@ -55,6 +56,13 @@ type DocumentRef struct {
 	CIGCode   string `xml:"CodiceCIG,omitempty"`                 // Tender procedure identification code
 }
 
+// Despatch contains data about a Delivery Document.
+type Despatch struct {
+	Code      string `xml:"NumeroDDT"`                        // document number
+	IssueDate string `xml:"DataDDT"`                          // document date (expressed according to the ISO
+	Lines     []int  `xml:"RiferimentoNumeroLinea,omitempty"` // detail row of the invoice referred to (if the reference is to the entire invoice, this is not filled in)
+}
+
 // GeneralDocumentData contains data about the general document
 type GeneralDocumentData struct {
 	DocumentType      string              `xml:"TipoDocumento"`
@@ -66,6 +74,7 @@ type GeneralDocumentData struct {
 	FundContributions []*FundContribution `xml:"DatiCassaPrevidenziale,omitempty"`
 	PriceAdjustments  []*PriceAdjustment  `xml:"ScontoMaggiorazione,omitempty"`
 	TotalAmount       string              `xml:"ImportoTotaleDocumento"`
+	Rounding          string              `xml:"Arrotondamento,omitempty"`
 	Reasons           []string            `xml:"Causale,omitempty"`
 }
 
@@ -124,6 +133,16 @@ func newGeneralData(inv *bill.Invoice) (*GeneralData, error) {
 		gd.Contracts = newDocumentRefs(o.Contracts)
 		gd.Tender = newDocumentRefs(o.Tender)
 		gd.Receiving = newDocumentRefs(o.Receiving)
+		gd.Despatch = make([]*Despatch, len(o.Despatch))
+		for i, ref := range o.Despatch {
+			gd.Despatch[i] = &Despatch{
+				Lines: ref.Lines,
+				Code:  ref.Series.Join(ref.Code).String(),
+			}
+			if ref.IssueDate != nil {
+				gd.Despatch[i].IssueDate = ref.IssueDate.String()
+			}
+		}
 	}
 	return gd, nil
 }
@@ -192,6 +211,7 @@ func newGeneralDocumentData(inv *bill.Invoice) (*GeneralDocumentData, error) {
 		StampDuty:         newStampDuty(inv.Charges),
 		FundContributions: extractFundContributions(inv),
 		TotalAmount:       formatAmount2(&inv.Totals.Payable),
+		Rounding:          formatAmount2(inv.Totals.Rounding),
 		PriceAdjustments:  extractPriceAdjustments(inv),
 		Reasons:           extractInvoiceReasons(inv),
 	}
