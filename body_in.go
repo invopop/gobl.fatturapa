@@ -284,24 +284,20 @@ func goblBillInvoiceAddFundContributions(inv *bill.Invoice, fundContributions []
 	}
 
 	for _, fc := range fundContributions {
-		amount, err := num.AmountFromString(fc.Amount)
-		if err != nil {
-			continue
-		}
-
-		percent, err := num.PercentageFromString(fc.Rate + "%")
-		if err != nil {
-			continue
-		}
-
 		// Create the charge with fund contribution key
 		charge := &bill.Charge{
-			Key:     sdi.KeyFundContribution,
-			Amount:  amount,
-			Percent: &percent,
+			Key: sdi.KeyFundContribution,
 			Ext: tax.Extensions{
 				sdi.ExtKeyFundType: cbc.Code(fc.FundType),
 			},
+		}
+
+		if amount, err := num.AmountFromString(fc.Amount); err == nil {
+			charge.Amount = amount
+		}
+
+		if percent, err := num.PercentageFromString(fc.Rate + "%"); err == nil {
+			charge.Percent = &percent
 		}
 
 		// Add administration reference as code
