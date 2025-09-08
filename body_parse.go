@@ -1,7 +1,6 @@
 package fatturapa
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
@@ -155,6 +154,17 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 		inv.Totals.Payable = payable
 	}
 
+	// Add totals rounding
+	if doc.Rounding != "" {
+		rounding, err := num.AmountFromString(doc.Rounding)
+		if err != nil {
+			return fmt.Errorf("adding rounding: %w", err)
+		}
+		if inv.Totals == nil {
+			inv.Totals = new(bill.Totals)
+		}
+		inv.Totals.Rounding = &rounding
+	}
 	// Add stamp duty
 	goblBillInvoiceAddStampDuty(inv, doc.StampDuty)
 
@@ -372,19 +382,29 @@ func parseSeriesAndCode(number string, series *cbc.Code, code *cbc.Code) {
 	}
 }
 
-// compareTotals compares the totals of the invoice with the totals of the FatturaPA document
-func compareTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
+// adjustTotals compares the totals of the invoice with the totals of the FatturaPA document and adds rounding if necessary
+func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 	if inv == nil || doc == nil {
 		return nil
 	}
 	if doc.TotalAmount != "" {
-		fatturapaTotal, err := num.AmountFromString(doc.TotalAmount)
+		ft, err := num.AmountFromString(doc.TotalAmount)
 		if err != nil {
 			return err
 		}
 
-		if fatturapaTotal.Compare(inv.Totals.Payable) != 0 {
-			return errors.New("totals do not match")
+		// Calculate to get totals
+		if err = inv.Calculate(); err != nil {
+			return err
+		}
+
+		if inv.Totals == nil {
+			return nil
+		}
+
+		r := ft.Subtract(inv.Totals.Payable)
+		if r.Compare(num.AmountZero) != 0 {
+			inv.Totals.Rounding = &r
 		}
 	}
 
