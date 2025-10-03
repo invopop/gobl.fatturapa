@@ -2,7 +2,6 @@ package fatturapa
 
 import (
 	"github.com/invopop/gobl/addons/it/sdi"
-	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
@@ -144,21 +143,23 @@ func newCustomer(c *org.Party) *Customer {
 }
 
 func newProfile(party *org.Party) *Profile {
-	if party.TaxID == nil || party.TaxID.Code == cbc.CodeEmpty {
-		// not a company
-		if len(party.People) > 0 {
-			name := party.People[0].Name
-			return &Profile{
-				Given:   name.Given,
-				Surname: name.Surname,
-				Title:   name.Prefix,
-			}
+	if party.Name != "" {
+		return &Profile{
+			Name: party.Name,
+		}
+	}
+	// not a company
+	if len(party.People) > 0 {
+		name := party.People[0].Name
+		return &Profile{
+			Given:   name.Given,
+			Surname: name.Surname,
+			Title:   name.Prefix,
 		}
 	}
 
-	return &Profile{
-		Name: party.Name,
-	}
+	return nil
+
 }
 
 func newContact(party *org.Party) *Contact {
