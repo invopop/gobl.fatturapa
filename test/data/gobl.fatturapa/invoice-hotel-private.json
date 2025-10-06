@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "89603f84fca0f9d23b3dc84af65c85e6d335267b526c2c328ae73c95dd2eede7"
+			"val": "340190c695a094a79373db0496cbda67068c35e9c9bc908e97fc08fb3dc4a7a1"
 		}
 	},
 	"doc": {
@@ -53,7 +53,6 @@
 			}
 		},
 		"customer": {
-			"name": "Random Person",
 			"tax_id": {
 				"country": "GB"
 			},

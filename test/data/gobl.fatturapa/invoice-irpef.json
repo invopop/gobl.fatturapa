@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "10379dfd2cb779027beb8fb24a9eaac5c666d03e0f1779ddfa55ad7d032b5327"
+			"val": "e3616954a01dfbaa7d63e473e718db91e76bd19eca56afaaa1cd8f1988c2a7f4"
 		}
 	},
 	"doc": {
@@ -62,7 +62,6 @@
 			}
 		},
 		"customer": {
-			"name": "MARIO LEONI",
 			"tax_id": {
 				"country": "IT"
 			},
