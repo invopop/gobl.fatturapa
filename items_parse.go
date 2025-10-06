@@ -95,13 +95,12 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 
 			// Add tax rate if it's not zero
 			taxRate, _ := num.PercentageFromString(detail.TaxRate + "%")
-			if taxRate != num.PercentageZero {
-				taxCombo.Percent = &taxRate
-			}
+			taxCombo.Percent = &taxRate
 
 			// Add exempt extension if nature is provided
 			if detail.TaxNature != "" {
 				taxCombo.Ext[sdi.ExtKeyExempt] = cbc.Code(detail.TaxNature)
+				taxCombo.Percent = nil // Clear percent if exempt
 			}
 
 			// Add tax to line
