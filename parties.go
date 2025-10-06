@@ -143,6 +143,8 @@ func newCustomer(c *org.Party) *Customer {
 }
 
 func newProfile(party *org.Party) *Profile {
+	// A company may not have a tax ID if they have a codice fiscale
+	// This means that we need to assume that it's a company if it has a name
 	if party.Name != "" {
 		return &Profile{
 			Name: party.Name,
