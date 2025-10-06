@@ -10,12 +10,8 @@
 	"doc": {
 		"$schema": "https://gobl.org/draft-0/bill/invoice",
 		"$regime": "IT",
-		"$addons": [
-			"it-sdi-v1"
-		],
-		"$tags": [
-			"freelance"
-		],
+		"$addons": ["it-sdi-v1"],
+		"$tags": ["freelance"],
 		"uuid": "0190caea-c352-7310-90fe-cbf74a3cd084",
 		"type": "standard",
 		"series": "SAMPLE",
@@ -62,7 +58,6 @@
 			}
 		},
 		"customer": {
-			"name": "MARIO LEONI",
 			"tax_id": {
 				"country": "IT"
 			},
