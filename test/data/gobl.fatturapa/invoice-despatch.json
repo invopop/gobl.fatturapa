@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "796a80d9ee2848e13bf695f49121934b8c7359cfae98d98fd782f5f2d131b080"
+			"val": "c3e44541bb5eb8aca1afc2a9162f2e155c2e44d93539c5043fdcb76c9898983b"
 		}
 	},
 	"doc": {
@@ -13,21 +13,23 @@
 		"$addons": [
 			"it-sdi-v1"
 		],
+		"$tags": [
+			"deferred"
+		],
 		"uuid": "0190caea-c344-7afa-a530-252b67108175",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
-		"issue_date": "2023-05-21",
+		"issue_date": "2025-08-21",
 		"currency": "EUR",
 		"tax": {
-			"prices_include": "VAT",
 			"ext": {
-				"it-sdi-document-type": "TD01",
+				"it-sdi-document-type": "TD24",
 				"it-sdi-format": "FPR12"
 			}
 		},
 		"supplier": {
-			"name": "Hotel California",
+			"name": "Mattoni \u0026 Cementi S.r.l.",
 			"tax_id": {
 				"country": "IT",
 				"code": "12345678903"
@@ -35,10 +37,10 @@
 			"addresses": [
 				{
 					"num": "102",
-					"street": "Via California",
+					"street": "Via dei Mattoni",
 					"locality": "Palermo",
 					"region": "PA",
-					"code": "33213",
+					"code": "90100",
 					"country": "IT"
 				}
 			],
@@ -52,7 +54,7 @@
 			}
 		},
 		"customer": {
-			"name": "Mela S.r.l.",
+			"name": "Edilizia Firenze S.r.l.",
 			"tax_id": {
 				"country": "IT",
 				"code": "13029381004"
@@ -66,10 +68,10 @@
 			"addresses": [
 				{
 					"num": "23",
-					"street": "Via dei Mille",
+					"street": "Via dei Cantieri",
 					"locality": "Firenze",
 					"region": "FI",
-					"code": "00100",
+					"code": "50100",
 					"country": "IT"
 				}
 			]
@@ -77,96 +79,83 @@
 		"lines": [
 			{
 				"i": 1,
-				"quantity": "1",
+				"quantity": "1000",
 				"item": {
-					"name": "Tassa di Soggiorno",
-					"price": "1.00"
+					"name": "Mattoni Rossi",
+					"price": "0.50"
 				},
-				"sum": "1.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"key": "outside-scope",
-						"ext": {
-							"it-sdi-exempt": "N1"
-						}
-					}
-				],
-				"total": "1.00"
-			},
-			{
-				"i": 2,
-				"quantity": "2",
-				"item": {
-					"name": "Camera Matrimoniale",
-					"price": "125.00"
-				},
-				"sum": "250.00",
-				"discounts": [
-					{
-						"reason": "Sconto",
-						"amount": "10.00"
-					}
-				],
+				"sum": "500.00",
 				"taxes": [
 					{
 						"cat": "VAT",
 						"key": "standard",
-						"rate": "intermediate",
-						"percent": "10.0%"
+						"rate": "general",
+						"percent": "22.0%"
 					}
 				],
-				"total": "240.00"
+				"total": "500.00"
+			},
+			{
+				"i": 2,
+				"quantity": "50",
+				"item": {
+					"name": "Sacchi di Cemento 25kg",
+					"price": "6.00"
+				},
+				"sum": "300.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					}
+				],
+				"total": "300.00"
 			}
 		],
-		"payment": {
-			"advances": [
+		"ordering": {
+			"despatch": [
 				{
-					"date": "2023-05-01",
-					"key": "card",
-					"description": "deposit",
-					"percent": "100%",
-					"amount": "241.00",
-					"ext": {
-						"it-sdi-payment-means": "MP08"
-					}
+					"issue_date": "2025-08-15",
+					"code": "DDT1234",
+					"lines": [
+						1
+					]
+				},
+				{
+					"issue_date": "2025-08-12",
+					"series": "DDT",
+					"code": "2345",
+					"lines": [
+						2
+					]
 				}
 			]
 		},
 		"totals": {
-			"sum": "241.00",
-			"tax_included": "21.82",
-			"total": "219.18",
+			"sum": "800.00",
+			"total": "800.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "outside-scope",
-								"ext": {
-									"it-sdi-exempt": "N1"
-								},
-								"base": "1.00",
-								"amount": "0.00"
-							},
-							{
 								"key": "standard",
-								"base": "218.18",
-								"percent": "10.0%",
-								"amount": "21.82"
+								"base": "800.00",
+								"percent": "22.0%",
+								"amount": "176.00"
 							}
 						],
-						"amount": "21.82"
+						"amount": "176.00"
 					}
 				],
-				"sum": "21.82"
+				"sum": "176.00"
 			},
-			"tax": "21.82",
-			"total_with_tax": "241.00",
-			"payable": "241.00",
-			"advance": "241.00",
-			"due": "0.00"
+			"tax": "176.00",
+			"total_with_tax": "976.00",
+			"payable": "976.00"
 		}
 	}
 }
