@@ -5,11 +5,16 @@ import (
 	"bytes"
 	"errors"
 	"fmt"
+	"io"
+	"regexp"
+	"strings"
 
 	// Momentary fix for nbio/xml library not properly handling namespace attributes but still needed for unmarshalling
 	"encoding/xml"
 
 	nbioXML "github.com/nbio/xml"
+	"golang.org/x/text/encoding/charmap"
+	"golang.org/x/text/transform"
 
 	"github.com/invopop/gobl"
 	"github.com/invopop/gobl/addons/it/sdi"
@@ -95,8 +100,14 @@ func Convert(env *gobl.Envelope, opts ...Option) (*Document, error) {
 // Parse expects the XML document bytes and provides a new GOBL
 // envelope containing the invoice.
 func Parse(doc []byte) (*gobl.Envelope, error) {
+	// Convert document to UTF-8 if needed
+	convertedDoc, err := convertToUTF8(doc)
+	if err != nil {
+		return nil, fmt.Errorf("convert encoding: %w", err)
+	}
+
 	d := &Document{}
-	if err := nbioXML.Unmarshal(doc, d); err != nil {
+	if err := nbioXML.Unmarshal(convertedDoc, d); err != nil {
 		return nil, fmt.Errorf("unmarshal document: %w", err)
 	}
 
@@ -118,8 +129,7 @@ func Parse(doc []byte) (*gobl.Envelope, error) {
 
 	// Retrieves information from the body and adds it to the invoice
 	// TODO: add support for multiple bodies
-	err := goblBillInvoiceAddBody(inv, d.Body[0])
-	if err != nil {
+	if err := goblBillInvoiceAddBody(inv, d.Body[0]); err != nil {
 		return nil, err
 	}
 
@@ -175,4 +185,47 @@ func (d *Document) buffer(base string) (*bytes.Buffer, error) {
 		return nil, fmt.Errorf("writing to buffer: %w", err)
 	}
 	return buf, nil
+}
+
+// convertToUTF8 detects the encoding from the XML declaration and converts
+// the document to UTF-8 if necessary
+func convertToUTF8(doc []byte) ([]byte, error) {
+	// Extract encoding from XML declaration
+	encoding := detectEncoding(doc)
+	if encoding == "" || strings.EqualFold(encoding, "utf-8") {
+		return doc, nil
+	}
+
+	// Handle windows-1252 encoding
+	if strings.EqualFold(encoding, "windows-1252") {
+		decoder := charmap.Windows1252.NewDecoder()
+		reader := transform.NewReader(bytes.NewReader(doc), decoder)
+		converted, err := io.ReadAll(reader)
+		if err != nil {
+			return nil, fmt.Errorf("failed to convert from windows-1252: %w", err)
+		}
+		// Replace the encoding declaration with UTF-8
+		converted = replaceEncodingDeclaration(converted, "UTF-8")
+		return converted, nil
+	}
+
+	// Add more encodings as needed
+	return nil, fmt.Errorf("unsupported encoding: %s", encoding)
+}
+
+// detectEncoding extracts the encoding attribute from the XML declaration
+func detectEncoding(doc []byte) string {
+	// Match XML declaration and extract encoding
+	re := regexp.MustCompile(`<\?xml[^>]+encoding=["']([^"']+)["']`)
+	matches := re.FindSubmatch(doc)
+	if len(matches) > 1 {
+		return string(matches[1])
+	}
+	return ""
+}
+
+// replaceEncodingDeclaration replaces the encoding in the XML declaration
+func replaceEncodingDeclaration(doc []byte, newEncoding string) []byte {
+	re := regexp.MustCompile(`(<\?xml[^>]+encoding=["'])([^"']+)(["'])`)
+	return re.ReplaceAll(doc, []byte("${1}"+newEncoding+"${3}"))
 }

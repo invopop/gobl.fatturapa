@@ -1,0 +1,151 @@
+{
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"code": "1",
+	"issue_date": "2025-01-23",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD01",
+			"it-sdi-format": "FPR12"
+		}
+	},
+	"supplier": {
+		"name": "MÂªF. Services",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"identities": [
+			{
+				"key": "it-fiscal-code",
+				"code": "12345678903"
+			}
+		],
+		"addresses": [
+			{
+				"street": "VIALE DELLA LIBERTA",
+				"locality": "ROMA",
+				"region": "RM",
+				"code": "00100",
+				"country": "IT"
+			}
+		],
+		"emails": [
+			{
+				"addr": "billing@example.com"
+			}
+		],
+		"telephones": [
+			{
+				"num": "999999999"
+			}
+		],
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
+		}
+	},
+	"customer": {
+		"name": "MARIO LEONI",
+		"tax_id": {
+			"country": "IT",
+			"code": "09876543217"
+		},
+		"identities": [
+			{
+				"key": "it-fiscal-code",
+				"code": "09876543217"
+			}
+		],
+		"inboxes": [
+			{
+				"key": "it-sdi-pec",
+				"email": "test@pec.it"
+			}
+		],
+		"addresses": [
+			{
+				"street": "VIA DELLE ROSE 1",
+				"locality": "ROMA",
+				"region": "RM",
+				"code": "00100",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1.000000",
+			"item": {
+				"name": "LENOVO",
+				"price": "101.750000",
+				"unit": "PZ"
+			},
+			"sum": "101.750000",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "standard",
+					"percent": "22.00%",
+					"ext": {
+						"it-sdi-vat-liability": "I"
+					}
+				}
+			],
+			"total": "101.750000"
+		},
+		{
+			"i": 2,
+			"quantity": "1.000000",
+			"item": {
+				"name": "LCD LENOVO",
+				"description": "(Unit: pz)",
+				"price": "36.890000"
+			},
+			"sum": "36.890000",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "standard",
+					"percent": "22.00%",
+					"ext": {
+						"it-sdi-vat-liability": "I"
+					}
+				}
+			],
+			"total": "36.890000"
+		}
+	],
+	"totals": {
+		"sum": "138.64",
+		"total": "138.64",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"key": "standard",
+							"ext": {
+								"it-sdi-vat-liability": "I"
+							},
+							"base": "138.64",
+							"percent": "22.00%",
+							"amount": "30.50"
+						}
+					],
+					"amount": "30.50"
+				}
+			],
+			"sum": "30.50"
+		},
+		"tax": "30.50",
+		"total_with_tax": "169.14",
+		"payable": "169.14"
+	}
+}

@@ -1,6 +1,8 @@
 package fatturapa
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
@@ -115,7 +117,7 @@ func goblOrgPartyAddRegistration(party *org.Party, registration *Registration) {
 	}
 
 	if registration.Capital != "" {
-		capital, err := num.AmountFromString(registration.Capital)
+		capital, err := num.AmountFromString(strings.TrimSpace(registration.Capital))
 		if err == nil {
 			party.Registration.Capital = &capital
 		}

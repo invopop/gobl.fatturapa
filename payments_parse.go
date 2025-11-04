@@ -1,6 +1,8 @@
 package fatturapa
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
@@ -98,7 +100,7 @@ func goblBillPaymentAddAdvancePayment(payment *bill.PaymentDetails, paymentDetai
 	}
 
 	// Parse amount
-	amount, err := num.AmountFromString(paymentDetail.Amount)
+	amount, err := num.AmountFromString(strings.TrimSpace(paymentDetail.Amount))
 	if err != nil {
 		return
 	}
@@ -139,7 +141,7 @@ func goblBillPaymentAddDueDate(payment *bill.PaymentDetails, paymentDetail *Paym
 	}
 
 	// Parse amount and due date
-	amount, err1 := num.AmountFromString(paymentDetail.Amount)
+	amount, err1 := num.AmountFromString(strings.TrimSpace(paymentDetail.Amount))
 	if err1 != nil {
 		return
 	}

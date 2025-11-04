@@ -4,7 +4,7 @@
 		"uuid": "0194d756-898f-73e9-a175-5cf0fb9a374a",
 		"dig": {
 			"alg": "sha256",
-			"val": "be7b9744a9bf4e2f34ad25fd4a7d9e47ab251323fde87a8585ee7a1a878aafd5"
+			"val": "713b0020c10e18cfd29371c3a9a717a72975680787bb0732e12dd89bd2bd3185"
 		}
 	},
 	"doc": {
@@ -101,7 +101,7 @@
 						"cat": "VAT",
 						"key": "outside-scope",
 						"ext": {
-							"it-sdi-exempt": "N1"
+							"it-sdi-exempt": "N2.1"
 						}
 					}
 				],
@@ -148,7 +148,7 @@
 						"cat": "VAT",
 						"key": "outside-scope",
 						"ext": {
-							"it-sdi-exempt": "N1"
+							"it-sdi-exempt": "N2.1"
 						}
 					}
 				],
@@ -185,7 +185,7 @@
 						"cat": "VAT",
 						"key": "outside-scope",
 						"ext": {
-							"it-sdi-exempt": "N1"
+							"it-sdi-exempt": "N2.1"
 						}
 					}
 				],
@@ -229,7 +229,7 @@
 							{
 								"key": "outside-scope",
 								"ext": {
-									"it-sdi-exempt": "N1"
+									"it-sdi-exempt": "N2.1"
 								},
 								"base": "25.20",
 								"amount": "0.00"
