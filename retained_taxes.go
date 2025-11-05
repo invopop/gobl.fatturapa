@@ -86,7 +86,7 @@ func findCodeTaxType(cat cbc.Code) (string, error) {
 		return "RT04", nil
 	case it.TaxCategoryENPAM:
 		return "RT05", nil
-	case it.TaxCategoryOTHER:
+	case it.TaxCategoryCP:
 		return "RT06", nil
 	default:
 		return "", fmt.Errorf("could not find TipoRitenuta code for tax category %s", cat)

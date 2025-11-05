@@ -259,7 +259,7 @@ func extractFundContributions(inv *bill.Invoice) []*FundContribution {
 				AdministrationRef: c.Code.String(),
 			}
 			for _, t := range c.Taxes {
-				if t.Category.In(it.TaxCategoryENASARCO, it.TaxCategoryENPAM, it.TaxCategoryINPS, it.TaxCategoryIRES, it.TaxCategoryIRPEF, it.TaxCategoryOTHER) {
+				if t.Category.In(it.TaxCategoryENASARCO, it.TaxCategoryENPAM, it.TaxCategoryINPS, it.TaxCategoryIRES, it.TaxCategoryIRPEF, it.TaxCategoryCP) {
 					r.Retained = "SI"
 					break
 				}
