@@ -4,7 +4,7 @@
 		"uuid": "0194d756-898f-73e9-a175-5cf0fb9a374a",
 		"dig": {
 			"alg": "sha256",
-			"val": "be7b9744a9bf4e2f34ad25fd4a7d9e47ab251323fde87a8585ee7a1a878aafd5"
+			"val": "986e2e6b340774227af0821abd9636f30d8d7c72236c8d0b5301a47e4208480e"
 		}
 	},
 	"doc": {
@@ -99,7 +99,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "outside-scope",
+						"key": "zero",
+						"percent": "0%",
 						"ext": {
 							"it-sdi-exempt": "N1"
 						}
@@ -146,7 +147,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "outside-scope",
+						"key": "zero",
+						"percent": "0%",
 						"ext": {
 							"it-sdi-exempt": "N1"
 						}
@@ -183,7 +185,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"key": "outside-scope",
+						"key": "zero",
+						"percent": "0%",
 						"ext": {
 							"it-sdi-exempt": "N1"
 						}
@@ -227,11 +230,12 @@
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "outside-scope",
+								"key": "zero",
 								"ext": {
 									"it-sdi-exempt": "N1"
 								},
 								"base": "25.20",
+								"percent": "0%",
 								"amount": "0.00"
 							},
 							{

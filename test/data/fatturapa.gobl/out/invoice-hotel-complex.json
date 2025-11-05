@@ -80,7 +80,8 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"key": "outside-scope",
+					"key": "zero",
+					"percent": "0%",
 					"ext": {
 						"it-sdi-exempt": "N1"
 					}
@@ -126,7 +127,8 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"key": "outside-scope",
+					"key": "zero",
+					"percent": "0%",
 					"ext": {
 						"it-sdi-exempt": "N1"
 					}
@@ -162,7 +164,8 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"key": "outside-scope",
+					"key": "zero",
+					"percent": "0%",
 					"ext": {
 						"it-sdi-exempt": "N1"
 					}
@@ -205,11 +208,12 @@
 					"code": "VAT",
 					"rates": [
 						{
-							"key": "outside-scope",
+							"key": "zero",
 							"ext": {
 								"it-sdi-exempt": "N1"
 							},
 							"base": "25.20",
+							"percent": "0%",
 							"amount": "0.00"
 						},
 						{

@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "c24f409a95d27ca605c757745cb0444781b889265c331f6590797818e203d2d9"
+			"val": "00a5b707815350dc803e55bef0505da81161f6bb3600d41dd79fdb271d97ee34"
 		}
 	},
 	"doc": {
@@ -13,21 +13,20 @@
 		"$addons": [
 			"it-sdi-v1"
 		],
-		"uuid": "0190caea-c344-7afa-a530-252b67108175",
+		"uuid": "0198f526-41e0-7000-b86e-80e06b5922cb",
 		"type": "standard",
 		"series": "SAMPLE",
 		"code": "002",
-		"issue_date": "2023-05-21",
+		"issue_date": "2025-08-21",
 		"currency": "EUR",
 		"tax": {
-			"prices_include": "VAT",
 			"ext": {
 				"it-sdi-document-type": "TD01",
 				"it-sdi-format": "FPR12"
 			}
 		},
 		"supplier": {
-			"name": "Hotel California",
+			"name": "ALPHA SRL",
 			"tax_id": {
 				"country": "IT",
 				"code": "12345678903"
@@ -43,6 +42,7 @@
 				}
 			],
 			"registration": {
+				"capital": "50000.00",
 				"currency": "EUR",
 				"office": "RM",
 				"entry": "123456"
@@ -59,7 +59,7 @@
 			},
 			"inboxes": [
 				{
-					"key": "it-sdi-code",
+					"key": "codice-destinatario",
 					"code": "M5UXCR5"
 				}
 			],
@@ -78,97 +78,100 @@
 			{
 				"i": 1,
 				"quantity": "1",
-				"item": {
-					"name": "Tassa di Soggiorno",
-					"price": "1.00"
+				"period": {
+					"start": "2025-08-17",
+					"end": "2025-08-19"
 				},
-				"sum": "1.00",
-				"taxes": [
-					{
-						"cat": "VAT",
-						"key": "zero",
-						"percent": "0%",
-						"ext": {
-							"it-sdi-exempt": "N1"
-						}
-					}
-				],
-				"total": "1.00"
-			},
-			{
-				"i": 2,
-				"quantity": "2",
 				"item": {
-					"name": "Camera Matrimoniale",
-					"price": "125.00"
+					"name": "IT environment support setup",
+					"price": "1600.00"
 				},
-				"sum": "250.00",
-				"discounts": [
-					{
-						"reason": "Sconto",
-						"amount": "10.00"
-					}
-				],
+				"sum": "1600.00",
 				"taxes": [
 					{
 						"cat": "VAT",
 						"key": "standard",
-						"rate": "intermediate",
-						"percent": "10.0%"
+						"rate": "general",
+						"percent": "22.0%"
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "20%",
+						"ext": {
+							"it-sdi-retained": "A"
+						}
 					}
 				],
-				"total": "240.00"
+				"total": "1600.00"
 			}
 		],
-		"payment": {
-			"advances": [
-				{
-					"date": "2023-05-01",
-					"key": "card",
-					"description": "deposit",
-					"percent": "100%",
-					"amount": "241.00",
-					"ext": {
-						"it-sdi-payment-means": "MP08"
+		"charges": [
+			{
+				"i": 1,
+				"key": "fund-contribution",
+				"percent": "4%",
+				"amount": "64.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "20%",
+						"ext": {
+							"it-sdi-retained": "A"
+						}
 					}
+				],
+				"ext": {
+					"it-sdi-fund-type": "TC22"
 				}
-			]
-		},
+			}
+		],
 		"totals": {
-			"sum": "241.00",
-			"tax_included": "21.82",
-			"total": "219.18",
+			"sum": "1600.00",
+			"charge": "64.00",
+			"total": "1664.00",
 			"taxes": {
 				"categories": [
 					{
 						"code": "VAT",
 						"rates": [
 							{
-								"key": "zero",
-								"ext": {
-									"it-sdi-exempt": "N1"
-								},
-								"base": "1.00",
-								"percent": "0%",
-								"amount": "0.00"
-							},
-							{
 								"key": "standard",
-								"base": "218.18",
-								"percent": "10.0%",
-								"amount": "21.82"
+								"base": "1664.00",
+								"percent": "22.0%",
+								"amount": "366.08"
 							}
 						],
-						"amount": "21.82"
+						"amount": "366.08"
+					},
+					{
+						"code": "IRPEF",
+						"retained": true,
+						"rates": [
+							{
+								"ext": {
+									"it-sdi-retained": "A"
+								},
+								"base": "1664.00",
+								"percent": "20%",
+								"amount": "332.80"
+							}
+						],
+						"amount": "332.80"
 					}
 				],
-				"sum": "21.82"
+				"sum": "366.08",
+				"retained": "332.80"
 			},
-			"tax": "21.82",
-			"total_with_tax": "241.00",
-			"payable": "241.00",
-			"advance": "241.00",
-			"due": "0.00"
+			"tax": "366.08",
+			"total_with_tax": "2030.08",
+			"retained_tax": "332.80",
+			"payable": "1697.28"
 		}
 	}
 }

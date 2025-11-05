@@ -7,7 +7,7 @@
 	"type": "standard",
 	"series": "SAMPLE",
 	"code": "002",
-	"issue_date": "2023-05-21",
+	"issue_date": "2025-08-21",
 	"currency": "EUR",
 	"tax": {
 		"ext": {
@@ -16,7 +16,7 @@
 		}
 	},
 	"supplier": {
-		"name": "Hotel California",
+		"name": "ALPHA SRL",
 		"tax_id": {
 			"country": "IT",
 			"code": "12345678903"
@@ -32,6 +32,7 @@
 			}
 		],
 		"registration": {
+			"capital": "50000.00",
 			"office": "RM",
 			"entry": "123456"
 		},
@@ -45,12 +46,6 @@
 			"country": "IT",
 			"code": "13029381004"
 		},
-		"inboxes": [
-			{
-				"key": "it-sdi-code",
-				"code": "M5UXCR5"
-			}
-		],
 		"addresses": [
 			{
 				"num": "23",
@@ -67,94 +62,92 @@
 			"i": 1,
 			"quantity": "1.00",
 			"item": {
-				"name": "Tassa di Soggiorno",
-				"price": "1.00"
+				"name": "IT environment support setup",
+				"price": "1600.00"
 			},
-			"sum": "1.00",
-			"taxes": [
-				{
-					"cat": "VAT",
-					"key": "zero",
-					"percent": "0%",
-					"ext": {
-						"it-sdi-exempt": "N1"
-					}
-				}
-			],
-			"total": "1.00"
-		},
-		{
-			"i": 2,
-			"quantity": "2.00",
-			"item": {
-				"name": "Camera Matrimoniale",
-				"price": "113.6364"
-			},
-			"sum": "227.2728",
-			"discounts": [
-				{
-					"amount": "9.0910"
-				}
-			],
+			"sum": "1600.00",
 			"taxes": [
 				{
 					"cat": "VAT",
 					"key": "standard",
-					"percent": "10.00%"
+					"percent": "22.00%"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20.00%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
 				}
 			],
-			"total": "218.1818"
+			"total": "1600.00"
 		}
 	],
-	"payment": {
-		"terms": {
-			"key": "advanced"
-		},
-		"advances": [
-			{
-				"date": "2023-05-01",
-				"key": "card",
-				"description": "Advance payment",
-				"amount": "241.00",
-				"ext": {
-					"it-sdi-payment-means": "MP08"
+	"charges": [
+		{
+			"i": 1,
+			"key": "fund-contribution",
+			"percent": "4.00%",
+			"amount": "64.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "standard",
+					"percent": "22.00%"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20.00%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
 				}
+			],
+			"ext": {
+				"it-sdi-fund-type": "TC22"
 			}
-		]
-	},
+		}
+	],
 	"totals": {
-		"sum": "219.18",
-		"total": "219.18",
+		"sum": "1600.00",
+		"charge": "64.00",
+		"total": "1664.00",
 		"taxes": {
 			"categories": [
 				{
 					"code": "VAT",
 					"rates": [
 						{
-							"key": "zero",
-							"ext": {
-								"it-sdi-exempt": "N1"
-							},
-							"base": "1.00",
-							"percent": "0%",
-							"amount": "0.00"
-						},
-						{
 							"key": "standard",
-							"base": "218.18",
-							"percent": "10.00%",
-							"amount": "21.82"
+							"base": "1664.00",
+							"percent": "22.00%",
+							"amount": "366.08"
 						}
 					],
-					"amount": "21.82"
+					"amount": "366.08"
+				},
+				{
+					"code": "IRPEF",
+					"retained": true,
+					"rates": [
+						{
+							"ext": {
+								"it-sdi-retained": "A"
+							},
+							"base": "1664.00",
+							"percent": "20.00%",
+							"amount": "332.80"
+						}
+					],
+					"amount": "332.80"
 				}
 			],
-			"sum": "21.82"
+			"sum": "366.08",
+			"retained": "332.80"
 		},
-		"tax": "21.82",
-		"total_with_tax": "241.00",
-		"payable": "241.00",
-		"advance": "241.00",
-		"due": "0.00"
+		"tax": "366.08",
+		"total_with_tax": "2030.08",
+		"retained_tax": "332.80",
+		"payable": "1697.28"
 	}
 }
