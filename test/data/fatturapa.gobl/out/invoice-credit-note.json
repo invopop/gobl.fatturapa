@@ -117,10 +117,9 @@
 			"taxes": [
 				{
 					"cat": "VAT",
-					"key": "zero",
-					"percent": "0.00%",
+					"key": "outside-scope",
 					"ext": {
-						"it-sdi-exempt": "N1"
+						"it-sdi-exempt": "N2.2"
 					}
 				}
 			],
@@ -169,9 +168,9 @@
 							"amount": "356.40"
 						},
 						{
-							"key": "zero",
+							"key": "outside-scope",
 							"ext": {
-								"it-sdi-exempt": "N1"
+								"it-sdi-exempt": "N2.2"
 							},
 							"base": "100.00",
 							"amount": "0.00"

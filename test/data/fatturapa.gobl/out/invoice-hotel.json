@@ -75,7 +75,7 @@
 				{
 					"cat": "VAT",
 					"key": "zero",
-					"percent": "0.00%",
+					"percent": "0%",
 					"ext": {
 						"it-sdi-exempt": "N1"
 					}
@@ -136,6 +136,7 @@
 								"it-sdi-exempt": "N1"
 							},
 							"base": "1.00",
+							"percent": "0%",
 							"amount": "0.00"
 						},
 						{
