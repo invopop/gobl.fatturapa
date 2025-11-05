@@ -74,6 +74,7 @@
 			"taxes": [
 				{
 					"cat": "VAT",
+					"key": "zero",
 					"percent": "0.00%",
 					"ext": {
 						"it-sdi-exempt": "N1"
@@ -98,6 +99,7 @@
 			"taxes": [
 				{
 					"cat": "VAT",
+					"key": "standard",
 					"percent": "10.00%"
 				}
 			],
@@ -129,6 +131,7 @@
 					"code": "VAT",
 					"rates": [
 						{
+							"key": "zero",
 							"ext": {
 								"it-sdi-exempt": "N1"
 							},
@@ -137,6 +140,7 @@
 							"amount": "0.00"
 						},
 						{
+							"key": "standard",
 							"base": "218.18",
 							"percent": "10.00%",
 							"amount": "21.82"

@@ -64,7 +64,7 @@
 				<NumeroLinea>1</NumeroLinea>
 				<Descrizione>22/01/2025 - 23/01/2025: (2) Suite Topazio - Luxury Apartment in Via Roma</Descrizione>
 				<Quantita>2.00</Quantita>
-				<PrezzoUnitario>76.69</PrezzoUnitario>
+				<PrezzoUnitario>76.6900</PrezzoUnitario>
 				<ScontoMaggiorazione>
 					<Tipo>SC</Tipo>
 					<Percentuale>50.00</Percentuale>
@@ -75,7 +75,7 @@
 					<Percentuale>50.00</Percentuale>
 					<Importo>38.3450</Importo>
 				</ScontoMaggiorazione>
-				<PrezzoTotale>0.00</PrezzoTotale>
+				<PrezzoTotale>0.0000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
 				<Natura>N1</Natura>
 			</DettaglioLinee>
@@ -91,18 +91,18 @@
 				<NumeroLinea>3</NumeroLinea>
 				<Descrizione>15/01/2025: cleaning cost</Descrizione>
 				<Quantita>1.00</Quantita>
-				<PrezzoUnitario>70.00</PrezzoUnitario>
+				<PrezzoUnitario>70.0000</PrezzoUnitario>
 				<ScontoMaggiorazione>
 					<Tipo>SC</Tipo>
 					<Percentuale>10.00</Percentuale>
-					<Importo>7.00</Importo>
+					<Importo>7.0000</Importo>
 				</ScontoMaggiorazione>
 				<ScontoMaggiorazione>
 					<Tipo>SC</Tipo>
 					<Percentuale>90.00</Percentuale>
-					<Importo>63.00</Importo>
+					<Importo>63.0000</Importo>
 				</ScontoMaggiorazione>
-				<PrezzoTotale>0.00</PrezzoTotale>
+				<PrezzoTotale>0.0000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
 				<Natura>N1</Natura>
 			</DettaglioLinee>
@@ -118,8 +118,8 @@
 				<NumeroLinea>5</NumeroLinea>
 				<Descrizione>22/01/2025 - 23/01/2025: Tourist tax</Descrizione>
 				<Quantita>4.00</Quantita>
-				<PrezzoUnitario>6.30</PrezzoUnitario>
-				<PrezzoTotale>25.20</PrezzoTotale>
+				<PrezzoUnitario>6.3000</PrezzoUnitario>
+				<PrezzoTotale>25.2000</PrezzoTotale>
 				<AliquotaIVA>0.00</AliquotaIVA>
 				<Natura>N1</Natura>
 			</DettaglioLinee>
@@ -159,7 +159,7 @@
 					<ds:Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"></ds:Transform>
 				</ds:Transforms>
 				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></ds:DigestMethod>
-				<ds:DigestValue>7p5emLvRDTCo3Tjvjy38qk3eWwebct3LRv1yU5vsMwbt1r1OBICCSwh6v+7K0vofwBgjqtrPpms/4cxk5ZPaLw==</ds:DigestValue>
+				<ds:DigestValue>Q7BrIKFB4K6oC8SVPqzT9LmTa0nJ5EG+0g2efBJP8RxHinA3pqlim1LHJ3ds6+VvkqpZBpnEqXTaF3R6/XiwmA==</ds:DigestValue>
 			</ds:Reference>
 			<ds:Reference URI="#Certificate-0194d756-898f-73e9-a175-5cf0fb9a374a">
 				<ds:DigestMethod Algorithm="http://www.w3.org/2001/04/xmlenc#sha512"></ds:DigestMethod>
@@ -170,7 +170,7 @@
 				<ds:DigestValue>vXmxBevubXajOzR1jlo1mftvQ5tEctDlvyAIehZCzHfLDXSLVgUewiAJC2RSy9NkR15yN4YbyvqwXqFI3TMGrg==</ds:DigestValue>
 			</ds:Reference>
 		</ds:SignedInfo>
-		<ds:SignatureValue Id="Signature-0194d756-898f-73e9-a175-5cf0fb9a374a-SignatureValue">aKyoZ+ZIUUOU3JkE9QEw/DWE3lxsrTN2MW27GLM7qAoAAx4rgzMrxrKf9jpLloKtJXRAUi+j8bF3t42QEIFb5NxGC0tvsOjBBb3lAP5nem6Ks/XmuIxnLXFtTydJF0e/zPs8ARGYppb9eO77h0RWfSFfbn7KrXZZZyqU/TOW39yWuCxGgK6hWNDdoNxMjuGAIj85b9IbsEXxPucNTBK+sD/WOaBuK4BcurJpUwbc/ktcsWLVffWwlY65ZQELlqJzOWUfKBFZgVGDd/my7SOuXaKQuqUbqrEtB0Ly6i+cPFJ+Tg2QU0//zpFU/LL4jbM1LCSALSLSOXBqA9jdweM3CQ==</ds:SignatureValue>
+		<ds:SignatureValue Id="Signature-0194d756-898f-73e9-a175-5cf0fb9a374a-SignatureValue">HQScH3zCEJnVcIreexWLS76D89dNlfQLwwK5Q+vclJGLo+wS/djgSKeTGwIQU9T68jYjzhiklHFcgjh797et92fXGyIbZUgebaXDcnnbfaarEi1js4CnQqzAr1VNAjLXazUMs3BwxeHSxLbZ+43fUgQpAL13UaQ4B/bv+E/L5k/h0gru0PbZT22Mcwn+kq6zFjq6RD/l8/CGCuYspU/v8N1xpxSUBe+YN7LVxbzGBYS3F9P8tAIW2zOyjsRuDOeYoBSyW+wzmyfP+sAi+JPf3kqKW8eENfuZNUjllYUfpA9+18MHIIDkjurEy0OXTBsj/yNAfP66+n1NSKGxIC80BA==</ds:SignatureValue>
 		<ds:KeyInfo Id="Certificate-0194d756-898f-73e9-a175-5cf0fb9a374a">
 			<ds:X509Data>
 				<ds:X509Certificate>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</ds:X509Certificate>
