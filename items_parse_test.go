@@ -63,7 +63,7 @@ func TestItemsInConversion(t *testing.T) {
 		// Check for tax exemption on the second line
 		require.NotEmpty(t, line2.Taxes)
 		assert.Equal(t, tax.CategoryVAT, line2.Taxes[0].Category)
-		assert.Equal(t, cbc.Code("N2.2"), line2.Taxes[0].Ext[sdi.ExtKeyExempt])
+		assert.Equal(t, cbc.Code("N1"), line2.Taxes[0].Ext[sdi.ExtKeyExempt])
 	})
 
 	t.Run("should convert tax summaries correctly", func(t *testing.T) {
