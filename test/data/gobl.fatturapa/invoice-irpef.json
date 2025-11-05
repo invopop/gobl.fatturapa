@@ -62,7 +62,6 @@
 			}
 		},
 		"customer": {
-			"name": "MARIO LEONI",
 			"tax_id": {
 				"country": "IT"
 			},

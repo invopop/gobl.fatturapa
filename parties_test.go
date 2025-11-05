@@ -165,4 +165,19 @@ func TestPartiesCustomer(t *testing.T) {
 		_, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 	})
+
+	t.Run("should take the company name when provided even if no tax ID", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-irpef.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Customer.Name = "ACME Corp"
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		c := doc.Header.Customer
+
+		assert.Equal(t, "ACME Corp", c.Identity.Profile.Name)
+		assert.Empty(t, c.Identity.Profile.Given)
+	})
 }
