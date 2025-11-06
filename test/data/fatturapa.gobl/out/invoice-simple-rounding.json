@@ -50,7 +50,7 @@
 			"entry": "123456"
 		},
 		"ext": {
-			"it-sdi-fiscal-regime": "RF01"
+			"it-sdi-fiscal-regime": "RF02"
 		}
 	},
 	"customer": {
@@ -61,8 +61,8 @@
 		},
 		"inboxes": [
 			{
-				"key": "it-sdi-pec",
-				"email": "fooo@inbox.com"
+				"key": "it-sdi-code",
+				"code": "ABCDEF1"
 			}
 		],
 		"addresses": [
@@ -115,7 +115,8 @@
 					"cat": "VAT",
 					"key": "outside-scope",
 					"ext": {
-						"it-sdi-exempt": "N2.2"
+						"it-sdi-exempt": "N2.2",
+						"it-sdi-vat-liability": "S"
 					}
 				}
 			],
@@ -166,7 +167,8 @@
 						{
 							"key": "outside-scope",
 							"ext": {
-								"it-sdi-exempt": "N2.2"
+								"it-sdi-exempt": "N2.2",
+								"it-sdi-vat-liability": "S"
 							},
 							"base": "100.00",
 							"amount": "0.00"
@@ -179,6 +181,7 @@
 		},
 		"tax": "356.40",
 		"total_with_tax": "1388.40",
-		"payable": "1388.40"
+		"rounding": "0.01",
+		"payable": "1388.41"
 	}
 }

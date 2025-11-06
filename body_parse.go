@@ -111,8 +111,31 @@ func goblBillInvoiceAddGeneralData(inv *bill.Invoice, generalData *GeneralData) 
 		Receiving: goblOrgDocumentRefsFromDocumentRefs(generalData.Receiving),
 	}
 
+	// Add despatch document reference if present
+	if len(generalData.Despatch) > 0 {
+		ordering.Despatch = make([]*org.DocumentRef, len(generalData.Despatch))
+		for i, d := range generalData.Despatch {
+			o := &org.DocumentRef{}
+
+			// Parse series and code
+			parseSeriesAndCode(d.Code, &o.Series, &o.Code)
+
+			// Parse issue date
+			date, err := parseDate(d.IssueDate)
+			if err != nil {
+				return err
+			}
+			o.IssueDate = &date
+
+			// Add lines
+			o.Lines = d.Lines
+
+			ordering.Despatch[i] = o
+		}
+	}
+
 	// Only set the ordering if at least one of the document reference arrays is not empty
-	if len(ordering.Purchases) > 0 || len(ordering.Contracts) > 0 || len(ordering.Tender) > 0 || len(ordering.Receiving) > 0 {
+	if len(ordering.Purchases) > 0 || len(ordering.Contracts) > 0 || len(ordering.Tender) > 0 || len(ordering.Receiving) > 0 || len(ordering.Despatch) > 0 {
 		inv.Ordering = ordering
 	}
 
@@ -154,6 +177,17 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 		inv.Totals.Payable = payable
 	}
 
+	// Add totals rounding
+	if doc.Rounding != "" {
+		rounding, err := num.AmountFromString(doc.Rounding)
+		if err != nil {
+			return fmt.Errorf("adding rounding: %w", err)
+		}
+		if inv.Totals == nil {
+			inv.Totals = new(bill.Totals)
+		}
+		inv.Totals.Rounding = &rounding
+	}
 	// Add stamp duty
 	goblBillInvoiceAddStampDuty(inv, doc.StampDuty)
 
@@ -353,6 +387,9 @@ func goblOrgDocumentRefFromDocumentRef(ref *DocumentRef) *org.DocumentRef {
 		})
 	}
 
+	// Add lines
+	orgRef.Lines = ref.Lines
+
 	return orgRef
 }
 
@@ -369,4 +406,33 @@ func parseSeriesAndCode(number string, series *cbc.Code, code *cbc.Code) {
 		*series = cbc.Code(parts[0])
 		*code = cbc.Code(parts[1])
 	}
+}
+
+// adjustTotals compares the totals of the invoice with the totals of the FatturaPA document and adds rounding if necessary
+func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
+	if inv == nil || doc == nil {
+		return nil
+	}
+	if doc.TotalAmount != "" {
+		ft, err := num.AmountFromString(doc.TotalAmount)
+		if err != nil {
+			return err
+		}
+
+		// Calculate to get totals
+		if err = inv.Calculate(); err != nil {
+			return err
+		}
+
+		if inv.Totals == nil {
+			return nil
+		}
+
+		r := ft.Subtract(inv.Totals.Payable)
+		if r.Compare(num.AmountZero) != 0 {
+			inv.Totals.Rounding = &r
+		}
+	}
+
+	return nil
 }

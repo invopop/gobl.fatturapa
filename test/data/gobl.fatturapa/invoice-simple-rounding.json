@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "7b4546c40d2eb535937ec752e7bb1af63407d4d5a2200e77460a2baf5c776e24"
+			"val": "91040e32ca80460f7af05e6a630b0f45a83039705a9e75d493be0a8df9ff4d47"
 		}
 	},
 	"doc": {
@@ -217,7 +217,8 @@
 			},
 			"tax": "356.40",
 			"total_with_tax": "1388.40",
-			"payable": "1388.40"
+			"rounding": "0.01",
+			"payable": "1388.41"
 		}
 	}
 }

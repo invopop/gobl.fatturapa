@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "f09feeee5ab38f0eeb74dcdf680b897f042583fe49231c2f0f2dc59251da5ed4"
+			"val": "e3616954a01dfbaa7d63e473e718db91e76bd19eca56afaaa1cd8f1988c2a7f4"
 		}
 	},
 	"doc": {
@@ -62,7 +62,6 @@
 			}
 		},
 		"customer": {
-			"name": "MARIO LEONI",
 			"tax_id": {
 				"country": "IT"
 			},
@@ -123,7 +122,8 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "standard",
+						"key": "standard",
+						"rate": "general",
 						"percent": "22.0%"
 					},
 					{
@@ -148,7 +148,7 @@
 				"taxes": [
 					{
 						"cat": "VAT",
-						"rate": "exempt",
+						"key": "outside-scope",
 						"ext": {
 							"it-sdi-exempt": "N2.2"
 						}
@@ -232,7 +232,7 @@
 								"amount": "356.40"
 							},
 							{
-								"key": "exempt",
+								"key": "outside-scope",
 								"ext": {
 									"it-sdi-exempt": "N2.2"
 								},
@@ -266,10 +266,12 @@
 						"amount": "374.00"
 					}
 				],
-				"sum": "-17.60"
+				"sum": "356.40",
+				"retained": "374.00"
 			},
-			"tax": "-17.60",
-			"total_with_tax": "1026.74",
+			"tax": "356.40",
+			"total_with_tax": "1400.74",
+			"retained_tax": "374.00",
 			"payable": "1026.74"
 		}
 	}

@@ -203,6 +203,11 @@ func setPaymentMethodAndKey(methodCode string, ext *tax.Extensions, key *cbc.Key
 	keyMap := sdi.PaymentMeansExtensions()
 	for k, v := range keyMap {
 		if v == cbc.Code(methodCode) {
+			if k == pay.MeansKeyOnline {
+				// Double mapping for MP08 causes errors when parsing values
+				// as it can either map to card or online, so we force it to card
+				k = pay.MeansKeyCard
+			}
 			*key = k
 			break
 		}

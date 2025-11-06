@@ -123,6 +123,11 @@ func Parse(doc []byte) (*gobl.Envelope, error) {
 		return nil, err
 	}
 
+	// Final totals check
+	if err := adjustTotals(inv, d.Body[0].GeneralData.Document); err != nil {
+		return nil, err
+	}
+
 	// Generate envelope
 	env, err := gobl.Envelop(inv)
 	if err != nil {

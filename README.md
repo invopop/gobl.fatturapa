@@ -9,6 +9,7 @@ Copyright [Invopop Ltd.](https://invopop.com) 2023. Released publicly under the 
 [![Go Report Card](https://goreportcard.com/badge/github.com/invopop/gobl.fatturapa)](https://goreportcard.com/report/github.com/invopop/gobl.fatturapa)
 [![GoDoc](https://godoc.org/github.com/invopop/gobl.fatturapa?status.svg)](https://godoc.org/github.com/invopop/gobl.fatturapa)
 ![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl.fatturapa)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/invopop/gobl.fatturapa)
 
 ## Introduction
 

@@ -31,6 +31,9 @@ const (
 
 	// PathFatturaPAGOBL is the path to the test data for the FatturaPA GOBL
 	PathFatturaPAGOBL = "fatturapa.gobl"
+
+	// PathInvalid is the path to the test data for the invalid FatturaPA
+	PathInvalid = "invalid"
 )
 
 // UpdateOut is a flag that can be set to update example files in test/data and test/data/out
