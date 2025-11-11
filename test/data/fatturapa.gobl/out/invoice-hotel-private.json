@@ -57,6 +57,7 @@
 				"num": "23",
 				"street": "Main Street",
 				"locality": "London",
+				"code": "00000",
 				"country": "GB"
 			}
 		]

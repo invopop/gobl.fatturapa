@@ -120,7 +120,7 @@ func TestPartiesInConversion(t *testing.T) {
 
 	t.Run("should convert foreign customer correctly", func(t *testing.T) {
 		// Load the XML file with foreign customer information
-		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-hotel.xml"))
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-foreign.xml"))
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
@@ -143,6 +143,6 @@ func TestPartiesInConversion(t *testing.T) {
 		// Verify tax ID for foreign customer
 		require.NotNil(t, customer.TaxID)
 		// Foreign customers might have different country codes
-		assert.NotEqual(t, l10n.IT, customer.TaxID.Country)
+		assert.NotEqual(t, l10n.ES, customer.TaxID.Country)
 	})
 }
