@@ -22,7 +22,7 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 	for _, rt := range retainedTaxes {
 		// Parse the retained tax rate and amount
 		rtRate, err1 := num.PercentageFromString(strings.TrimSpace(rt.Rate) + "%")
-		rtAmount, err2 := num.AmountFromString(strings.TrimSpace(rt.Amount))
+		rtAmount, err2 := parseAmount(rt.Amount)
 		if err1 != nil || err2 != nil {
 			return fmt.Errorf("invalid retained tax rate or amount: %s %s", rt.Rate, rt.Amount)
 		}

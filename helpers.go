@@ -1,6 +1,8 @@
 package fatturapa
 
 import (
+	"strings"
+
 	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 )
@@ -46,4 +48,12 @@ func parseDate(date string) (cal.Date, error) {
 		return cal.Date{}, err
 	}
 	return d, nil
+}
+
+// parseAmount will trim whitespace and parse a string into a num.Amount
+func parseAmount(s string) (num.Amount, error) {
+	if s == "" {
+		return num.Amount{}, nil
+	}
+	return num.AmountFromString(strings.TrimSpace(s))
 }
