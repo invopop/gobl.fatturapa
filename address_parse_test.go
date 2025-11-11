@@ -47,7 +47,7 @@ func TestAddressInConversion(t *testing.T) {
 	t.Run("should handle non-Italian address correctly", func(t *testing.T) {
 		// TODO: update xml file with --update flag
 		// Load the XML file with a non-Italian address
-		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-b2g.xml"))
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-foreign.xml"))
 		require.NoError(t, err)
 
 		// Convert XML to GOBL
@@ -65,10 +65,39 @@ func TestAddressInConversion(t *testing.T) {
 		address := invoice.Customer.Addresses[0]
 		require.NotNil(t, address)
 
-		// Verify address fields for a non-Italian address and a PO Box
-		assert.NotEmpty(t, address.PostOfficeBox)
+		assert.NotEmpty(t, address.Street)
+		assert.NotEmpty(t, address.Number)
 		assert.NotEmpty(t, address.Locality)
 		assert.Equal(t, l10n.ES.ISO(), address.Country)
+		assert.NotEmpty(t, address.Code)
+	})
+
+	t.Run("should handle PO address correctly", func(t *testing.T) {
+		// TODO: update xml file with --update flag
+		// Load the XML file with a non-Italian address
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-pobox.xml"))
+		require.NoError(t, err)
+
+		// Convert XML to GOBL
+		env, err := test.ConvertToGOBL(data)
+		require.NoError(t, err)
+		require.NotNil(t, env)
+
+		// Extract the invoice
+		invoice, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+		require.NotNil(t, invoice)
+
+		// Check the customer address
+		require.NotEmpty(t, invoice.Customer.Addresses)
+		address := invoice.Customer.Addresses[0]
+		require.NotNil(t, address)
+
+		// Verify address fields for a PO Box
+		assert.NotEmpty(t, address.PostOfficeBox)
+		assert.NotEmpty(t, address.Locality)
+		assert.NotEmpty(t, address.Region)
+		assert.Equal(t, l10n.IT.ISO(), address.Country)
 		assert.NotEmpty(t, address.Code)
 	})
 }

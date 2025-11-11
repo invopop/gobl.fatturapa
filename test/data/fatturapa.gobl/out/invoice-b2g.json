@@ -50,10 +50,12 @@
 		},
 		"addresses": [
 			{
-				"po_box": "P.O. Box 1234",
-				"locality": "Madrid",
-				"code": "28006",
-				"country": "ES"
+				"num": "23",
+				"street": "Via dei Mille",
+				"locality": "Firenze",
+				"region": "FI",
+				"code": "00100",
+				"country": "IT"
 			}
 		]
 	},
