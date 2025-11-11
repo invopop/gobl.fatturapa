@@ -62,7 +62,7 @@
 				<Divisa>EUR</Divisa>
 				<Data>2024-10-09</Data>
 				<Numero>SAMPLE-002</Numero>
-				<ImportoTotaleDocumento>265.00</ImportoTotaleDocumento>
+				<ImportoTotaleDocumento>265.00 </ImportoTotaleDocumento>
 			</DatiGeneraliDocumento>
 			<DatiOrdineAcquisto>
 				<IdDocumento>ORDINECLI</IdDocumento>

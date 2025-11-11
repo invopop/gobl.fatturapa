@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<?xml-stylesheet type="text/xsl" href="fatturapa_v1.2.xsl"?>
+<p:FatturaElettronica versione="FPR12"
+xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <FatturaElettronicaHeader>
+   <DatiTrasmissione>
+    <IdTrasmittente>
+     <IdPaese>IT</IdPaese>
+     <IdCodice>01234567890</IdCodice>
+    </IdTrasmittente>
+    <ProgressivoInvio>00001</ProgressivoInvio>
+    <FormatoTrasmissione>FPR12</FormatoTrasmissione>
+    <CodiceDestinatario>0000000</CodiceDestinatario>
+    <PECDestinatario>test@pec.it</PECDestinatario>
+   </DatiTrasmissione>
+   <CedentePrestatore>
+    <DatiAnagrafici>
+     <IdFiscaleIVA>
+      <IdPaese>IT</IdPaese>
+      <IdCodice>12345678903</IdCodice>
+     </IdFiscaleIVA>
+     <CodiceFiscale>12345678903</CodiceFiscale>
+     <Anagrafica>
+      <Denominazione>MªF. Services</Denominazione>
+     </Anagrafica>
+     <RegimeFiscale>RF01</RegimeFiscale>
+    </DatiAnagrafici>
+    <Sede>
+     <Indirizzo>VIALE DELLA LIBERTA</Indirizzo>
+     <CAP>00100</CAP>
+     <Comune>ROMA</Comune>
+     <Provincia>RM</Provincia>
+     <Nazione>IT</Nazione>
+    </Sede>
+    <Contatti>
+     <Telefono>999999999</Telefono>
+     <Email>billing@example.com</Email>
+    </Contatti>
+   </CedentePrestatore>
+   <CessionarioCommittente>
+    <DatiAnagrafici>
+     <IdFiscaleIVA>
+      <IdPaese>IT</IdPaese>
+      <IdCodice>09876543217</IdCodice>
+     </IdFiscaleIVA>
+     <CodiceFiscale>09876543217</CodiceFiscale>
+     <Anagrafica>
+      <Denominazione>MARIO LEONI</Denominazione>
+     </Anagrafica>
+    </DatiAnagrafici>
+    <Sede>
+     <Indirizzo>VIA DELLE ROSE 1</Indirizzo>
+     <CAP>00100</CAP>
+     <Comune>ROMA</Comune>
+     <Provincia>RM</Provincia>
+     <Nazione>IT</Nazione>
+    </Sede>
+   </CessionarioCommittente>
+  </FatturaElettronicaHeader>
+  <FatturaElettronicaBody>
+   <DatiGenerali>
+    <DatiGeneraliDocumento>
+     <TipoDocumento>TD01</TipoDocumento>
+     <Divisa>EUR</Divisa>
+     <Data>2025-01-23</Data>
+     <Numero>1</Numero>
+     <ImportoTotaleDocumento>169.14</ImportoTotaleDocumento>
+    </DatiGeneraliDocumento>
+    <DatiTrasporto>
+     <DataOraRitiro>2025-01-23T13:00:00</DataOraRitiro>
+     <DataInizioTrasporto>2025-01-23</DataInizioTrasporto>
+    </DatiTrasporto>
+   </DatiGenerali>
+   <DatiBeniServizi>
+    <DettaglioLinee>
+     <NumeroLinea>1</NumeroLinea>
+     <CodiceArticolo>
+      <CodiceTipo>PROPRIETARIO</CodiceTipo>
+     </CodiceArticolo>
+     <Descrizione>LENOVO</Descrizione>
+     <Quantita>1.000000</Quantita>
+     <UnitaMisura>PZ</UnitaMisura>
+     <PrezzoUnitario>101.750000</PrezzoUnitario>
+     <PrezzoTotale>101.75</PrezzoTotale>
+     <AliquotaIVA>22.00</AliquotaIVA>
+     <AltriDatiGestionali>
+      <TipoDato>DATI LOTTO</TipoDato>
+      <RiferimentoTesto>Id: 2811 - Qtà: 1</RiferimentoTesto>
+     </AltriDatiGestionali>
+    </DettaglioLinee>
+    <DettaglioLinee>
+     <NumeroLinea>2</NumeroLinea>
+     <CodiceArticolo>
+      <CodiceTipo>PROPRIETARIO</CodiceTipo>
+     </CodiceArticolo>
+     <Descrizione>LCD LENOVO</Descrizione>
+     <Quantita>1.000000</Quantita>
+     <UnitaMisura>pz</UnitaMisura>
+     <PrezzoUnitario>36.890000</PrezzoUnitario>
+     <PrezzoTotale>36.89</PrezzoTotale>
+     <AliquotaIVA>22.00</AliquotaIVA>
+     <AltriDatiGestionali>
+      <TipoDato>DATI LOTTO</TipoDato>
+      <RiferimentoTesto>Id: 2345 - Qtà: 1</RiferimentoTesto>
+     </AltriDatiGestionali>
+    </DettaglioLinee>
+    <DatiRiepilogo>
+     <AliquotaIVA>22.00</AliquotaIVA>
+     <ImponibileImporto>138.64</ImponibileImporto>
+     <Imposta>30.50</Imposta>
+     <EsigibilitaIVA>I</EsigibilitaIVA>
+    </DatiRiepilogo>
+   </DatiBeniServizi>
+  </FatturaElettronicaBody>
+</p:FatturaElettronica>

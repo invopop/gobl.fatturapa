@@ -2,6 +2,7 @@ package fatturapa
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
@@ -20,8 +21,8 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 	// Process each retained tax
 	for _, rt := range retainedTaxes {
 		// Parse the retained tax rate and amount
-		rtRate, err1 := num.PercentageFromString(rt.Rate + "%")
-		rtAmount, err2 := num.AmountFromString(rt.Amount)
+		rtRate, err1 := num.PercentageFromString(strings.TrimSpace(rt.Rate) + "%")
+		rtAmount, err2 := parseAmount(rt.Amount)
 		if err1 != nil || err2 != nil {
 			return fmt.Errorf("invalid retained tax rate or amount: %s %s", rt.Rate, rt.Amount)
 		}

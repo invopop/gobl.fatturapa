@@ -5,13 +5,14 @@ go 1.23.0
 toolchain go1.24.0
 
 require (
-	github.com/invopop/gobl v0.301.0
+	github.com/invopop/gobl v0.302.1
 	github.com/invopop/xmldsig v0.10.0
 	github.com/lestrrat-go/libxml2 v0.0.0-20240905100032-c934e3fcb9d3
 	github.com/nbio/xml v0.0.0-20250127210239-7f9281fed8c6
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	gitlab.com/flimzy/testy v0.15.0
+	golang.org/x/text v0.23.0
 )
 
 require (

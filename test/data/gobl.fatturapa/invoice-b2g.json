@@ -4,7 +4,7 @@
 		"uuid": "019270f1-b0d8-7299-85ca-0a595a9ee9c7",
 		"dig": {
 			"alg": "sha256",
-			"val": "14f3815c7004fe7f7b79281403b5c0f6c2213f6069f805b6636655db7ddd0a30"
+			"val": "c29da4ff016a7e3ac83c0e89c94807f5a1e7fdd99801761e9b1219984413d73d"
 		}
 	},
 	"doc": {
@@ -90,7 +90,7 @@
 						"cat": "VAT",
 						"key": "outside-scope",
 						"ext": {
-							"it-sdi-exempt": "N1"
+							"it-sdi-exempt": "N2.1"
 						}
 					}
 				],
@@ -159,7 +159,7 @@
 							{
 								"key": "outside-scope",
 								"ext": {
-									"it-sdi-exempt": "N1"
+									"it-sdi-exempt": "N2.1"
 								},
 								"base": "1.00",
 								"amount": "0.00"

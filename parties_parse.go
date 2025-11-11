@@ -4,7 +4,6 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/l10n"
-	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
 	"github.com/invopop/gobl/tax"
@@ -115,7 +114,7 @@ func goblOrgPartyAddRegistration(party *org.Party, registration *Registration) {
 	}
 
 	if registration.Capital != "" {
-		capital, err := num.AmountFromString(registration.Capital)
+		capital, err := parseAmount(registration.Capital)
 		if err == nil {
 			party.Registration.Capital = &capital
 		}

@@ -3,6 +3,7 @@ package fatturapa
 import (
 	"fmt"
 	"strconv"
+	"strings"
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
@@ -46,11 +47,11 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 		}
 
 		// Parse total price and unit price first
-		unitPrice, err := num.AmountFromString(detail.UnitPrice)
+		unitPrice, err := parseAmount(detail.UnitPrice)
 		if err != nil {
 			return fmt.Errorf("parsing unit price: %w", err)
 		}
-		totalPrice, err := num.AmountFromString(detail.TotalPrice)
+		totalPrice, err := parseAmount(detail.TotalPrice)
 		if err != nil {
 			return fmt.Errorf("parsing total price: %w", err)
 		}
@@ -58,7 +59,7 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 		// Handle quantity parsing/calculation
 		var quantity num.Amount
 		if detail.Quantity != "" {
-			quantity, err = num.AmountFromString(detail.Quantity)
+			quantity, err = parseAmount(detail.Quantity)
 			if err != nil {
 				return fmt.Errorf("parsing quantity: %w", err)
 			}
@@ -77,9 +78,14 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 			},
 		}
 
-		// Add unit
+		// Add unit. Add to description if unit is invalid
 		if detail.Unit != "" {
-			line.Item.Unit = org.Unit(detail.Unit)
+			unit := org.Unit(detail.Unit)
+			if err := unit.Validate(); err != nil {
+				line.Item.Description = fmt.Sprintf("(Unit: %s)", detail.Unit)
+			} else {
+				line.Item.Unit = unit
+			}
 		}
 
 		// Add price adjustments
@@ -175,9 +181,9 @@ func goblBillLineAddPriceAdjustments(line *bill.Line, adjustments []*PriceAdjust
 	}
 
 	for _, adj := range adjustments {
-		amount, err1 := num.AmountFromString(adj.Amount)
+		amount, err1 := parseAmount(adj.Amount)
 		// FatturaPA stores the percentage as a string without the % symbol so we add it so that the conversion works
-		percent, err2 := num.PercentageFromString(adj.Percent + "%")
+		percent, err2 := num.PercentageFromString(strings.TrimSpace(adj.Percent) + "%")
 
 		if err1 != nil && err2 != nil {
 			// Skip if both amount and percent are invalid

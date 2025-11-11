@@ -167,7 +167,7 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 
 	// Add totals payable
 	if doc.TotalAmount != "" {
-		payable, err := num.AmountFromString(doc.TotalAmount)
+		payable, err := parseAmount(doc.TotalAmount)
 		if err != nil {
 			return fmt.Errorf("adding totals payable: %w", err)
 		}
@@ -179,7 +179,7 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 
 	// Add totals rounding
 	if doc.Rounding != "" {
-		rounding, err := num.AmountFromString(doc.Rounding)
+		rounding, err := parseAmount(doc.Rounding)
 		if err != nil {
 			return fmt.Errorf("adding rounding: %w", err)
 		}
@@ -254,7 +254,7 @@ func goblBillInvoiceAddStampDuty(inv *bill.Invoice, stampDuty *StampDuty) {
 		return
 	}
 
-	amount, err := num.AmountFromString(stampDuty.Amount)
+	amount, err := parseAmount(stampDuty.Amount)
 	if err == nil {
 		if inv.Charges == nil {
 			inv.Charges = make([]*bill.Charge, 0)
@@ -273,9 +273,9 @@ func goblBillInvoiceAddPriceAdjustments(inv *bill.Invoice, adjustments []*PriceA
 	}
 
 	for _, adj := range adjustments {
-		amount, err1 := num.AmountFromString(adj.Amount)
+		amount, err1 := parseAmount(adj.Amount)
 		// FatturaPA stores the percentage as a string without the % symbol so we add it so that the conversion works
-		percent, err2 := num.PercentageFromString(adj.Percent + "%")
+		percent, err2 := num.PercentageFromString(strings.TrimSpace(adj.Percent) + "%")
 
 		if err1 != nil && err2 != nil {
 			// Skip if both amount and percent are invalid
@@ -414,7 +414,7 @@ func adjustTotals(inv *bill.Invoice, doc *GeneralDocumentData) error {
 		return nil
 	}
 	if doc.TotalAmount != "" {
-		ft, err := num.AmountFromString(doc.TotalAmount)
+		ft, err := parseAmount(doc.TotalAmount)
 		if err != nil {
 			return err
 		}
