@@ -144,10 +144,6 @@ func Parse(doc []byte) (*gobl.Envelope, error) {
 		return nil, err
 	}
 
-	if err := env.Validate(); err != nil {
-		return nil, err
-	}
-
 	return env, nil
 }
 
