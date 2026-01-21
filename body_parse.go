@@ -132,6 +132,12 @@ func goblBillInvoiceAddGeneralData(inv *bill.Invoice, generalData *GeneralData) 
 
 			ordering.Despatch[i] = o
 		}
+
+		// Add deferred tag when despatch notes are present
+		existingTags := inv.GetTags()
+		if !sdi.TagDeferred.In(existingTags...) {
+			inv.SetTags(append(existingTags, sdi.TagDeferred)...)
+		}
 	}
 
 	// Only set the ordering if at least one of the document reference arrays is not empty

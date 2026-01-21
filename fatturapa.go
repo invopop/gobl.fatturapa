@@ -9,10 +9,8 @@ import (
 	"regexp"
 	"strings"
 
-	// Momentary fix for nbio/xml library not properly handling namespace attributes but still needed for unmarshalling
 	"encoding/xml"
 
-	nbioXML "github.com/nbio/xml"
 	"golang.org/x/text/encoding/charmap"
 	"golang.org/x/text/transform"
 
@@ -20,6 +18,7 @@ import (
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/tax"
+	"github.com/invopop/xmlctx"
 	"github.com/invopop/xmldsig"
 )
 
@@ -107,7 +106,11 @@ func Parse(doc []byte) (*gobl.Envelope, error) {
 	}
 
 	d := &Document{}
-	if err := nbioXML.Unmarshal(convertedDoc, d); err != nil {
+	if err := xmlctx.Unmarshal(convertedDoc, d, xmlctx.WithNamespaces(map[string]string{
+		"p":   namespaceFatturaPA,
+		"ds":  namespaceDSig,
+		"xsi": namespaceXSI,
+	})); err != nil {
 		return nil, fmt.Errorf("unmarshal document: %w", err)
 	}
 
