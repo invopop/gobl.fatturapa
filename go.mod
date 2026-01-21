@@ -1,18 +1,16 @@
 module github.com/invopop/gobl.fatturapa
 
-go 1.23.0
-
-toolchain go1.24.0
+go 1.24.4
 
 require (
-	github.com/invopop/gobl v0.302.1
+	github.com/invopop/gobl v0.306.0
+	github.com/invopop/xmlctx v0.13.0
 	github.com/invopop/xmldsig v0.10.0
 	github.com/lestrrat-go/libxml2 v0.0.0-20240905100032-c934e3fcb9d3
-	github.com/nbio/xml v0.0.0-20250127210239-7f9281fed8c6
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.10.0
 	gitlab.com/flimzy/testy v0.15.0
-	golang.org/x/text v0.23.0
+	golang.org/x/text v0.33.0
 )
 
 require (
@@ -36,7 +34,7 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/spf13/pflag v1.0.6 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
-	golang.org/x/crypto v0.36.0 // indirect
+	golang.org/x/crypto v0.47.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	software.sslmate.com/src/go-pkcs12 v0.5.0 // indirect
 )
