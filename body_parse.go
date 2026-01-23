@@ -117,8 +117,7 @@ func goblBillInvoiceAddGeneralData(inv *bill.Invoice, generalData *GeneralData) 
 		for i, d := range generalData.Despatch {
 			o := &org.DocumentRef{}
 
-			// Parse series and code
-			parseSeriesAndCode(d.Code, &o.Series, &o.Code)
+			o.Code = cbc.Code(d.Code)
 
 			// Parse issue date
 			date, err := parseDate(d.IssueDate)
@@ -167,9 +166,7 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	}
 	inv.IssueDate = date
 
-	// Add number
-	// Check if the number contains a series (format: "SERIES-CODE")
-	parseSeriesAndCode(doc.Number, &inv.Series, &inv.Code)
+	inv.Code = cbc.Code(doc.Number)
 
 	// Add totals payable
 	if doc.TotalAmount != "" {
@@ -352,8 +349,7 @@ func goblOrgDocumentRefFromDocumentRef(ref *DocumentRef) *org.DocumentRef {
 
 	orgRef := &org.DocumentRef{}
 
-	// Parse series and code
-	parseSeriesAndCode(ref.Code, &orgRef.Series, &orgRef.Code)
+	orgRef.Code = cbc.Code(ref.Code)
 
 	// Add issue date
 	if ref.IssueDate != "" {
@@ -397,21 +393,6 @@ func goblOrgDocumentRefFromDocumentRef(ref *DocumentRef) *org.DocumentRef {
 	orgRef.Lines = ref.Lines
 
 	return orgRef
-}
-
-// parseSeriesAndCode parses a document number into series and code components
-// If the number contains a hyphen (format: "SERIES-CODE"), it will split the string
-// and set the series and code accordingly. Otherwise, it will set only the code.
-func parseSeriesAndCode(number string, series *cbc.Code, code *cbc.Code) {
-	if code != nil {
-		*code = cbc.Code(number)
-	}
-
-	parts := strings.Split(number, "-")
-	if len(parts) > 1 && series != nil && code != nil {
-		*series = cbc.Code(parts[0])
-		*code = cbc.Code(parts[1])
-	}
 }
 
 // adjustTotals compares the totals of the invoice with the totals of the FatturaPA document and adds rounding if necessary
