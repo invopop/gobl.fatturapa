@@ -8,8 +8,7 @@
 	],
 	"uuid": "00000000-0000-0000-0000-000000000000",
 	"type": "standard",
-	"series": "SAMPLE",
-	"code": "001",
+	"code": "SAMPLE-001",
 	"issue_date": "2023-03-02",
 	"currency": "EUR",
 	"tax": {
