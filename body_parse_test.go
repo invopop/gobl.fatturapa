@@ -38,9 +38,8 @@ func TestBodyInConversion(t *testing.T) {
 		assert.False(t, invoice.Tags.HasTags(tax.TagSimplified), "Invoice should not be tagged as simplified")
 		assert.False(t, invoice.Tags.HasTags(tax.TagSelfBilled), "Invoice should not be tagged as self-billed")
 
-		// Check invoice code and series
-		assert.Equal(t, cbc.Code("SAMPLE"), invoice.Series)
-		assert.Equal(t, cbc.Code("001"), invoice.Code)
+		// Check invoice code
+		assert.Equal(t, cbc.Code("SAMPLE-001"), invoice.Code)
 
 		// Check invoice currency
 		assert.Equal(t, currency.Code("EUR"), invoice.Currency)

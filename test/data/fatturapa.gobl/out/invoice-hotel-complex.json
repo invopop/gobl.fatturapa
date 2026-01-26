@@ -5,8 +5,7 @@
 	],
 	"uuid": "00000000-0000-0000-0000-000000000000",
 	"type": "standard",
-	"series": "INV4",
-	"code": "000008",
+	"code": "INV4-000008",
 	"issue_date": "2025-02-06",
 	"currency": "EUR",
 	"tax": {

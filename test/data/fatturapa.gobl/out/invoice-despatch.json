@@ -8,8 +8,7 @@
 	],
 	"uuid": "00000000-0000-0000-0000-000000000000",
 	"type": "standard",
-	"series": "SAMPLE",
-	"code": "002",
+	"code": "SAMPLE-002",
 	"issue_date": "2025-08-21",
 	"currency": "EUR",
 	"tax": {
@@ -112,8 +111,7 @@
 			},
 			{
 				"issue_date": "2025-08-12",
-				"series": "DDT",
-				"code": "2345",
+				"code": "DDT-2345",
 				"lines": [
 					2
 				]
