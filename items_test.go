@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/invopop/gobl.fatturapa/test"
+	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/num"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -56,5 +58,31 @@ func TestDatiRiepilogo(t *testing.T) {
 		assert.Equal(t, "N2.2", dr.TaxNature)
 		assert.Equal(t, "S", dr.TaxLiability)
 		assert.Equal(t, "Non soggette - altri casi", dr.LegalReference)
+	})
+}
+
+func TestNegativeQuantityConversion(t *testing.T) {
+	t.Run("should convert negative quantities to negative prices", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+
+		// Modify the invoice to have a negative quantity
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Lines[0].Quantity = num.MakeAmount(-2000, 2) // -20.00
+			require.NoError(t, inv.Calculate())
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		dl := doc.Body[0].GoodsServices.LineDetails[0]
+
+		// Quantity should be positive
+		assert.Equal(t, "20.00", dl.Quantity)
+
+		// Unit price should be negative
+		assert.Equal(t, "-90.00", dl.UnitPrice)
+
+		// Total price should still be negative
+		assert.Equal(t, "-1620.00", dl.TotalPrice)
 	})
 }

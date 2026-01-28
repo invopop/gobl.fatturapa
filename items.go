@@ -50,12 +50,21 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 	var dl []*LineDetail
 
 	for _, line := range inv.Lines {
+		if line.Item == nil || line.Item.Price == nil {
+			continue
+		}
+		q := line.Quantity
+		lp := *line.Item.Price
+		if q.IsNegative() {
+			q = q.Negate()
+			lp = lp.Negate()
+		}
 		d := &LineDetail{
 			LineNumber:       strconv.Itoa(line.Index),
 			Description:      line.Item.Name,
-			Quantity:         formatAmount8(&line.Quantity),
+			Quantity:         formatAmount8(&q),
 			Unit:             string(line.Item.Unit),
-			UnitPrice:        formatAmount8(line.Item.Price),
+			UnitPrice:        formatAmount8(&lp),
 			TotalPrice:       formatAmount8(line.Total),
 			PriceAdjustments: extractLinePriceAdjustments(line),
 		}
