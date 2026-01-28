@@ -53,6 +53,9 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 		if line.Item == nil || line.Item.Price == nil {
 			continue
 		}
+
+		// We need to invert the quantity if negative to comply with the
+		// FatturaPA schema.
 		q := line.Quantity
 		lp := *line.Item.Price
 		if q.IsNegative() {
