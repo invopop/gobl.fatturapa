@@ -63,6 +63,8 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 			if err != nil {
 				return fmt.Errorf("parsing quantity: %w", err)
 			}
+		} else if unitPrice.IsZero() {
+			quantity = num.MakeAmount(1, 0)
 		} else {
 			quantity = totalPrice.Divide(unitPrice)
 		}
