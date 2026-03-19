@@ -142,7 +142,7 @@ func extractLinePriceAdjustments(line *bill.Line) []*PriceAdjustment {
 		// instead of the line sum.
 		// Quick ref: https://fex-app.com/FatturaElettronica/FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee/PrezzoTotale
 		a := discount.Amount
-		if line.Quantity.Value() != 1 {
+		if line.Quantity.Value() != 1 && !line.Quantity.IsZero() {
 			a = a.RescaleUp(4).Divide(line.Quantity)
 		}
 		list = append(list, &PriceAdjustment{
@@ -154,7 +154,7 @@ func extractLinePriceAdjustments(line *bill.Line) []*PriceAdjustment {
 
 	for _, charge := range line.Charges {
 		a := charge.Amount
-		if line.Quantity.Value() != 1 {
+		if line.Quantity.Value() != 1 && !line.Quantity.IsZero() {
 			a = a.RescaleUp(4).Divide(line.Quantity)
 		}
 		list = append(list, &PriceAdjustment{

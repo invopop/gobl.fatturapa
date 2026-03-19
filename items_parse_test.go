@@ -66,6 +66,28 @@ func TestItemsInConversion(t *testing.T) {
 		assert.Equal(t, cbc.Code("N2.2"), line2.Taxes[0].Ext[sdi.ExtKeyExempt])
 	})
 
+	t.Run("should default quantity to 1 when unit price is zero", func(t *testing.T) {
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-zero-price.xml"))
+		require.NoError(t, err)
+
+		env, err := test.ConvertToGOBL(data)
+		require.NoError(t, err)
+		require.NotNil(t, env)
+
+		invoice, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+		require.NotNil(t, invoice)
+
+		require.Len(t, invoice.Lines, 2)
+
+		// Second line has zero unit price and no quantity in XML
+		line2 := invoice.Lines[1]
+		assert.Equal(t, "Free item", line2.Item.Name)
+		assert.True(t, line2.Item.Price.IsZero(), "Unit price should be zero")
+		assert.True(t, line2.Quantity.Compare(num.MakeAmount(1, 0)) == 0, "Quantity should default to 1")
+		assert.True(t, line2.Total.IsZero(), "Total should be zero")
+	})
+
 	t.Run("should convert tax summaries correctly", func(t *testing.T) {
 		// Load the XML file with tax summaries
 		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-simple.xml"))
