@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/org"
+	"github.com/invopop/gobl/tax"
 )
 
 const (
@@ -21,7 +22,12 @@ const (
 	condizioniPagamentoAdvance      = "TP03" // anticipo
 )
 
-const stampDutyCode = "SI"
+const flagSI = "SI"
+
+const (
+	causaleBollo              = "Bollo"
+	causaleCassaPrevidenziale = "Contributo cassa previdenziale"
+)
 
 // Body contains all invoice data apart from the parties involved, which are
 // contained in Header.
@@ -63,22 +69,35 @@ type Despatch struct {
 
 // GeneralDocumentData contains data about the general document
 type GeneralDocumentData struct {
-	DocumentType     string             `xml:"TipoDocumento"`
-	Currency         string             `xml:"Divisa"`
-	IssueDate        string             `xml:"Data"`
-	Number           string             `xml:"Numero"`
-	RetainedTaxes    []*RetainedTax     `xml:"DatiRitenuta,omitempty"`
-	StampDuty        *StampDuty         `xml:"DatiBollo,omitempty"`
-	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
-	TotalAmount      string             `xml:"ImportoTotaleDocumento,omitempty"`
-	Rounding         string             `xml:"Arrotondamento,omitempty"`
-	Reasons          []string           `xml:"Causale,omitempty"`
+	DocumentType      string              `xml:"TipoDocumento"`
+	Currency          string              `xml:"Divisa"`
+	IssueDate         string              `xml:"Data"`
+	Number            string              `xml:"Numero"`
+	RetainedTaxes     []*RetainedTax      `xml:"DatiRitenuta,omitempty"`
+	StampDuty         *StampDuty          `xml:"DatiBollo,omitempty"`
+	FundContributions []*FundContribution `xml:"DatiCassaPrevidenziale,omitempty"`
+	PriceAdjustments  []*PriceAdjustment  `xml:"ScontoMaggiorazione,omitempty"`
+	TotalAmount       string              `xml:"ImportoTotaleDocumento,omitempty"`
+	Rounding          string              `xml:"Arrotondamento,omitempty"`
+	Reasons           []string            `xml:"Causale,omitempty"`
 }
 
 // StampDuty contains data about the stamp duty
 type StampDuty struct {
 	VirtualStamp string `xml:"BolloVirtuale"`
 	Amount       string `xml:"ImportoBollo,omitempty"`
+}
+
+// FundContribution contains data about a professional fund contribution (DatiCassaPrevidenziale)
+type FundContribution struct {
+	Type      string `xml:"TipoCassa"`
+	Rate      string `xml:"AlCassa"`
+	Amount    string `xml:"ImportoContributoCassa"`
+	TaxBase   string `xml:"ImponibileCassa,omitempty"`
+	TaxRate   string `xml:"AliquotaIVA"`
+	Retained  string `xml:"Ritenuta,omitempty"`
+	TaxNature string `xml:"Natura,omitempty"`
+	AdminRef  string `xml:"RiferimentoAmministrazione,omitempty"`
 }
 
 // PriceAdjustment contains data about price adjustments like discounts and
@@ -188,16 +207,17 @@ func newGeneralDocumentData(inv *bill.Invoice) (*GeneralDocumentData, error) {
 	}
 
 	doc := &GeneralDocumentData{
-		DocumentType:     codeDocumentType,
-		Currency:         string(inv.Currency),
-		IssueDate:        inv.IssueDate.String(),
-		Number:           code.String(),
-		RetainedTaxes:    dr,
-		StampDuty:        newStampDuty(inv.Charges),
-		TotalAmount:      formatAmount2(&inv.Totals.Payable),
-		Rounding:         formatAmount2(inv.Totals.Rounding),
-		PriceAdjustments: extractPriceAdjustments(inv),
-		Reasons:          extractInvoiceReasons(inv),
+		DocumentType:      codeDocumentType,
+		Currency:          string(inv.Currency),
+		IssueDate:         inv.IssueDate.String(),
+		Number:            code.String(),
+		RetainedTaxes:     dr,
+		StampDuty:         newStampDuty(inv.Charges),
+		FundContributions: newFundContributions(inv.Charges),
+		TotalAmount:       formatAmount2(&inv.Totals.Payable),
+		Rounding:          formatAmount2(inv.Totals.Rounding),
+		PriceAdjustments:  extractPriceAdjustments(inv),
+		Reasons:           extractInvoiceReasons(inv),
 	}
 
 	return doc, nil
@@ -218,15 +238,52 @@ func findCodeDocumentType(inv *bill.Invoice) (string, error) {
 
 func newStampDuty(charges []*bill.Charge) *StampDuty {
 	for _, charge := range charges {
-		if charge.Key == bill.ChargeKeyStampDuty {
+		if charge.Key.Has(bill.ChargeKeyStampDuty) {
 			return &StampDuty{
-				VirtualStamp: stampDutyCode,
+				VirtualStamp: flagSI,
 				Amount:       formatAmount2(&charge.Amount),
 			}
 		}
 	}
 
 	return nil
+}
+
+func newFundContributions(charges []*bill.Charge) []*FundContribution {
+	var fcs []*FundContribution
+	for _, charge := range charges {
+		if charge.Key.Has(sdi.KeyFundContribution) {
+			fcs = append(fcs, newFundContribution(charge))
+		}
+	}
+	return fcs
+}
+
+func newFundContribution(charge *bill.Charge) *FundContribution {
+	fc := &FundContribution{
+		Type:   charge.Ext[sdi.ExtKeyFundType].String(),
+		Rate:   formatPercentage(charge.Percent),
+		Amount: formatAmount2(&charge.Amount),
+	}
+
+	if charge.Base != nil {
+		fc.TaxBase = formatAmount2(charge.Base)
+	}
+
+	if charge.Code != cbc.CodeEmpty {
+		fc.AdminRef = charge.Code.String()
+	}
+
+	for _, t := range charge.Taxes {
+		if t.Category == tax.CategoryVAT {
+			fc.TaxRate = formatPercentageWithZero(t.Percent)
+			fc.TaxNature = exemptExtensionCode(t.Ext)
+		} else if t.Ext != nil && t.Ext.Has(sdi.ExtKeyRetained) {
+			fc.Retained = flagSI
+		}
+	}
+
+	return fc
 }
 
 func extractPriceAdjustments(inv *bill.Invoice) []*PriceAdjustment {
@@ -241,7 +298,7 @@ func extractPriceAdjustments(inv *bill.Invoice) []*PriceAdjustment {
 	}
 
 	for _, charge := range inv.Charges {
-		if charge.Key != bill.ChargeKeyStampDuty {
+		if !charge.Key.Has(bill.ChargeKeyStampDuty) && !charge.Key.Has(sdi.KeyFundContribution) {
 			priceAdjustments = append(priceAdjustments, &PriceAdjustment{
 				Type:    scontoMaggiorazioneTypeCharge,
 				Percent: formatPercentage(charge.Percent),
