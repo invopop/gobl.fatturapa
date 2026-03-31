@@ -21,6 +21,8 @@ type LineDetail struct {
 	Description      string             `xml:"Descrizione"`
 	Quantity         string             `xml:"Quantita"`
 	Unit             string             `xml:"UnitaMisura,omitempty"`
+	PeriodStart      string             `xml:"DataInizioPeriodo,omitempty"`
+	PeriodEnd        string             `xml:"DataFinePeriodo,omitempty"`
 	UnitPrice        string             `xml:"PrezzoUnitario"`
 	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
 	TotalPrice       string             `xml:"PrezzoTotale"`
@@ -70,6 +72,11 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 			UnitPrice:        formatAmount8(&lp),
 			TotalPrice:       formatAmount8(line.Total),
 			PriceAdjustments: extractLinePriceAdjustments(line),
+		}
+
+		if line.Period != nil {
+			d.PeriodStart = line.Period.Start.String()
+			d.PeriodEnd = line.Period.End.String()
 		}
 
 		// Process taxes

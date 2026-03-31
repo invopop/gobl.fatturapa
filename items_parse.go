@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -78,6 +79,19 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 				Name:  detail.Description,
 				Price: &unitPrice,
 			},
+		}
+
+		// Add period dates
+		if detail.PeriodStart != "" || detail.PeriodEnd != "" {
+			start, err := parseDate(detail.PeriodStart)
+			if err != nil {
+				return fmt.Errorf("parsing period start: %w", err)
+			}
+			end, err := parseDate(detail.PeriodEnd)
+			if err != nil {
+				return fmt.Errorf("parsing period end: %w", err)
+			}
+			line.Period = &cal.Period{Start: start, End: end}
 		}
 
 		// Add unit. Add to description if unit is invalid

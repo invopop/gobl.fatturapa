@@ -39,6 +39,23 @@ func TestDettaglioLinee(t *testing.T) {
 	})
 }
 
+func TestDettaglioLineePeriod(t *testing.T) {
+	t.Run("should map period dates from GOBL to FatturaPA", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-services-period.json", test.PathGOBLFatturaPA)
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		dl := doc.Body[0].GoodsServices.LineDetails[0]
+		assert.Equal(t, "2024-01-01", dl.PeriodStart)
+		assert.Equal(t, "2024-01-31", dl.PeriodEnd)
+
+		// Line without period should have empty dates
+		dl2 := doc.Body[0].GoodsServices.LineDetails[1]
+		assert.Empty(t, dl2.PeriodStart)
+		assert.Empty(t, dl2.PeriodEnd)
+	})
+}
+
 func TestDatiRiepilogo(t *testing.T) {
 	t.Run("should contain the tax summary info", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
