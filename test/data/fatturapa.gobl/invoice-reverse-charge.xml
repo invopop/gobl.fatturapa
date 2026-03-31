@@ -1,0 +1,109 @@
+<p:FatturaElettronica xmlns:p="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" versione="FPR12" xsi:schemaLocation="http://ivaservizi.agenziaentrate.gov.it/docs/xsd/fatture/v1.2 https://www.fatturapa.gov.it/export/documenti/fatturapa/v1.2.2/Schema_del_file_xml_FatturaPA_v1.2.2.xsd">
+	<FatturaElettronicaHeader>
+		<DatiTrasmissione>
+			<IdTrasmittente>
+				<IdPaese>IT</IdPaese>
+				<IdCodice>01234567890</IdCodice>
+			</IdTrasmittente>
+			<ProgressivoInvio>679a2f25</ProgressivoInvio>
+			<FormatoTrasmissione>FPR12</FormatoTrasmissione>
+			<CodiceDestinatario>XXXXXXX</CodiceDestinatario>
+		</DatiTrasmissione>
+		<CedentePrestatore>
+			<DatiAnagrafici>
+				<IdFiscaleIVA>
+					<IdPaese>IT</IdPaese>
+					<IdCodice>12345678903</IdCodice>
+				</IdFiscaleIVA>
+				<Anagrafica>
+					<Denominazione>Tech Solutions S.r.l.</Denominazione>
+				</Anagrafica>
+				<RegimeFiscale>RF01</RegimeFiscale>
+			</DatiAnagrafici>
+			<Sede>
+				<Indirizzo>Via Roma</Indirizzo>
+				<NumeroCivico>15</NumeroCivico>
+				<CAP>20100</CAP>
+				<Comune>Milano</Comune>
+				<Provincia>MI</Provincia>
+				<Nazione>IT</Nazione>
+			</Sede>
+		</CedentePrestatore>
+		<CessionarioCommittente>
+			<DatiAnagrafici>
+				<IdFiscaleIVA>
+					<IdPaese>DE</IdPaese>
+					<IdCodice>111111125</IdCodice>
+				</IdFiscaleIVA>
+				<Anagrafica>
+					<Denominazione>Acme GmbH</Denominazione>
+				</Anagrafica>
+			</DatiAnagrafici>
+			<Sede>
+				<Indirizzo>Friedrichstrasse</Indirizzo>
+				<NumeroCivico>10</NumeroCivico>
+				<CAP>10117</CAP>
+				<Comune>Berlin</Comune>
+				<Nazione>DE</Nazione>
+			</Sede>
+		</CessionarioCommittente>
+	</FatturaElettronicaHeader>
+	<FatturaElettronicaBody>
+		<DatiGenerali>
+			<DatiGeneraliDocumento>
+				<TipoDocumento>TD01</TipoDocumento>
+				<Divisa>EUR</Divisa>
+				<Data>2024-02-15</Data>
+				<Numero>SAMPLE-010</Numero>
+				<ImportoTotaleDocumento>2300.00</ImportoTotaleDocumento>
+			</DatiGeneraliDocumento>
+		</DatiGenerali>
+		<DatiBeniServizi>
+			<DettaglioLinee>
+				<NumeroLinea>1</NumeroLinea>
+				<Descrizione>Development services</Descrizione>
+				<Quantita>20.00</Quantita>
+				<UnitaMisura>h</UnitaMisura>
+				<PrezzoUnitario>90.00</PrezzoUnitario>
+				<PrezzoTotale>1800.00</PrezzoTotale>
+				<AliquotaIVA>0.00</AliquotaIVA>
+				<Natura>N2.1</Natura>
+				<AltriDatiGestionali>
+					<TipoDato>INVCONT</TipoDato>
+					<RiferimentoTesto>Inversione contabile - art. 21 c.6 bis lett. a) DPR 633/72</RiferimentoTesto>
+				</AltriDatiGestionali>
+			</DettaglioLinee>
+			<DettaglioLinee>
+				<NumeroLinea>2</NumeroLinea>
+				<Descrizione>Consulting services</Descrizione>
+				<Quantita>1.00</Quantita>
+				<UnitaMisura>h</UnitaMisura>
+				<PrezzoUnitario>500.00</PrezzoUnitario>
+				<PrezzoTotale>500.00</PrezzoTotale>
+				<AliquotaIVA>0.00</AliquotaIVA>
+				<Natura>N2.1</Natura>
+				<AltriDatiGestionali>
+					<TipoDato>INVCONT</TipoDato>
+					<RiferimentoTesto>Inversione contabile - art. 21 c.6 bis lett. a) DPR 633/72</RiferimentoTesto>
+				</AltriDatiGestionali>
+			</DettaglioLinee>
+			<DatiRiepilogo>
+				<AliquotaIVA>0.00</AliquotaIVA>
+				<Natura>N2.1</Natura>
+				<ImponibileImporto>2300.00</ImponibileImporto>
+				<Imposta>0.00</Imposta>
+				<RiferimentoNormativo>Non soggette ex. art. 7 del D.P.R. 633/72</RiferimentoNormativo>
+			</DatiRiepilogo>
+		</DatiBeniServizi>
+		<DatiPagamento>
+			<CondizioniPagamento>TP02</CondizioniPagamento>
+			<DettaglioPagamento>
+				<ModalitaPagamento>MP05</ModalitaPagamento>
+				<ImportoPagamento>2300.00</ImportoPagamento>
+				<IstitutoFinanziario>BANCA POPOLARE DI MILANO</IstitutoFinanziario>
+				<IBAN>IT60X0542811101000000123456</IBAN>
+				<BIC>BCITITMM</BIC>
+			</DettaglioPagamento>
+		</DatiPagamento>
+	</FatturaElettronicaBody>
+</p:FatturaElettronica>

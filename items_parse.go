@@ -83,15 +83,20 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 
 		// Add period dates
 		if detail.PeriodStart != "" || detail.PeriodEnd != "" {
-			start, err := parseDate(detail.PeriodStart)
-			if err != nil {
-				return fmt.Errorf("parsing period start: %w", err)
+			p := &cal.Period{}
+			if detail.PeriodStart != "" {
+				p.Start, err = parseDate(detail.PeriodStart)
+				if err != nil {
+					return fmt.Errorf("parsing period start: %w", err)
+				}
 			}
-			end, err := parseDate(detail.PeriodEnd)
-			if err != nil {
-				return fmt.Errorf("parsing period end: %w", err)
+			if detail.PeriodEnd != "" {
+				p.End, err = parseDate(detail.PeriodEnd)
+				if err != nil {
+					return fmt.Errorf("parsing period end: %w", err)
+				}
 			}
-			line.Period = &cal.Period{Start: start, End: end}
+			line.Period = p
 		}
 
 		// Add unit. Add to description if unit is invalid
@@ -114,6 +119,14 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 		}
 		if vatCombo != nil {
 			line.Taxes = append(line.Taxes, vatCombo)
+		}
+
+		// Check for INVCONT in AltriDatiGestionali
+		for _, od := range detail.OtherData {
+			if od.DataType == tipoDatoINVCONT {
+				inv.SetTags(tax.TagReverseCharge)
+				break
+			}
 		}
 
 		// Add line to invoice

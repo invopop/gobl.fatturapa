@@ -1,0 +1,148 @@
+{
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"$tags": [
+		"reverse-charge"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"code": "SAMPLE-010",
+	"issue_date": "2024-02-15",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD01",
+			"it-sdi-format": "FPR12"
+		}
+	},
+	"supplier": {
+		"name": "Tech Solutions S.r.l.",
+		"tax_id": {
+			"country": "IT",
+			"code": "12345678903"
+		},
+		"addresses": [
+			{
+				"num": "15",
+				"street": "Via Roma",
+				"locality": "Milano",
+				"region": "MI",
+				"code": "20100",
+				"country": "IT"
+			}
+		],
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
+		}
+	},
+	"customer": {
+		"name": "Acme GmbH",
+		"tax_id": {
+			"country": "DE",
+			"code": "111111125"
+		},
+		"addresses": [
+			{
+				"num": "10",
+				"street": "Friedrichstrasse",
+				"locality": "Berlin",
+				"country": "DE"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "20.00",
+			"item": {
+				"name": "Development services",
+				"price": "90.00",
+				"unit": "h"
+			},
+			"sum": "1800.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "outside-scope",
+					"ext": {
+						"it-sdi-exempt": "N2.1"
+					}
+				}
+			],
+			"total": "1800.00"
+		},
+		{
+			"i": 2,
+			"quantity": "1.00",
+			"item": {
+				"name": "Consulting services",
+				"price": "500.00",
+				"unit": "h"
+			},
+			"sum": "500.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "outside-scope",
+					"ext": {
+						"it-sdi-exempt": "N2.1"
+					}
+				}
+			],
+			"total": "500.00"
+		}
+	],
+	"payment": {
+		"terms": {
+			"key": "pending"
+		},
+		"instructions": {
+			"key": "credit-transfer",
+			"credit_transfer": [
+				{
+					"iban": "IT60X0542811101000000123456",
+					"bic": "BCITITMM",
+					"name": "BANCA POPOLARE DI MILANO"
+				}
+			],
+			"ext": {
+				"it-sdi-payment-means": "MP05"
+			}
+		}
+	},
+	"totals": {
+		"sum": "2300.00",
+		"total": "2300.00",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"key": "outside-scope",
+							"ext": {
+								"it-sdi-exempt": "N2.1"
+							},
+							"base": "2300.00",
+							"amount": "0.00"
+						}
+					],
+					"amount": "0.00"
+				}
+			],
+			"sum": "0.00"
+		},
+		"tax": "0.00",
+		"total_with_tax": "2300.00",
+		"payable": "2300.00"
+	},
+	"notes": [
+		{
+			"key": "legal",
+			"src": "reverse-charge",
+			"text": "Reverse Charge / Inversione del soggetto passivo"
+		}
+	]
+}

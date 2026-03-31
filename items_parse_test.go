@@ -204,3 +204,18 @@ func TestItemsInConversion(t *testing.T) {
 		assert.Equal(t, cbc.Code("I"), rate2.Ext[sdi.ExtKeyRetained])
 	})
 }
+
+func TestINVCONTInConversion(t *testing.T) {
+	t.Run("should set reverse-charge tag when INVCONT is present", func(t *testing.T) {
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-reverse-charge.xml"))
+		require.NoError(t, err)
+
+		env, err := test.ConvertToGOBL(data)
+		require.NoError(t, err)
+		require.NotNil(t, env)
+
+		invoice, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+		assert.True(t, invoice.HasTags(tax.TagReverseCharge))
+	})
+}
