@@ -5,6 +5,7 @@ import (
 
 	"github.com/invopop/gobl.fatturapa/test"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/num"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -36,6 +37,61 @@ func TestDettaglioLinee(t *testing.T) {
 
 		assert.Equal(t, "2", dl.LineNumber)
 		assert.Equal(t, "N2.2", dl.TaxNature)
+	})
+}
+
+func TestDettaglioLineePeriod(t *testing.T) {
+	t.Run("should map period dates from GOBL to FatturaPA", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-services-period.json", test.PathGOBLFatturaPA)
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		dl := doc.Body[0].GoodsServices.LineDetails[0]
+		assert.Equal(t, "2024-01-01", dl.PeriodStart)
+		assert.Equal(t, "2024-01-31", dl.PeriodEnd)
+
+		// Line without period should have empty dates
+		dl2 := doc.Body[0].GoodsServices.LineDetails[1]
+		assert.Empty(t, dl2.PeriodStart)
+		assert.Empty(t, dl2.PeriodEnd)
+	})
+
+	t.Run("should omit missing period date", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-services-period.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Lines[0].Period.End = cal.Date{}
+		})
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		dl := doc.Body[0].GoodsServices.LineDetails[0]
+		assert.Equal(t, "2024-01-01", dl.PeriodStart)
+		assert.Empty(t, dl.PeriodEnd)
+	})
+}
+
+func TestAltriDatiGestionaliINVCONT(t *testing.T) {
+	t.Run("should add INVCONT for N2.1 with reverse-charge tag", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-reverse-charge.json", test.PathGOBLFatturaPA)
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		for _, dl := range doc.Body[0].GoodsServices.LineDetails {
+			require.Len(t, dl.OtherData, 1)
+			assert.Equal(t, "INVCONT", dl.OtherData[0].DataType)
+			assert.Equal(t, "Inversione contabile - art. 21 c.6 bis lett. a) DPR 633/72", dl.OtherData[0].TextReference)
+		}
+	})
+
+	t.Run("should not add INVCONT for N2.1 without reverse-charge tag", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-hotel.json", test.PathGOBLFatturaPA)
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		// First line has N2.1 but no reverse-charge tag on the invoice
+		dl := doc.Body[0].GoodsServices.LineDetails[0]
+		assert.Equal(t, "N2.1", dl.TaxNature)
+		assert.Empty(t, dl.OtherData)
 	})
 }
 

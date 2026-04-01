@@ -9,6 +9,12 @@ import (
 	"github.com/invopop/gobl/tax"
 )
 
+const (
+	naturaN21               = "N2.1"
+	tipoDatoINVCONT         = "INVCONT"
+	riferimentoTestoINVCONT = "Inversione contabile - art. 21 c.6 bis lett. a) DPR 633/72"
+)
+
 // GoodsServices contains all data related to the goods and services sold.
 type GoodsServices struct {
 	LineDetails []*LineDetail `xml:"DettaglioLinee"`
@@ -21,12 +27,23 @@ type LineDetail struct {
 	Description      string             `xml:"Descrizione"`
 	Quantity         string             `xml:"Quantita"`
 	Unit             string             `xml:"UnitaMisura,omitempty"`
+	PeriodStart      string             `xml:"DataInizioPeriodo,omitempty"`
+	PeriodEnd        string             `xml:"DataFinePeriodo,omitempty"`
 	UnitPrice        string             `xml:"PrezzoUnitario"`
 	PriceAdjustments []*PriceAdjustment `xml:"ScontoMaggiorazione,omitempty"`
 	TotalPrice       string             `xml:"PrezzoTotale"`
 	TaxRate          string             `xml:"AliquotaIVA"`
 	Retained         string             `xml:"Ritenuta,omitempty"`
 	TaxNature        string             `xml:"Natura,omitempty"`
+	OtherData        []*OtherData       `xml:"AltriDatiGestionali,omitempty"`
+}
+
+// OtherData contains additional management data for a line item.
+type OtherData struct {
+	DataType      string `xml:"TipoDato"`
+	TextReference string `xml:"RiferimentoTesto,omitempty"`
+	NumReference  string `xml:"RiferimentoNumero,omitempty"`
+	DateReference string `xml:"RiferimentoData,omitempty"`
 }
 
 // TaxSummary contains tax summary data such as tax rate, tax amount, etc.
@@ -72,18 +89,32 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 			PriceAdjustments: extractLinePriceAdjustments(line),
 		}
 
-		// Process taxes
-		if len(line.Taxes) > 0 {
-			// Process all taxes in a single loop
-			for _, t := range line.Taxes {
-				// Handle VAT tax
-				if t.Category == tax.CategoryVAT {
-					d.TaxRate = formatPercentageWithZero(t.Percent)
-					d.TaxNature = exemptExtensionCode(t.Ext)
-				} else if t.Ext != nil && t.Ext.Has(sdi.ExtKeyRetained) {
-					// Check for retained taxes
-					d.Retained = flagSI
-				}
+		if line.Period != nil {
+			if !line.Period.Start.IsZero() {
+				d.PeriodStart = line.Period.Start.String()
+			}
+			if !line.Period.End.IsZero() {
+				d.PeriodEnd = line.Period.End.String()
+			}
+		}
+
+		// Set VAT fields from the VAT combo on the line
+		if vat := line.Taxes.Get(tax.CategoryVAT); vat != nil {
+			d.TaxRate = formatPercentageWithZero(vat.Percent)
+			d.TaxNature = exemptExtensionCode(vat.Ext)
+			if d.TaxNature == naturaN21 && inv.HasTags(tax.TagReverseCharge) {
+				d.OtherData = append(d.OtherData, &OtherData{
+					DataType:      tipoDatoINVCONT,
+					TextReference: riferimentoTestoINVCONT,
+				})
+			}
+		}
+
+		// Check for retained taxes
+		for _, t := range line.Taxes {
+			if t.Ext != nil && t.Ext.Has(sdi.ExtKeyRetained) {
+				d.Retained = flagSI
+				break
 			}
 		}
 

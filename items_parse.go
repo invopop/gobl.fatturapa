@@ -7,6 +7,7 @@ import (
 
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/cal"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
@@ -80,6 +81,24 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 			},
 		}
 
+		// Add period dates
+		if detail.PeriodStart != "" || detail.PeriodEnd != "" {
+			p := &cal.Period{}
+			if detail.PeriodStart != "" {
+				p.Start, err = parseDate(detail.PeriodStart)
+				if err != nil {
+					return fmt.Errorf("parsing period start: %w", err)
+				}
+			}
+			if detail.PeriodEnd != "" {
+				p.End, err = parseDate(detail.PeriodEnd)
+				if err != nil {
+					return fmt.Errorf("parsing period end: %w", err)
+				}
+			}
+			line.Period = p
+		}
+
 		// Add unit. Add to description if unit is invalid
 		if detail.Unit != "" {
 			unit := org.Unit(detail.Unit)
@@ -100,6 +119,14 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 		}
 		if vatCombo != nil {
 			line.Taxes = append(line.Taxes, vatCombo)
+		}
+
+		// Check for INVCONT in AltriDatiGestionali
+		for _, od := range detail.OtherData {
+			if od.DataType == tipoDatoINVCONT {
+				inv.SetTags(tax.TagReverseCharge)
+				break
+			}
 		}
 
 		// Add line to invoice
