@@ -17,6 +17,59 @@ import (
 )
 
 func TestRetainedTaxesInConversion(t *testing.T) {
+	t.Run("should only apply retention to fund contributions with Ritenuta=SI", func(t *testing.T) {
+		// Invoice has two fund contributions: one with Ritenuta=SI and one without.
+		// The retained tax (20% of line 1600 + retained fund 64 = 332.80) should
+		// only match against the retained fund contribution, not both.
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-fund-contribution-mixed-retention.xml"))
+		require.NoError(t, err)
+
+		env, err := test.ConvertToGOBL(data)
+		require.NoError(t, err, "parsing should succeed — retained tax matches line + retained fund contribution only")
+		require.NotNil(t, env)
+
+		invoice, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+
+		// Should have 3 charges (one retained, one not, one zero-rate)
+		require.Len(t, invoice.Charges, 3)
+
+		// Find the fund contributions by type
+		var retainedCharge, nonRetainedCharge, zeroRateCharge *bill.Charge
+		for _, ch := range invoice.Charges {
+			switch ch.Ext[sdi.ExtKeyFundType] {
+			case "TC22":
+				retainedCharge = ch
+			case "TC04":
+				nonRetainedCharge = ch
+			case "TC07":
+				zeroRateCharge = ch
+			}
+		}
+		require.NotNil(t, retainedCharge, "TC22 charge should exist")
+		require.NotNil(t, nonRetainedCharge, "TC04 charge should exist")
+		require.NotNil(t, zeroRateCharge, "TC07 charge should exist")
+
+		// The retained fund contribution should have IRPEF tax applied
+		var hasIRPEF bool
+		for _, tx := range retainedCharge.Taxes {
+			if tx.Category == it.TaxCategoryIRPEF {
+				hasIRPEF = true
+				assert.True(t, tx.Percent.Compare(num.MakePercentage(200, 3)) == 0, "rate should be 20%")
+				assert.Equal(t, cbc.Code("A"), tx.Ext[sdi.ExtKeyRetained])
+			}
+		}
+		assert.True(t, hasIRPEF, "retained fund contribution should have IRPEF tax")
+
+		// The non-retained fund contribution should NOT have IRPEF tax
+		for _, tx := range nonRetainedCharge.Taxes {
+			assert.NotEqual(t, it.TaxCategoryIRPEF, tx.Category, "non-retained fund contribution should not have IRPEF tax")
+		}
+
+		// Zero-rate fund contribution should not derive a base (would cause division by zero)
+		assert.Nil(t, zeroRateCharge.Base, "zero-rate fund contribution should have no base")
+	})
+
 	t.Run("should convert retained taxes correctly", func(t *testing.T) {
 		// Load the XML file with retained taxes
 		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-irpef.xml"))

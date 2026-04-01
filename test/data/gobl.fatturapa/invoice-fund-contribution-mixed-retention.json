@@ -1,0 +1,211 @@
+{
+	"$schema": "https://gobl.org/draft-0/envelope",
+	"head": {
+		"uuid": "019d3a02-c3d5-7000-b000-000000000003",
+		"dig": {
+			"alg": "sha256",
+			"val": "1750dae49413203d05293d47ff3f088ff58530c9e20165531db046af66d85d2b"
+		}
+	},
+	"doc": {
+		"$schema": "https://gobl.org/draft-0/bill/invoice",
+		"$regime": "IT",
+		"$addons": [
+			"it-sdi-v1"
+		],
+		"$tags": [
+			"freelance"
+		],
+		"uuid": "019d3a02-c3d5-7000-b000-000000000004",
+		"type": "standard",
+		"series": "MIXED",
+		"code": "001",
+		"issue_date": "2026-03-20",
+		"currency": "EUR",
+		"tax": {
+			"ext": {
+				"it-sdi-document-type": "TD06",
+				"it-sdi-format": "FPR12"
+			}
+		},
+		"supplier": {
+			"name": "Luca Bianchi Studio",
+			"tax_id": {
+				"country": "IT",
+				"code": "12345678903"
+			},
+			"people": [
+				{
+					"name": {
+						"given": "Luca",
+						"surname": "Bianchi"
+					}
+				}
+			],
+			"addresses": [
+				{
+					"num": "5",
+					"street": "Via Garibaldi",
+					"locality": "Roma",
+					"region": "RM",
+					"code": "00100",
+					"country": "IT"
+				}
+			],
+			"ext": {
+				"it-sdi-fiscal-regime": "RF01"
+			}
+		},
+		"customer": {
+			"name": "Tech Solutions S.r.l.",
+			"tax_id": {
+				"country": "IT",
+				"code": "13029381004"
+			},
+			"inboxes": [
+				{
+					"key": "it-sdi-code",
+					"code": "AB12CDE"
+				}
+			],
+			"addresses": [
+				{
+					"num": "15",
+					"street": "Via Dante",
+					"locality": "Milano",
+					"region": "MI",
+					"code": "20100",
+					"country": "IT"
+				}
+			]
+		},
+		"lines": [
+			{
+				"i": 1,
+				"quantity": "1",
+				"item": {
+					"name": "Engineering consultancy services",
+					"price": "2500.00"
+				},
+				"sum": "2500.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "20%",
+						"ext": {
+							"it-sdi-retained": "A"
+						}
+					}
+				],
+				"total": "2500.00"
+			}
+		],
+		"charges": [
+			{
+				"i": 1,
+				"key": "fund-contribution",
+				"reason": "Contributo cassa previdenziale",
+				"percent": "4%",
+				"amount": "100.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					},
+					{
+						"cat": "IRPEF",
+						"percent": "20%",
+						"ext": {
+							"it-sdi-retained": "A"
+						}
+					}
+				],
+				"ext": {
+					"it-sdi-fund-type": "TC22"
+				}
+			},
+			{
+				"i": 2,
+				"key": "fund-contribution",
+				"reason": "Contributo cassa previdenziale",
+				"percent": "2%",
+				"amount": "50.00",
+				"taxes": [
+					{
+						"cat": "VAT",
+						"key": "standard",
+						"rate": "general",
+						"percent": "22.0%"
+					}
+				],
+				"ext": {
+					"it-sdi-fund-type": "TC04"
+				}
+			}
+		],
+		"payment": {
+			"instructions": {
+				"key": "credit-transfer",
+				"credit_transfer": [
+					{
+						"iban": "IT60X0542811101000000123456",
+						"name": "BANCA POPOLARE DI MILANO"
+					}
+				],
+				"ext": {
+					"it-sdi-payment-means": "MP05"
+				}
+			}
+		},
+		"totals": {
+			"sum": "2500.00",
+			"charge": "150.00",
+			"total": "2650.00",
+			"taxes": {
+				"categories": [
+					{
+						"code": "VAT",
+						"rates": [
+							{
+								"key": "standard",
+								"base": "2650.00",
+								"percent": "22.0%",
+								"amount": "583.00"
+							}
+						],
+						"amount": "583.00"
+					},
+					{
+						"code": "IRPEF",
+						"retained": true,
+						"rates": [
+							{
+								"ext": {
+									"it-sdi-retained": "A"
+								},
+								"base": "2600.00",
+								"percent": "20%",
+								"amount": "520.00"
+							}
+						],
+						"amount": "520.00"
+					}
+				],
+				"sum": "583.00",
+				"retained": "520.00"
+			},
+			"tax": "583.00",
+			"total_with_tax": "3233.00",
+			"retained_tax": "520.00",
+			"payable": "2713.00"
+		}
+	}
+}

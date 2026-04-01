@@ -82,7 +82,7 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 					d.TaxNature = exemptExtensionCode(t.Ext)
 				} else if t.Ext != nil && t.Ext.Has(sdi.ExtKeyRetained) {
 					// Check for retained taxes
-					d.Retained = "SI"
+					d.Retained = flagSI
 				}
 			}
 		}

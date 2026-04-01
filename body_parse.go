@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/cbc"
 	"github.com/invopop/gobl/currency"
+	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/num"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/tax"
@@ -72,14 +73,16 @@ func goblBillInvoiceAddBody(inv *bill.Invoice, body *Body) error {
 		return fmt.Errorf("adding general data: %w", err)
 	}
 
-	// Extract retained taxes from the general data
+	// Extract retained taxes and fund contributions from the general data
 	var retainedTaxes []*RetainedTax
+	var fundContributions []*FundContribution
 	if body.GeneralData != nil && body.GeneralData.Document != nil {
 		retainedTaxes = body.GeneralData.Document.RetainedTaxes
+		fundContributions = body.GeneralData.Document.FundContributions
 	}
 
-	// Add goods and services, passing the retained taxes
-	if err := goblBillInvoiceAddGoodsServices(inv, body.GoodsServices, retainedTaxes); err != nil {
+	// Add goods and services, passing the retained taxes and fund contributions
+	if err := goblBillInvoiceAddGoodsServices(inv, body.GoodsServices, retainedTaxes, fundContributions); err != nil {
 		return fmt.Errorf("adding goods and services: %w", err)
 	}
 
@@ -194,6 +197,11 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 	// Add stamp duty
 	goblBillInvoiceAddStampDuty(inv, doc.StampDuty)
 
+	// Add fund contributions
+	if err := goblBillInvoiceAddFundContributions(inv, doc.FundContributions); err != nil {
+		return fmt.Errorf("adding fund contributions: %w", err)
+	}
+
 	// Add price adjustments
 	goblBillInvoiceAddPriceAdjustments(inv, doc.PriceAdjustments)
 
@@ -264,9 +272,145 @@ func goblBillInvoiceAddStampDuty(inv *bill.Invoice, stampDuty *StampDuty) {
 		}
 		inv.Charges = append(inv.Charges, &bill.Charge{
 			Key:    bill.ChargeKeyStampDuty,
+			Reason: causaleBollo,
 			Amount: amount,
 		})
 	}
+}
+
+// goblBillInvoiceAddFundContributions adds fund contribution data from the FatturaPA document to the GOBL invoice
+func goblBillInvoiceAddFundContributions(inv *bill.Invoice, fcs []*FundContribution) error {
+	if inv == nil || len(fcs) == 0 {
+		return nil
+	}
+
+	// Initialize charges if needed
+	if inv.Charges == nil {
+		inv.Charges = make([]*bill.Charge, 0)
+	}
+
+	for _, fc := range fcs {
+		if fc == nil {
+			continue
+		}
+		charge, err := goblFundContributionCharge(fc)
+		if err != nil {
+			return fmt.Errorf("parsing fund contribution: %w", err)
+		}
+		inv.Charges = append(inv.Charges, charge)
+	}
+	return nil
+}
+
+func goblFundContributionCharge(fc *FundContribution) (*bill.Charge, error) {
+	charge := &bill.Charge{
+		Key:    sdi.KeyFundContribution,
+		Reason: fundContributionReason(fc.Type),
+	}
+
+	if fc.Type != "" {
+		charge.Ext = tax.Extensions{
+			sdi.ExtKeyFundType: cbc.Code(fc.Type),
+		}
+	}
+
+	if fc.Rate != "" {
+		p, err := num.PercentageFromString(strings.TrimSpace(fc.Rate) + "%")
+		if err != nil {
+			return nil, fmt.Errorf("parsing fund rate %q: %w", fc.Rate, err)
+		}
+		charge.Percent = &p
+	}
+
+	if fc.Amount != "" {
+		a, err := parseAmount(fc.Amount)
+		if err != nil {
+			return nil, fmt.Errorf("parsing fund amount %q: %w", fc.Amount, err)
+		}
+		charge.Amount = a
+	}
+
+	if fc.TaxBase != "" {
+		b, err := parseAmount(fc.TaxBase)
+		if err != nil {
+			return nil, fmt.Errorf("parsing fund tax base %q: %w", fc.TaxBase, err)
+		}
+		charge.Base = &b
+	} else if charge.Percent != nil && !charge.Percent.Base().IsZero() && !charge.Amount.IsZero() {
+		// ImponibileCassa is optional in FatturaPA. When absent, we derive the
+		// base from amount and rate so GOBL can verify the math. The supplier
+		// chooses their own base (a subset of lines, a custom amount, or even
+		// a base that includes other contributions), so we can't assume it
+		// equals the sum of invoice lines.
+		b := charge.Amount.Divide(charge.Percent.Base())
+		charge.Base = &b
+	}
+
+	if fc.AdminRef != "" {
+		charge.Code = cbc.Code(fc.AdminRef)
+	}
+
+	vatCombo, err := goblVATCombo(fc.TaxRate, fc.TaxNature)
+	if err != nil {
+		return nil, err
+	}
+	if vatCombo != nil {
+		charge.Taxes = append(charge.Taxes, vatCombo)
+	}
+
+	return charge, nil
+}
+
+// goblVATCombo builds a VAT tax combo from a FatturaPA tax rate and nature (exemption) code.
+// Returns nil, nil if both are empty.
+func goblVATCombo(taxRate, taxNature string) (*tax.Combo, error) {
+	if taxRate == "" && taxNature == "" {
+		return nil, nil
+	}
+
+	combo := &tax.Combo{
+		Category: tax.CategoryVAT,
+	}
+
+	if taxNature != "" {
+		combo.Ext = tax.Extensions{
+			sdi.ExtKeyExempt: cbc.Code(taxNature),
+		}
+	} else {
+		rate, err := num.PercentageFromString(taxRate + "%")
+		if err != nil {
+			return nil, fmt.Errorf("parsing VAT rate %q: %w", taxRate, err)
+		}
+		combo.Percent = &rate
+	}
+
+	return combo, nil
+}
+
+// fundContributionReason builds a human-readable reason for a fund contribution
+// charge by looking up the fund type description from the SDI addon definitions.
+func fundContributionReason(fundType string) string {
+	base := causaleCassaPrevidenziale
+	if fundType == "" {
+		return base
+	}
+
+	ad := tax.AddonForKey(sdi.V1)
+	if ad == nil {
+		return base
+	}
+
+	fundTypeDef := cbc.GetKeyDefinition(sdi.ExtKeyFundType, ad.Extensions)
+	if fundTypeDef == nil {
+		return base
+	}
+
+	codeDef := fundTypeDef.CodeDef(cbc.Code(fundType))
+	if codeDef == nil {
+		return base
+	}
+
+	return fmt.Sprintf("%s - %s", base, codeDef.Name.In(i18n.IT))
 }
 
 // goblBillInvoiceAddPriceAdjustments adds price adjustments (discounts and charges) from the FatturaPA document to the GOBL invoice

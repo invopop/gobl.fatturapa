@@ -14,13 +14,13 @@ import (
 )
 
 // goblBillInvoiceAddGoodsServices adds goods and services from the FatturaPA document to the GOBL invoice
-func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServices, retainedTaxes []*RetainedTax) error {
+func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServices, retainedTaxes []*RetainedTax, fundContributions []*FundContribution) error {
 	if inv == nil || goodsServices == nil {
 		return nil
 	}
 
 	// Add line details, passing the retained taxes and tax summaries
-	if err := goblBillInvoiceAddLineDetails(inv, goodsServices.LineDetails, retainedTaxes, goodsServices.TaxSummary); err != nil {
+	if err := goblBillInvoiceAddLineDetails(inv, goodsServices.LineDetails, retainedTaxes, fundContributions, goodsServices.TaxSummary); err != nil {
 		return fmt.Errorf("adding line details: %w", err)
 	}
 
@@ -28,7 +28,7 @@ func goblBillInvoiceAddGoodsServices(inv *bill.Invoice, goodsServices *GoodsServ
 }
 
 // goblBillInvoiceAddLineDetails adds line details from the FatturaPA document to the GOBL invoice
-func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail, retainedTaxes []*RetainedTax, taxSummaries []*TaxSummary) error {
+func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail, retainedTaxes []*RetainedTax, fundContributions []*FundContribution, taxSummaries []*TaxSummary) error {
 	if inv == nil || len(lineDetails) == 0 {
 		return nil
 	}
@@ -94,25 +94,12 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 		goblBillLineAddPriceAdjustments(line, detail.PriceAdjustments)
 
 		// Add tax information
-		if detail.TaxRate != "" || detail.TaxNature != "" {
-			// Create tax
-			taxCombo := &tax.Combo{
-				Category: tax.CategoryVAT,
-				Ext:      tax.Extensions{},
-			}
-
-			// Add tax rate if it's not zero
-			taxRate, _ := num.PercentageFromString(detail.TaxRate + "%")
-			taxCombo.Percent = &taxRate
-
-			// Add exempt extension if nature is provided
-			if detail.TaxNature != "" {
-				taxCombo.Ext[sdi.ExtKeyExempt] = cbc.Code(detail.TaxNature)
-				taxCombo.Percent = nil // Clear percent if exempt
-			}
-
-			// Add tax to line
-			line.Taxes = append(line.Taxes, taxCombo)
+		vatCombo, err := goblVATCombo(detail.TaxRate, detail.TaxNature)
+		if err != nil {
+			return fmt.Errorf("parsing line %s tax: %w", detail.LineNumber, err)
+		}
+		if vatCombo != nil {
+			line.Taxes = append(line.Taxes, vatCombo)
 		}
 
 		// Add line to invoice
@@ -120,7 +107,7 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 	}
 
 	// Process retained taxes
-	if err := processRetainedTaxes(inv, lineDetails, retainedTaxes); err != nil {
+	if err := processRetainedTaxes(inv, lineDetails, retainedTaxes, fundContributions); err != nil {
 		return fmt.Errorf("processing retained taxes: %w", err)
 	}
 

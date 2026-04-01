@@ -150,6 +150,7 @@
 		{
 			"i": 1,
 			"key": "stamp-duty",
+			"reason": "Bollo",
 			"amount": "12.34"
 		},
 		{
