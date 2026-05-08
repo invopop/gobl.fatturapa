@@ -1,0 +1,184 @@
+{
+	"$regime": "IT",
+	"$addons": [
+		"it-sdi-v1"
+	],
+	"uuid": "00000000-0000-0000-0000-000000000000",
+	"type": "standard",
+	"code": "42",
+	"issue_date": "2026-04-24",
+	"currency": "EUR",
+	"tax": {
+		"ext": {
+			"it-sdi-document-type": "TD01",
+			"it-sdi-format": "FPR12"
+		}
+	},
+	"supplier": {
+		"name": "PAOLO PIETRO CAPPELLARI",
+		"tax_id": {
+			"country": "IT",
+			"code": "04358650960"
+		},
+		"identities": [
+			{
+				"key": "it-fiscal-code",
+				"code": "CPPPPT66D17F205Z"
+			}
+		],
+		"people": [
+			{
+				"name": {
+					"given": "PAOLO PIETRO",
+					"surname": "CAPPELLARI"
+				}
+			}
+		],
+		"addresses": [
+			{
+				"num": "116/1",
+				"street": "VIA NOVARA",
+				"locality": "MILANO",
+				"region": "MI",
+				"code": "20153",
+				"country": "IT"
+			}
+		],
+		"ext": {
+			"it-sdi-fiscal-regime": "RF01"
+		}
+	},
+	"customer": {
+		"name": "MR. ADVENTURES S.R.L.",
+		"tax_id": {
+			"country": "IT",
+			"code": "11537360965"
+		},
+		"identities": [
+			{
+				"key": "it-fiscal-code",
+				"code": "11537360965"
+			}
+		],
+		"inboxes": [
+			{
+				"key": "it-sdi-code",
+				"code": "ABCDEF1"
+			}
+		],
+		"addresses": [
+			{
+				"street": "VIA PISANI VITTOR 19",
+				"locality": "MILANO",
+				"region": "MI",
+				"code": "20124",
+				"country": "IT"
+			}
+		]
+	},
+	"lines": [
+		{
+			"i": 1,
+			"quantity": "1.00",
+			"item": {
+				"name": "Safety training course",
+				"price": "1100.00"
+			},
+			"sum": "1100.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "standard",
+					"percent": "22.00%"
+				},
+				{
+					"cat": "IRPEF",
+					"percent": "20.00%",
+					"ext": {
+						"it-sdi-retained": "A"
+					}
+				}
+			],
+			"total": "1100.00"
+		}
+	],
+	"charges": [
+		{
+			"i": 1,
+			"key": "fund-contribution",
+			"reason": "Contributo cassa previdenziale - Cassa nazionale di previdenza e assistenza per gli ingegneri e gli architetti liberi professionisti",
+			"base": "1100.00",
+			"percent": "4.00%",
+			"amount": "44.00",
+			"taxes": [
+				{
+					"cat": "VAT",
+					"key": "standard",
+					"percent": "22.00%"
+				}
+			],
+			"ext": {
+				"it-sdi-fund-type": "TC04"
+			}
+		}
+	],
+	"payment": {
+		"terms": {
+			"key": "pending"
+		},
+		"instructions": {
+			"key": "credit-transfer",
+			"credit_transfer": [
+				{
+					"iban": "IT15C0358901600010570241743"
+				}
+			],
+			"ext": {
+				"it-sdi-payment-means": "MP05"
+			}
+		}
+	},
+	"totals": {
+		"sum": "1100.00",
+		"charge": "44.00",
+		"total": "1144.00",
+		"taxes": {
+			"categories": [
+				{
+					"code": "VAT",
+					"rates": [
+						{
+							"key": "standard",
+							"base": "1144.00",
+							"percent": "22.00%",
+							"amount": "251.68"
+						}
+					],
+					"amount": "251.68"
+				},
+				{
+					"code": "IRPEF",
+					"retained": true,
+					"rates": [
+						{
+							"ext": {
+								"it-sdi-retained": "A"
+							},
+							"base": "1100.00",
+							"percent": "20.00%",
+							"amount": "220.00"
+						}
+					],
+					"amount": "220.00"
+				}
+			],
+			"sum": "251.68",
+			"retained": "220.00"
+		},
+		"tax": "251.68",
+		"total_with_tax": "1395.68",
+		"retained_tax": "220.00",
+		"rounding": "220.00",
+		"payable": "1395.68"
+	}
+}
