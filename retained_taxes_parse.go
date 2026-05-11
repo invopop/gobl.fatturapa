@@ -23,6 +23,12 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 	// in the original XML. We match by fund type code against the invoice charges.
 	retainedCharges := retainedFundContributionCharges(inv.Charges, fundContributions)
 
+	// Determine which lines are candidates for retained tax matching.
+	// When lines are explicitly flagged with Ritenuta=SI, use only those.
+	// When no lines are flagged, all lines are candidates — the flag is
+	// optional in the FatturaPA spec and some invoicing software omits it.
+	candidates := candidateLinesForRetention(inv.Lines, lineDetails)
+
 	// Process each retained tax
 	for _, rt := range retainedTaxes {
 		// Parse the retained tax rate and amount
@@ -51,16 +57,13 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 
 		// Try to match against a single line first (common case)
 		matched := false
-		for i, detail := range lineDetails {
-			if detail.Retained == flagSI {
-				line := inv.Lines[i]
-				expectedAmount := rtRate.Of(*line.Total)
+		for _, line := range candidates {
+			expectedAmount := rtRate.Of(*line.Total)
 
-				if expectedAmount.Equals(rtAmount) {
-					line.Taxes = append(line.Taxes, taxCombo)
-					matched = true
-					break
-				}
+			if expectedAmount.Equals(rtAmount) {
+				line.Taxes = append(line.Taxes, taxCombo)
+				matched = true
+				break
 			}
 		}
 
@@ -68,14 +71,10 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 			continue
 		}
 
-		// Try matching against the sum of all retained-flagged lines + fund contribution charges
+		// Try matching against the sum of all candidate lines + fund contribution charges
 		totalBase := num.MakeAmount(0, 2)
-		var retainedLines []*bill.Line
-		for i, detail := range lineDetails {
-			if detail.Retained == flagSI {
-				totalBase = totalBase.Add(*inv.Lines[i].Total)
-				retainedLines = append(retainedLines, inv.Lines[i])
-			}
+		for _, line := range candidates {
+			totalBase = totalBase.Add(*line.Total)
 		}
 		for _, charge := range retainedCharges {
 			totalBase = totalBase.Add(charge.Amount)
@@ -83,8 +82,7 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 
 		expectedTotal := rtRate.Of(totalBase)
 		if expectedTotal.Equals(rtAmount) {
-			// Apply retained tax to all matching lines and charges
-			for _, line := range retainedLines {
+			for _, line := range candidates {
 				tc := *taxCombo
 				tc.Ext = copyExtensions(taxCombo.Ext)
 				line.Taxes = append(line.Taxes, &tc)
@@ -103,6 +101,23 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 	}
 
 	return nil
+}
+
+// candidateLinesForRetention returns the lines that should be considered
+// when matching retained taxes. If any line has Ritenuta=SI, only those
+// lines are candidates. Otherwise all lines are candidates — the flag
+// is optional in the FatturaPA spec and some invoicing software omits it.
+func candidateLinesForRetention(lines []*bill.Line, lineDetails []*LineDetail) []*bill.Line {
+	var flagged []*bill.Line
+	for i, detail := range lineDetails {
+		if i < len(lines) && detail.Retained == flagSI {
+			flagged = append(flagged, lines[i])
+		}
+	}
+	if len(flagged) > 0 {
+		return flagged
+	}
+	return lines
 }
 
 // retainedFundContributionCharges returns the subset of invoice charges that
