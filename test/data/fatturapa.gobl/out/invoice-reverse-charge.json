@@ -15,7 +15,14 @@
 		"ext": {
 			"it-sdi-document-type": "TD01",
 			"it-sdi-format": "FPR12"
-		}
+		},
+		"notes": [
+			{
+				"cat": "VAT",
+				"key": "reverse-charge",
+				"text": "Reverse Charge / Inversione del soggetto passivo"
+			}
+		]
 	},
 	"supplier": {
 		"name": "Tech Solutions S.r.l.",
@@ -137,12 +144,5 @@
 		"tax": "0.00",
 		"total_with_tax": "2300.00",
 		"payable": "2300.00"
-	},
-	"notes": [
-		{
-			"key": "legal",
-			"src": "reverse-charge",
-			"text": "Reverse Charge / Inversione del soggetto passivo"
-		}
-	]
+	}
 }
