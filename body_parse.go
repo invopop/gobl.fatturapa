@@ -224,10 +224,7 @@ func goblBillInvoiceAddDocumentType(inv *bill.Invoice, documentType string) {
 	if inv.Tax == nil {
 		inv.Tax = new(bill.Tax)
 	}
-	if inv.Tax.Ext == nil {
-		inv.Tax.Ext = tax.Extensions{}
-	}
-	inv.Tax.Ext[sdi.ExtKeyDocumentType] = cbc.Code(documentType)
+	inv.Tax.Ext = inv.Tax.Ext.Set(sdi.ExtKeyDocumentType, cbc.Code(documentType))
 
 	// Set invoice type based on document type
 	switch documentType {
@@ -309,9 +306,7 @@ func goblFundContributionCharge(fc *FundContribution) (*bill.Charge, error) {
 	}
 
 	if fc.Type != "" {
-		charge.Ext = tax.Extensions{
-			sdi.ExtKeyFundType: cbc.Code(fc.Type),
-		}
+		charge.Ext = charge.Ext.Set(sdi.ExtKeyFundType, cbc.Code(fc.Type))
 	}
 
 	if fc.Rate != "" {
@@ -373,9 +368,7 @@ func goblVATCombo(taxRate, taxNature string) (*tax.Combo, error) {
 	}
 
 	if taxNature != "" {
-		combo.Ext = tax.Extensions{
-			sdi.ExtKeyExempt: cbc.Code(taxNature),
-		}
+		combo.Ext = combo.Ext.Set(sdi.ExtKeyExempt, cbc.Code(taxNature))
 	} else {
 		rate, err := num.PercentageFromString(taxRate + "%")
 		if err != nil {

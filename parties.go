@@ -103,7 +103,7 @@ func newSupplier(s *org.Party) *Supplier {
 		Contact:      newContact(s),
 	}
 
-	if v, ok := s.Ext[sdi.ExtKeyFiscalRegime]; ok {
+	if v := s.Ext.Get(sdi.ExtKeyFiscalRegime); v != "" {
 		ns.Identity.FiscalRegime = v.String()
 	} else {
 		ns.Identity.FiscalRegime = "RF01"

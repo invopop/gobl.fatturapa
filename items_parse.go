@@ -180,10 +180,7 @@ func goblBillLinesAddTaxSummary(lines []*bill.Line, lineDetails []*LineDetail, t
 
 			if (rateMatches || natureMatches) && summary.TaxLiability != "" {
 				// Add the tax liability to the VAT tax extensions
-				if vatTax.Ext == nil {
-					vatTax.Ext = tax.Extensions{}
-				}
-				vatTax.Ext[sdi.ExtKeyVATLiability] = cbc.Code(summary.TaxLiability)
+				vatTax.Ext = vatTax.Ext.Set(sdi.ExtKeyVATLiability, cbc.Code(summary.TaxLiability))
 				break
 			}
 		}

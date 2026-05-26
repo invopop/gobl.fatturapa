@@ -106,7 +106,7 @@ func TestBodyInConversion(t *testing.T) {
 		// Check tax extensions for transmission format
 		require.NotNil(t, invoice.Tax)
 		require.NotNil(t, invoice.Tax.Ext)
-		assert.Equal(t, cbc.Code("FPA12"), invoice.Tax.Ext[sdi.ExtKeyFormat])
+		assert.Equal(t, cbc.Code("FPA12"), invoice.Tax.Ext.Get(sdi.ExtKeyFormat))
 	})
 
 	t.Run("should convert invoice with stamp duty correctly", func(t *testing.T) {
@@ -126,9 +126,9 @@ func TestBodyInConversion(t *testing.T) {
 
 		// Check stamp duty
 		require.NotNil(t, invoice.Tax)
-		require.NotNil(t, invoice.Tax.Ext)
+		require.False(t, invoice.Tax.Ext.IsZero())
 
-		if stampDuty, ok := invoice.Tax.Ext["it-sdi-stamp-duty"]; ok {
+		if stampDuty := invoice.Tax.Ext.Get("it-sdi-stamp-duty"); stampDuty != "" {
 			assert.Equal(t, cbc.Code("SI"), stampDuty)
 		}
 	})

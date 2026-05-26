@@ -103,7 +103,7 @@ func goblBillPaymentAddAdvancePayment(payment *bill.PaymentDetails, paymentDetai
 	}
 
 	// Create advance payment
-	advance := &pay.Advance{
+	advance := &pay.Record{
 		Amount:      amount,
 		Description: "Advance payment",
 	}
@@ -193,14 +193,11 @@ func goblBillPaymentAddPaymentInstructions(payment *bill.PaymentDetails, payment
 
 // setPaymentMethodAndKey sets the payment method extension and key based on the method code
 func setPaymentMethodAndKey(methodCode string, ext *tax.Extensions, key *cbc.Key) {
-	if *ext == nil {
-		*ext = tax.Extensions{}
-	}
-	(*ext)[sdi.ExtKeyPaymentMeans] = cbc.Code(methodCode)
+	*ext = ext.Set(sdi.ExtKeyPaymentMeans, cbc.Code(methodCode))
 
 	// Find the key for the payment method code
 	keyMap := sdi.PaymentMeansExtensions()
-	for k, v := range keyMap {
+	for k, v := range keyMap.All() {
 		if v == cbc.Code(methodCode) {
 			if k == pay.MeansKeyOnline {
 				// Double mapping for MP08 causes errors when parsing values

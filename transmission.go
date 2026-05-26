@@ -51,8 +51,7 @@ func newTransmissionData(inv *bill.Invoice, env *gobl.Envelope, transmitter *Tra
 
 func formatoTransmissione(inv *bill.Invoice) string {
 	if inv.Tax != nil && inv.Tax.Ext.Has(sdi.ExtKeyFormat) {
-		return inv.Tax.Ext[sdi.ExtKeyFormat].String()
-
+		return inv.Tax.Ext.Get(sdi.ExtKeyFormat).String()
 	}
 	// Default is always FPR12 for regular non-government invoices
 	return formatoTrasmissioneFPR12

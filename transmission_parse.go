@@ -13,11 +13,7 @@ func goblBillInvoiceAddTransmission(inv *bill.Invoice, dt *TransmissionData) {
 		inv.Tax = &bill.Tax{}
 	}
 
-	if inv.Tax.Ext == nil {
-		inv.Tax.Ext = tax.Extensions{}
-	}
-
-	inv.Tax.Ext[sdi.ExtKeyFormat] = cbc.Code(dt.TransmissionFormat)
+	inv.Tax.Ext = inv.Tax.Ext.Set(sdi.ExtKeyFormat, cbc.Code(dt.TransmissionFormat))
 
 	if dt.TransmissionFormat == "FPA12" {
 		inv.Tags.SetTags(tax.TagB2G)

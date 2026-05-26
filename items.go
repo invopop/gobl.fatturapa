@@ -112,7 +112,7 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 
 		// Check for retained taxes
 		for _, t := range line.Taxes {
-			if t.Ext != nil && t.Ext.Has(sdi.ExtKeyRetained) {
+			if t.Ext.Has(sdi.ExtKeyRetained) {
 				d.Retained = flagSI
 				break
 			}
@@ -125,11 +125,11 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 }
 
 func exemptExtensionCode(ext tax.Extensions) string {
-	if ext.Has(sdi.ExtKeyExempt) {
-		return ext[sdi.ExtKeyExempt].String()
+	if v := ext.Get(sdi.ExtKeyExempt); v != "" {
+		return v.String()
 	}
-	if ext.Has("it-sdi-nature") { // old key
-		return ext["it-sdi-nature"].String()
+	if v := ext.Get("it-sdi-nature"); v != "" { // old key
+		return v.String()
 	}
 	return ""
 }
@@ -147,10 +147,7 @@ func generateTaxSummary(inv *bill.Invoice) []*TaxSummary {
 
 	for _, rateTotal := range vatRateTotals {
 		// Get tax liability from extensions if present
-		var taxLiability string
-		if rateTotal.Ext != nil && rateTotal.Ext.Has(sdi.ExtKeyVATLiability) {
-			taxLiability = rateTotal.Ext[sdi.ExtKeyVATLiability].String()
-		}
+		taxLiability := rateTotal.Ext.Get(sdi.ExtKeyVATLiability).String()
 
 		dr = append(dr, &TaxSummary{
 			TaxRate:        formatPercentageWithZero(rateTotal.Percent),
