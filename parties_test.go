@@ -8,6 +8,7 @@ import (
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
 	"github.com/invopop/gobl/regimes/it"
+	"github.com/invopop/gobl/tax"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -39,7 +40,7 @@ func TestPartiesSupplier(t *testing.T) {
 	t.Run("should set the supplier fiscal regime", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		inv := env.Extract().(*bill.Invoice)
-		inv.Supplier.Ext = nil
+		inv.Supplier.Ext = tax.Extensions{}
 		doc, err := test.ConvertFromGOBL(env)
 		require.NoError(t, err)
 

@@ -37,7 +37,7 @@ func TestRetainedTaxesInConversion(t *testing.T) {
 		// Find the fund contributions by type
 		var retainedCharge, nonRetainedCharge, zeroRateCharge *bill.Charge
 		for _, ch := range invoice.Charges {
-			switch ch.Ext[sdi.ExtKeyFundType] {
+			switch ch.Ext.Get(sdi.ExtKeyFundType) {
 			case "TC22":
 				retainedCharge = ch
 			case "TC04":
@@ -56,7 +56,7 @@ func TestRetainedTaxesInConversion(t *testing.T) {
 			if tx.Category == it.TaxCategoryIRPEF {
 				hasIRPEF = true
 				assert.True(t, tx.Percent.Compare(num.MakePercentage(200, 3)) == 0, "rate should be 20%")
-				assert.Equal(t, cbc.Code("A"), tx.Ext[sdi.ExtKeyRetained])
+				assert.Equal(t, cbc.Code("A"), tx.Ext.Get(sdi.ExtKeyRetained))
 			}
 		}
 		assert.True(t, hasIRPEF, "retained fund contribution should have IRPEF tax")
@@ -117,14 +117,14 @@ func TestRetainedTaxesInConversion(t *testing.T) {
 		require.NotNil(t, rate1.Percent)
 		assert.True(t, rate1.Percent.Compare(num.MakePercentage(200, 3)) == 0, "Rate should be 20.0%")
 		assert.True(t, rate1.Amount.Compare(num.MakeAmount(32400, 2)) == 0, "Amount should be 324.00")
-		assert.Equal(t, cbc.Code("A"), rate1.Ext[sdi.ExtKeyRetained])
+		assert.Equal(t, cbc.Code("A"), rate1.Ext.Get(sdi.ExtKeyRetained))
 
 		// Check second rate (50% IRPEF)
 		rate2 := retainedCategory.Rates[1]
 		require.NotNil(t, rate2.Percent)
 		assert.True(t, rate2.Percent.Compare(num.MakePercentage(500, 3)) == 0, "Rate should be 50.0%")
 		assert.True(t, rate2.Amount.Compare(num.MakeAmount(5000, 2)) == 0, "Amount should be 50.00")
-		assert.Equal(t, cbc.Code("I"), rate2.Ext[sdi.ExtKeyRetained])
+		assert.Equal(t, cbc.Code("I"), rate2.Ext.Get(sdi.ExtKeyRetained))
 	})
 
 	t.Run("should not have retained taxes when not present", func(t *testing.T) {

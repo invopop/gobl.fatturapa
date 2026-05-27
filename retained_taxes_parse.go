@@ -50,9 +50,7 @@ func processRetainedTaxes(inv *bill.Invoice, lineDetails []*LineDetail, retained
 			Percent:  &rtRate,
 		}
 		if rt.Reason != "" {
-			taxCombo.Ext = tax.Extensions{
-				sdi.ExtKeyRetained: cbc.Code(rt.Reason),
-			}
+			taxCombo.Ext = taxCombo.Ext.Set(sdi.ExtKeyRetained, cbc.Code(rt.Reason))
 		}
 
 		// Try to match against a single line first (common case)
@@ -136,7 +134,7 @@ func retainedFundContributionCharges(charges []*bill.Charge, fcs []*FundContribu
 		if !charge.Key.Has(sdi.KeyFundContribution) {
 			continue
 		}
-		ft := charge.Ext[sdi.ExtKeyFundType]
+		ft := charge.Ext.Get(sdi.ExtKeyFundType)
 		if count, ok := retainedTypes[ft]; ok && count > 0 {
 			out = append(out, charge)
 			retainedTypes[ft]--
@@ -145,16 +143,9 @@ func retainedFundContributionCharges(charges []*bill.Charge, fcs []*FundContribu
 	return out
 }
 
-// copyExtensions creates a shallow copy of tax extensions
+// copyExtensions returns a shallow copy of tax extensions.
 func copyExtensions(ext tax.Extensions) tax.Extensions {
-	if ext == nil {
-		return nil
-	}
-	cp := make(tax.Extensions, len(ext))
-	for k, v := range ext {
-		cp[k] = v
-	}
-	return cp
+	return ext.Clone()
 }
 
 // convertRetainedTaxType converts a TipoRitenuta code to a tax category code

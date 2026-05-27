@@ -228,8 +228,8 @@ func findCodeDocumentType(inv *bill.Invoice) (string, error) {
 		return "", fmt.Errorf("missing tax")
 	}
 
-	val, ok := inv.Tax.Ext[sdi.ExtKeyDocumentType]
-	if !ok || val == "" {
+	val := inv.Tax.Ext.Get(sdi.ExtKeyDocumentType)
+	if val == "" {
 		return "", fmt.Errorf("missing %s", sdi.ExtKeyDocumentType)
 	}
 
@@ -261,7 +261,7 @@ func newFundContributions(charges []*bill.Charge) []*FundContribution {
 
 func newFundContribution(charge *bill.Charge) *FundContribution {
 	fc := &FundContribution{
-		Type:   charge.Ext[sdi.ExtKeyFundType].String(),
+		Type:   charge.Ext.Get(sdi.ExtKeyFundType).String(),
 		Rate:   formatPercentage(charge.Percent),
 		Amount: formatAmount2(&charge.Amount),
 	}
@@ -278,7 +278,7 @@ func newFundContribution(charge *bill.Charge) *FundContribution {
 		if t.Category == tax.CategoryVAT {
 			fc.TaxRate = formatPercentageWithZero(t.Percent)
 			fc.TaxNature = exemptExtensionCode(t.Ext)
-		} else if t.Ext != nil && t.Ext.Has(sdi.ExtKeyRetained) {
+		} else if t.Ext.Has(sdi.ExtKeyRetained) {
 			fc.Retained = flagSI
 		}
 	}

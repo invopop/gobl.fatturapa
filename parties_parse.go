@@ -74,10 +74,7 @@ func goblOrgPartyAddIdentity(party *org.Party, identity *Identity) {
 	}
 
 	if identity.FiscalRegime != "" {
-		if party.Ext == nil {
-			party.Ext = tax.Extensions{}
-		}
-		party.Ext[sdi.ExtKeyFiscalRegime] = cbc.Code(identity.FiscalRegime)
+		party.Ext = party.Ext.Set(sdi.ExtKeyFiscalRegime, cbc.Code(identity.FiscalRegime))
 	}
 
 	if identity.Profile == nil {

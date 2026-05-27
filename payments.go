@@ -70,7 +70,7 @@ func prepareAdvancePaymentDetails(inv *bill.Invoice) []*PaymentDetailRow {
 
 	for _, advance := range payment.Advances {
 		row := &PaymentDetailRow{
-			Method: advance.Ext[sdi.ExtKeyPaymentMeans].String(),
+			Method: advance.Ext.Get(sdi.ExtKeyPaymentMeans).String(),
 			Amount: formatAmount2(&advance.Amount),
 		}
 
@@ -92,7 +92,7 @@ func preparePaymentDetails(inv *bill.Invoice) []*PaymentDetailRow {
 	payment := inv.Payment
 
 	br := PaymentDetailRow{
-		Method: payment.Instructions.Ext[sdi.ExtKeyPaymentMeans].String(),
+		Method: payment.Instructions.Ext.Get(sdi.ExtKeyPaymentMeans).String(),
 	}
 	if len(payment.Instructions.CreditTransfer) > 0 {
 		ct1 := payment.Instructions.CreditTransfer[0]

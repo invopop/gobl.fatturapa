@@ -4,7 +4,7 @@
 		"uuid": "679a2f25-7483-11ec-9722-7ea2cb436ff6",
 		"dig": {
 			"alg": "sha256",
-			"val": "256b8fdbb909680c3649f955efea6ce714a949fe96f9b74afc565d97586d00cd"
+			"val": "a8b2051874fc8f1fa221bc5d1db0ffc9d094f3c5e81a88bd665dd93bae93896e"
 		}
 	},
 	"doc": {
@@ -26,7 +26,14 @@
 			"ext": {
 				"it-sdi-document-type": "TD01",
 				"it-sdi-format": "FPR12"
-			}
+			},
+			"notes": [
+				{
+					"cat": "VAT",
+					"key": "reverse-charge",
+					"text": "Reverse Charge / Inversione del soggetto passivo"
+				}
+			]
 		},
 		"supplier": {
 			"name": "Tech Solutions S.r.l.",

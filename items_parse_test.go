@@ -63,7 +63,7 @@ func TestItemsInConversion(t *testing.T) {
 		// Check for tax exemption on the second line
 		require.NotEmpty(t, line2.Taxes)
 		assert.Equal(t, tax.CategoryVAT, line2.Taxes[0].Category)
-		assert.Equal(t, cbc.Code("N2.2"), line2.Taxes[0].Ext[sdi.ExtKeyExempt])
+		assert.Equal(t, cbc.Code("N2.2"), line2.Taxes[0].Ext.Get(sdi.ExtKeyExempt))
 	})
 
 	t.Run("should default quantity to 1 when unit price is zero", func(t *testing.T) {
@@ -194,14 +194,14 @@ func TestItemsInConversion(t *testing.T) {
 		require.NotNil(t, rate1.Percent)
 		assert.True(t, rate1.Percent.Compare(num.MakePercentage(200, 3)) == 0, "Rate should be 20.0%")
 		assert.True(t, rate1.Amount.Compare(num.MakeAmount(32400, 2)) == 0, "Amount should be 324.00")
-		assert.Equal(t, cbc.Code("A"), rate1.Ext[sdi.ExtKeyRetained])
+		assert.Equal(t, cbc.Code("A"), rate1.Ext.Get(sdi.ExtKeyRetained))
 
 		// Check second rate (50% IRPEF)
 		rate2 := retainedCategory.Rates[1]
 		require.NotNil(t, rate2.Percent)
 		assert.True(t, rate2.Percent.Compare(num.MakePercentage(500, 3)) == 0, "Rate should be 50.0%")
 		assert.True(t, rate2.Amount.Compare(num.MakeAmount(5000, 2)) == 0, "Amount should be 50.00")
-		assert.Equal(t, cbc.Code("I"), rate2.Ext[sdi.ExtKeyRetained])
+		assert.Equal(t, cbc.Code("I"), rate2.Ext.Get(sdi.ExtKeyRetained))
 	})
 }
 

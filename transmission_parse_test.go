@@ -33,8 +33,8 @@ func TestTransmissionInConversion(t *testing.T) {
 
 		// Check tax extensions for transmission format
 		require.NotNil(t, invoice.Tax)
-		require.NotNil(t, invoice.Tax.Ext)
-		assert.Equal(t, cbc.Code("FPR12"), invoice.Tax.Ext[sdi.ExtKeyFormat])
+		require.False(t, invoice.Tax.Ext.IsZero())
+		assert.Equal(t, cbc.Code("FPR12"), invoice.Tax.Ext.Get(sdi.ExtKeyFormat))
 
 		// Check customer inboxes for recipient code
 		require.NotNil(t, invoice.Customer)
@@ -70,8 +70,8 @@ func TestTransmissionInConversion(t *testing.T) {
 
 		// Check tax extensions for transmission format
 		require.NotNil(t, invoice.Tax)
-		require.NotNil(t, invoice.Tax.Ext)
-		assert.Equal(t, cbc.Code("FPR12"), invoice.Tax.Ext[sdi.ExtKeyFormat])
+		require.False(t, invoice.Tax.Ext.IsZero())
+		assert.Equal(t, cbc.Code("FPR12"), invoice.Tax.Ext.Get(sdi.ExtKeyFormat))
 
 		// Check customer inboxes for PEC
 		require.NotNil(t, invoice.Customer)
@@ -107,8 +107,8 @@ func TestTransmissionInConversion(t *testing.T) {
 
 		// Check tax extensions for transmission format
 		require.NotNil(t, invoice.Tax)
-		require.NotNil(t, invoice.Tax.Ext)
-		assert.Equal(t, cbc.Code("FPA12"), invoice.Tax.Ext[sdi.ExtKeyFormat])
+		require.False(t, invoice.Tax.Ext.IsZero())
+		assert.Equal(t, cbc.Code("FPA12"), invoice.Tax.Ext.Get(sdi.ExtKeyFormat))
 
 		// Check that the invoice is tagged as B2G
 		assert.True(t, invoice.Tags.HasTags(tax.TagB2G), "Invoice should be tagged as B2G")

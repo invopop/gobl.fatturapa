@@ -65,11 +65,11 @@ func newRetainedTax(cat cbc.Code, rateTotal *tax.RateTotal) (*RetainedTax, error
 }
 
 func retainedExtensionCode(ext tax.Extensions) string {
-	if ext.Has(sdi.ExtKeyRetained) {
-		return ext[sdi.ExtKeyRetained].String()
+	if v := ext.Get(sdi.ExtKeyRetained); v != "" {
+		return v.String()
 	}
-	if ext.Has("it-sdi-retained-tax") { // old key
-		return ext["it-sdi-retained-tax"].String()
+	if v := ext.Get("it-sdi-retained-tax"); v != "" { // old key
+		return v.String()
 	}
 	return ""
 }
