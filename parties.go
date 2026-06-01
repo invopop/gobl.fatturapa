@@ -93,14 +93,20 @@ type Contact struct {
 func newSupplier(s *org.Party) *Supplier {
 	ns := &Supplier{
 		Identity: &Identity{
-			TaxID: &TaxID{
-				Country: s.TaxID.Country.String(),
-				Code:    s.TaxID.Code.String(),
-			},
 			Profile: newProfile(s),
 		},
 		Registration: newRegistration(s),
 		Contact:      newContact(s),
+	}
+
+	// Apply the same foreign-party defaulting as the customer so that foreign
+	// suppliers (e.g. on a self-billed invoice received from abroad) get a valid
+	// default ID when they have no VAT number, instead of an empty/invalid one.
+	if s.TaxID != nil {
+		ns.Identity.TaxID = partyTaxID(s.TaxID)
+	}
+	if id := org.IdentityForKey(s.Identities, it.IdentityKeyFiscalCode); id != nil {
+		ns.Identity.FiscalCode = id.Code.String()
 	}
 
 	if v := s.Ext.Get(sdi.ExtKeyFiscalRegime); v != "" {
@@ -131,7 +137,7 @@ func newCustomer(c *org.Party) *Customer {
 	}
 
 	if c.TaxID != nil {
-		da.TaxID = customerTaxID(c.TaxID)
+		da.TaxID = partyTaxID(c.TaxID)
 	}
 	if id := org.IdentityForKey(c.Identities, it.IdentityKeyFiscalCode); id != nil {
 		da.FiscalCode = id.Code.String()
@@ -175,7 +181,12 @@ func newContact(party *org.Party) *Contact {
 	return c
 }
 
-func customerTaxID(id *tax.Identity) *TaxID {
+// partyTaxID builds the FatturaPA tax ID for a party (supplier or customer),
+// applying the SDI defaults for foreign parties: a non-IT party with no VAT
+// number is treated as a private individual (0000000), and a non-EU party with
+// a VAT number uses the generic non-EU placeholder (OO99999999999). An IT party
+// with no code returns nil so the CodiceFiscale can be used instead.
+func partyTaxID(id *tax.Identity) *TaxID {
 	code := id.Code.String()
 
 	if code == "" {

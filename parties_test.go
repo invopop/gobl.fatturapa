@@ -48,6 +48,84 @@ func TestPartiesSupplier(t *testing.T) {
 
 		assert.Equal(t, "RF01", s.Identity.FiscalRegime)
 	})
+
+	t.Run("should keep supplier info for EU company with Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Supplier.TaxID.Code = "81237984062783472"
+			inv.Supplier.TaxID.Country = l10n.AT.Tax()
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		s := doc.Header.Supplier
+
+		assert.Equal(t, "AT", s.Identity.TaxID.Country)
+		assert.Equal(t, "81237984062783472", s.Identity.TaxID.Code)
+	})
+
+	t.Run("should default supplier info for EU individual with no Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Supplier.TaxID.Code = ""
+			inv.Supplier.TaxID.Country = l10n.SE.Tax()
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		s := doc.Header.Supplier
+
+		assert.Equal(t, "SE", s.Identity.TaxID.Country)
+		assert.Equal(t, "0000000", s.Identity.TaxID.Code)
+	})
+
+	t.Run("should replace supplier ID info for non-EU company with Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Supplier.TaxID.Code = "09823876432"
+			inv.Supplier.TaxID.Country = l10n.GB.Tax()
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		s := doc.Header.Supplier
+
+		assert.Equal(t, "GB", s.Identity.TaxID.Country)
+		assert.Equal(t, "OO99999999999", s.Identity.TaxID.Code)
+	})
+
+	t.Run("should default supplier info for non-EU individual with no Tax ID given", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Supplier.TaxID.Code = ""
+			inv.Supplier.TaxID.Country = l10n.JP.Tax()
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		s := doc.Header.Supplier
+
+		assert.Equal(t, "JP", s.Identity.TaxID.Country)
+		assert.Equal(t, "0000000", s.Identity.TaxID.Code)
+	})
+
+	t.Run("should not fail if supplier has no Tax ID", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Supplier.TaxID = nil
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		s := doc.Header.Supplier
+
+		assert.Nil(t, s.Identity.TaxID)
+	})
 }
 
 func TestPartiesCustomer(t *testing.T) {
