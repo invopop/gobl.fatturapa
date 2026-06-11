@@ -3,7 +3,7 @@ module github.com/invopop/gobl.fatturapa
 go 1.24.4
 
 require (
-	github.com/invopop/gobl v0.403.0
+	github.com/invopop/gobl v0.500.1-0.20260616160210-f726a6023a16
 	github.com/invopop/xmlctx v0.13.0
 	github.com/invopop/xmldsig v0.10.0
 	github.com/lestrrat-go/libxml2 v0.0.0-20240905100032-c934e3fcb9d3
@@ -27,7 +27,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/invopop/jsonschema v0.14.0 // indirect
 	github.com/invopop/yaml v0.3.1 // indirect
-	github.com/kr/pretty v0.3.1 // indirect
+	github.com/kr/text v0.2.0 // indirect
 	github.com/magefile/mage v1.15.0 // indirect
 	github.com/pb33f/ordered-map/v2 v2.3.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect

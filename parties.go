@@ -81,6 +81,9 @@ type Registration struct {
 	Entry string `xml:"NumeroREA,omitempty"`
 	// Company's share capital
 	Capital string `xml:"CapitaleSociale,omitempty"`
+	// Indication of whether the company has a sole shareholder.
+	// Possible values: SU (sole shareholder), SM (multiple shareholders).
+	SoleShareholder string `xml:"SocioUnico,omitempty"`
 	// Indication of whether the Company is in liquidation or not.
 	// Possible values: LS (in liquidation), LN (not in liquidation)
 	LiquidationState string `xml:"StatoLiquidazione,omitempty"`
@@ -228,10 +231,16 @@ func newRegistration(supplier *org.Party) *Registration {
 		capitalFormatted = capital.Rescale(2).String()
 	}
 
+	liquidationState := supplier.Registration.Ext.Get(sdi.ExtKeyLiquidationState).String()
+	if liquidationState == "" {
+		liquidationState = statoLiquidazioneDefault
+	}
+
 	return &Registration{
 		Office:           supplier.Registration.Office,
 		Entry:            supplier.Registration.Entry,
 		Capital:          capitalFormatted,
-		LiquidationState: statoLiquidazioneDefault,
+		SoleShareholder:  supplier.Registration.Ext.Get(sdi.ExtKeyShareholderState).String(),
+		LiquidationState: liquidationState,
 	}
 }
