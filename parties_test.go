@@ -48,6 +48,42 @@ func TestPartiesSupplier(t *testing.T) {
 
 		assert.Equal(t, "RF01", s.Identity.FiscalRegime)
 	})
+
+	t.Run("should emit IscrizioneREA liquidation state and sole shareholder", func(t *testing.T) {
+		cases := []struct {
+			name            string
+			liquidation     string
+			soleShareholder string
+		}{
+			{"not in liquidation, multiple shareholders", "LN", "SM"},
+			{"not in liquidation, sole shareholder", "LN", "SU"},
+			{"in liquidation, multiple shareholders", "LS", "SM"},
+			{"in liquidation, sole shareholder", "LS", "SU"},
+		}
+		for _, c := range cases {
+			t.Run(c.name, func(t *testing.T) {
+				env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+				test.ModifyInvoice(env, func(inv *bill.Invoice) {
+					inv.Supplier.Registration.LiquidationState = c.liquidation
+					inv.Supplier.Registration.SoleShareholder = c.soleShareholder
+				})
+				doc, err := test.ConvertFromGOBL(env)
+				require.NoError(t, err)
+
+				s := doc.Header.Supplier
+				assert.Equal(t, c.liquidation, s.Registration.LiquidationState)
+				assert.Equal(t, c.soleShareholder, s.Registration.SoleShareholder)
+			})
+		}
+	})
+
+	t.Run("should omit SocioUnico when sole shareholder unset", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		assert.Empty(t, doc.Header.Supplier.Registration.SoleShareholder)
+	})
 }
 
 func TestPartiesCustomer(t *testing.T) {
