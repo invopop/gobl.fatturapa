@@ -113,18 +113,24 @@ func TestPartiesSupplier(t *testing.T) {
 		assert.Equal(t, "0000000", s.Identity.TaxID.Code)
 	})
 
-	t.Run("should not fail if supplier has no Tax ID", func(t *testing.T) {
+	t.Run("should return an error if supplier has no Tax ID", func(t *testing.T) {
 		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
 		test.ModifyInvoice(env, func(inv *bill.Invoice) {
 			inv.Supplier.TaxID = nil
 		})
 
-		doc, err := test.ConvertFromGOBL(env)
-		require.NoError(t, err)
+		_, err := test.ConvertFromGOBL(env)
+		require.ErrorContains(t, err, "supplier tax ID is required")
+	})
 
-		s := doc.Header.Supplier
+	t.Run("should return an error for IT supplier with no Tax ID code", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Supplier.TaxID.Code = ""
+		})
 
-		assert.Nil(t, s.Identity.TaxID)
+		_, err := test.ConvertFromGOBL(env)
+		require.ErrorContains(t, err, "supplier tax ID is required")
 	})
 }
 

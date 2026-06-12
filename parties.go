@@ -1,6 +1,8 @@
 package fatturapa
 
 import (
+	"errors"
+
 	"github.com/invopop/gobl/addons/it/sdi"
 	"github.com/invopop/gobl/l10n"
 	"github.com/invopop/gobl/org"
@@ -90,7 +92,7 @@ type Contact struct {
 	Email     string `xml:"Email,omitempty"`
 }
 
-func newSupplier(s *org.Party) *Supplier {
+func newSupplier(s *org.Party) (*Supplier, error) {
 	ns := &Supplier{
 		Identity: &Identity{
 			Profile: newProfile(s),
@@ -99,11 +101,14 @@ func newSupplier(s *org.Party) *Supplier {
 		Contact:      newContact(s),
 	}
 
-	// Apply the same foreign-party defaulting as the customer so that foreign
-	// suppliers (e.g. on a self-billed invoice received from abroad) get a valid
-	// default ID when they have no VAT number, instead of an empty/invalid one.
 	if s.TaxID != nil {
 		ns.Identity.TaxID = partyTaxID(s.TaxID)
+	}
+	// Unlike the customer's, the supplier's IdFiscaleIVA is mandatory in the
+	// FatturaPA schema, so fail early instead of generating XML that SDI
+	// would reject.
+	if ns.Identity.TaxID == nil {
+		return nil, errors.New("supplier tax ID is required")
 	}
 	if id := org.IdentityForKey(s.Identities, it.IdentityKeyFiscalCode); id != nil {
 		ns.Identity.FiscalCode = id.Code.String()
@@ -119,7 +124,7 @@ func newSupplier(s *org.Party) *Supplier {
 		ns.Address = newAddress(s.Addresses[0])
 	}
 
-	return ns
+	return ns, nil
 }
 
 func newCustomer(c *org.Party) *Customer {
@@ -185,7 +190,8 @@ func newContact(party *org.Party) *Contact {
 // applying the SDI defaults for foreign parties: a non-IT party with no VAT
 // number is treated as a private individual (0000000), and a non-EU party with
 // a VAT number uses the generic non-EU placeholder (OO99999999999). An IT party
-// with no code returns nil so the CodiceFiscale can be used instead.
+// with no code returns nil: an IT customer may identify itself with the
+// CodiceFiscale instead, while an IT supplier must always provide a VAT number.
 func partyTaxID(id *tax.Identity) *TaxID {
 	code := id.Code.String()
 
