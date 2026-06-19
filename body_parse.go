@@ -183,17 +183,6 @@ func goblBillInvoiceAddGeneralDocumentData(inv *bill.Invoice, doc *GeneralDocume
 		inv.Totals.Payable = payable
 	}
 
-	// Add totals rounding
-	if doc.Rounding != "" {
-		rounding, err := parseAmount(doc.Rounding)
-		if err != nil {
-			return fmt.Errorf("adding rounding: %w", err)
-		}
-		if inv.Totals == nil {
-			inv.Totals = new(bill.Totals)
-		}
-		inv.Totals.Rounding = &rounding
-	}
 	// Add stamp duty
 	goblBillInvoiceAddStampDuty(inv, doc.StampDuty)
 
