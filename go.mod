@@ -1,16 +1,16 @@
 module github.com/invopop/gobl.fatturapa
 
-go 1.24.4
+go 1.25.0
 
 require (
-	github.com/invopop/gobl v0.500.1-0.20260616160210-f726a6023a16
+	github.com/invopop/gobl v0.501.0
 	github.com/invopop/xmlctx v0.13.0
 	github.com/invopop/xmldsig v0.10.0
 	github.com/lestrrat-go/libxml2 v0.0.0-20240905100032-c934e3fcb9d3
 	github.com/spf13/cobra v1.9.1
 	github.com/stretchr/testify v1.11.1
 	gitlab.com/flimzy/testy v0.15.0
-	golang.org/x/text v0.34.0
+	golang.org/x/text v0.38.0
 )
 
 require (
