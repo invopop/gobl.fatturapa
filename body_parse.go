@@ -417,7 +417,8 @@ func goblBillInvoiceAddPriceAdjustments(inv *bill.Invoice, adjustments []*PriceA
 			percentPtr = &percent
 		}
 
-		if adj.Type == scontoMaggiorazioneTypeDiscount {
+		switch adj.Type {
+		case scontoMaggiorazioneTypeDiscount:
 			if inv.Discounts == nil {
 				inv.Discounts = make([]*bill.Discount, 0)
 			}
@@ -425,7 +426,7 @@ func goblBillInvoiceAddPriceAdjustments(inv *bill.Invoice, adjustments []*PriceA
 				Amount:  amount,
 				Percent: percentPtr,
 			})
-		} else if adj.Type == scontoMaggiorazioneTypeCharge {
+		case scontoMaggiorazioneTypeCharge:
 			if inv.Charges == nil {
 				inv.Charges = make([]*bill.Charge, 0)
 			}
