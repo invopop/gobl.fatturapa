@@ -4,12 +4,12 @@ Convert GOBL documents to and from Italy's FatturaPA format.
 
 Copyright [Invopop Ltd.](https://invopop.com) 2023. Released publicly under the [Apache License Version 2.0](LICENSE). For commercial licenses please contact the [dev team at invopop](mailto:dev@invopop.com). In order to accept contributions to this library we will require transferring copyrights to Invopop Ltd.
 
-[![Lint](https://github.com/invopop/gobl.fatturapa/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl.fatturapa/actions/workflows/lint.yaml)
-[![Test Go](https://github.com/invopop/gobl.fatturapa/actions/workflows/test.yaml/badge.svg)](https://github.com/invopop/gobl.fatturapa/actions/workflows/test.yaml)
-[![Go Report Card](https://goreportcard.com/badge/github.com/invopop/gobl.fatturapa)](https://goreportcard.com/report/github.com/invopop/gobl.fatturapa)
-[![GoDoc](https://godoc.org/github.com/invopop/gobl.fatturapa?status.svg)](https://godoc.org/github.com/invopop/gobl.fatturapa)
-![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl.fatturapa)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/invopop/gobl.fatturapa)
+[![Lint](https://github.com/invopop/gobl.it.sdi/actions/workflows/lint.yaml/badge.svg)](https://github.com/invopop/gobl.it.sdi/actions/workflows/lint.yaml)
+[![Test Go](https://github.com/invopop/gobl.it.sdi/actions/workflows/test.yaml/badge.svg)](https://github.com/invopop/gobl.it.sdi/actions/workflows/test.yaml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/invopop/gobl.it.sdi)](https://goreportcard.com/report/github.com/invopop/gobl.it.sdi)
+[![GoDoc](https://godoc.org/github.com/invopop/gobl.it.sdi?status.svg)](https://godoc.org/github.com/invopop/gobl.it.sdi)
+![Latest Tag](https://img.shields.io/github/v/tag/invopop/gobl.it.sdi)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/invopop/gobl.it.sdi)
 
 ## Introduction
 
@@ -169,10 +169,10 @@ Note that when converting from FatturaPA to GOBL:
 
 ### CLI
 
-The command line interface can be useful for situations when you're using a language other than Golang in your application. Download one of the [pre-compiled `gobl.fatturapa` releases](https://github.com/invopop/gobl.fatturapa/releases) or install with:
+The command line interface can be useful for situations when you're using a language other than Golang in your application. Download one of the [pre-compiled `gobl.fatturapa` releases](https://github.com/invopop/gobl.it.sdi/releases) or install with:
 
 ```bash
-go install github.com/invopop/gobl.fatturapa/cmd/gobl.fatturapa
+go install github.com/invopop/gobl.it.sdi/cmd/gobl.fatturapa
 ```
 
 #### Converting GOBL to FatturaPA
