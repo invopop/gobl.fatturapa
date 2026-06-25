@@ -3,7 +3,7 @@ package fatturapa
 import (
 	"strconv"
 
-	sdi "github.com/invopop/gobl.fatturapa/addon"
+	sdi "github.com/invopop/gobl.it.sdi/addon"
 	"github.com/invopop/gobl/bill"
 	"github.com/invopop/gobl/i18n"
 	"github.com/invopop/gobl/tax"
