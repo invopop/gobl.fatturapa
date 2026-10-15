@@ -288,6 +288,9 @@ func billInvoiceRules() *rules.Set {
 		rules.Assert("63", "ordering issuer must not be the customer: remove it and set the issuer type to CC",
 			is.Func("ordering issuer is not the customer", invoiceIssuerIsNotCustomer),
 		),
+		rules.Assert("65", "supplier and customer must be the same party for document types TD21 and TD27",
+			is.Func("supplier is the customer", invoiceSupplierIsCustomer),
+		),
 	)
 }
 
@@ -465,6 +468,28 @@ func invoiceIssuerIsNotCustomer(val any) bool {
 		}
 	}
 	return true
+}
+
+// selfIssuedDocumentTypes are the document types a supplier issues to itself.
+var selfIssuedDocumentTypes = []cbc.Code{"TD21", "TD27"}
+
+// invoiceSupplierIsCustomer applies SDI check 00472, which requires the same
+// party on both sides of a TD21 or TD27.
+func invoiceSupplierIsCustomer(val any) bool {
+	inv, ok := val.(*bill.Invoice)
+	if !ok || inv == nil || inv.Tax == nil || !inv.Tax.Ext.Get(ExtKeyDocumentType).In(selfIssuedDocumentTypes...) {
+		return true
+	}
+	if inv.Supplier == nil || inv.Customer == nil {
+		return true
+	}
+	supplierIDs := partyFiscalIDs(inv.Supplier)
+	for _, id := range partyFiscalIDs(inv.Customer) {
+		if slices.Contains(supplierIDs, id) {
+			return true
+		}
+	}
+	return false
 }
 
 func invoiceHasDeferredTag(val any) bool {
