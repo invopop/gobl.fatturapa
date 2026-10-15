@@ -1380,6 +1380,53 @@ const (
 	seriesName = "SAMPLE"
 )
 
+func TestSelfIssuedInvoiceParties(t *testing.T) {
+	const sameParty = "supplier and customer must be the same party for document types TD21 and TD27"
+
+	t.Run("TD27 issued to the supplier itself", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		inv.Customer.TaxID = &tax.Identity{Country: "IT", Code: inv.Supplier.TaxID.Code}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "TD27", inv.Tax.Ext.Get(sdi.ExtKeyDocumentType).String())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("TD21 issued to the supplier itself", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled, sdi.TagCeilingExceeded)
+		inv.Customer.TaxID = &tax.Identity{Country: "IT", Code: inv.Supplier.TaxID.Code}
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "TD21", inv.Tax.Ext.Get(sdi.ExtKeyDocumentType).String())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	// A company's codice fiscale is its partita IVA.
+	t.Run("TD27 customer identified by the supplier's VAT number as fiscal code", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		inv.Customer.TaxID = &tax.Identity{Country: "IT"}
+		inv.Customer.Identities = []*org.Identity{{Key: it.IdentityKeyFiscalCode, Code: inv.Supplier.TaxID.Code}}
+		require.NoError(t, inv.Calculate())
+		assert.NoError(t, rules.Validate(inv))
+	})
+
+	t.Run("self-billed with a different customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		inv.SetTags(tax.TagSelfBilled)
+		require.NoError(t, inv.Calculate())
+		assert.Equal(t, "TD27", inv.Tax.Ext.Get(sdi.ExtKeyDocumentType).String())
+		assert.ErrorContains(t, rules.Validate(inv), sameParty)
+	})
+
+	t.Run("explicit TD21 with a different customer", func(t *testing.T) {
+		inv := testInvoiceStandard(t)
+		require.NoError(t, inv.Calculate())
+		inv.Tax.Ext = inv.Tax.Ext.Set(sdi.ExtKeyDocumentType, "TD21")
+		assert.ErrorContains(t, rules.Validate(inv), sameParty)
+	})
+}
+
 func TestDocumentNumberLength(t *testing.T) {
 	t.Run("numbers of 20 characters", func(t *testing.T) {
 		inv := testInvoiceStandard(t)
