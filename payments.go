@@ -5,6 +5,8 @@ import (
 
 	sdi "github.com/invopop/gobl.it.sdi/addon"
 	"github.com/invopop/gobl/bill"
+	"github.com/invopop/gobl/num"
+	"github.com/invopop/gobl/tax"
 )
 
 // PaymentData contains all data related to the payment of the document.
@@ -109,37 +111,91 @@ func preparePaymentDetails(inv *bill.Invoice) ([]*PaymentDetailRow, error) {
 	// First check if there are multiple due dates, and if so, create a
 	// DettaglioPagamento for each one.
 	if terms := payment.Terms; terms != nil {
+		amounts := dueDateAmounts(inv)
 		for i, dueDate := range terms.DueDates {
 			// ImportoPagamento is mandatory, so there is nothing to emit without it.
-			if dueDate.Amount == nil {
+			if amounts[i] == nil {
 				return nil, fmt.Errorf("due date %d has no amount", i)
 			}
 			r := br // copy
 			r.DueDate = dueDate.Date.String()
-			r.Amount = formatAmount2(dueDate.Amount)
+			r.Amount = formatAmount2(amounts[i])
 			dp = append(dp, &r)
 		}
 	}
 
 	// If there are no due dates, then a single DettaglioPagamento is created
-	// with the total payable amount.
+	// with everything the supplier is owed.
 	if len(dp) == 0 {
-		br.Amount = formatAmount2(&inv.Totals.Payable)
+		due := amountDue(inv)
+		br.Amount = formatAmount2(&due)
 		dp = append(dp, &br)
 	}
 
 	return dp, nil
 }
 
+// dueDateAmounts returns the amount to print for each due date. GOBL works
+// out percentage due dates over the payable total, which under split payment
+// still includes the VAT the customer pays to the tax authority, so those are
+// recalculated over what the supplier is actually owed, each rounded on its
+// own as GOBL rounds them. Explicit amounts are the issuer's call and left
+// untouched.
+func dueDateAmounts(inv *bill.Invoice) []*num.Amount {
+	dds := inv.Payment.Terms.DueDates
+	amounts := make([]*num.Amount, len(dds))
+	split := splitPaymentVAT(inv)
+	net := amountDue(inv)
+	for i, dd := range dds {
+		if split.IsZero() || dd.Percent == nil {
+			amounts[i] = dd.Amount
+			continue
+		}
+		a := dd.Percent.Of(net).Rescale(net.Exp())
+		amounts[i] = &a
+	}
+	return amounts
+}
+
+// amountDue is what the customer still owes the supplier: the payable total
+// less any advances already paid, and less any VAT the customer pays directly
+// to the tax authority under split payment.
+func amountDue(inv *bill.Invoice) num.Amount {
+	due := inv.Totals.Payable
+	if inv.Totals.Due != nil {
+		due = *inv.Totals.Due
+	}
+	return due.Subtract(splitPaymentVAT(inv))
+}
+
+// splitPaymentVAT adds up the VAT marked with split payment liability.
+func splitPaymentVAT(inv *bill.Invoice) num.Amount {
+	sum := num.MakeAmount(0, inv.Totals.Payable.Exp())
+	cat := inv.Totals.Taxes.Category(tax.CategoryVAT)
+	if cat == nil {
+		return sum
+	}
+	for _, rt := range cat.Rates {
+		if rt.Ext.Get(sdi.ExtKeyVATLiability) == sdi.ExtCodeVATLiabilitySplitPayment {
+			sum = sum.Add(rt.Amount)
+		}
+	}
+	return sum
+}
+
 // checkInstallments checks if the payment method should be by installments
 func checkInstallments(inv *bill.Invoice) bool {
-	if inv.Payment != nil && inv.Payment.Terms != nil &&
-		// check that if there is more than one due date, then the method should be by installments
-		(len(inv.Payment.Terms.DueDates) > 1 ||
-			// check that if there is only one due date but the ammount is less than the total payable, then the method should be by installments
-			(len(inv.Payment.Terms.DueDates) == 1 && inv.Payment.Terms.DueDates[0].Amount != nil &&
-				inv.Payment.Terms.DueDates[0].Amount.Compare(inv.Totals.Payable) == -1)) {
+	if inv.Payment == nil || inv.Payment.Terms == nil {
+		return false
+	}
+	dds := inv.Payment.Terms.DueDates
+	// More than one due date is always paid by installments.
+	if len(dds) > 1 {
 		return true
+	}
+	// A single due date for less than what is owed is a partial payment.
+	if len(dds) == 1 && dds[0].Amount != nil {
+		return dueDateAmounts(inv)[0].Compare(amountDue(inv)) == -1
 	}
 	return false
 }

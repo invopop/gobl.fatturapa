@@ -36,6 +36,11 @@ const (
 	ExtCodeIssuerTypeThirdParty cbc.Code = "TZ" // Terzo
 )
 
+// ExtCodeVATLiabilitySplitPayment marks VAT that the customer pays directly
+// to the tax authority (scissione dei pagamenti, art. 17-ter DPR 633/72)
+// instead of to the supplier.
+const ExtCodeVATLiabilitySplitPayment cbc.Code = "S"
+
 var extensions = []*cbc.Definition{
 	{
 		Key: ExtKeyFormat,
@@ -944,7 +949,7 @@ var extensions = []*cbc.Definition{
 				},
 			},
 			{
-				Code: "S",
+				Code: ExtCodeVATLiabilitySplitPayment,
 				Name: i18n.String{
 					i18n.EN: "Split Payment",
 					i18n.IT: "Scissione dei pagamenti",
