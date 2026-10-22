@@ -317,3 +317,25 @@ func TestNegativeQuantityConversion(t *testing.T) {
 		assert.Equal(t, "9.0000", dl.PriceAdjustments[0].Amount)
 	})
 }
+
+func TestDettaglioLineeRiferimentoAmministrazione(t *testing.T) {
+	t.Run("should map the line cost reference", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-b2g.json", test.PathGOBLFatturaPA)
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		lines := doc.Body[0].GoodsServices.LineDetails
+		assert.Empty(t, lines[0].AdminRef)
+		assert.Equal(t, "CAP-2024-0135", lines[1].AdminRef)
+	})
+
+	t.Run("should omit it when the line has no cost", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+
+		for _, dl := range doc.Body[0].GoodsServices.LineDetails {
+			assert.Empty(t, dl.AdminRef)
+		}
+	})
+}

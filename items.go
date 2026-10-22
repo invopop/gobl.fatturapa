@@ -37,6 +37,7 @@ type LineDetail struct {
 	TaxRate          string             `xml:"AliquotaIVA"`
 	Retained         string             `xml:"Ritenuta,omitempty"`
 	TaxNature        string             `xml:"Natura,omitempty"`
+	AdminRef         string             `xml:"RiferimentoAmministrazione,omitempty"`
 	OtherData        []*OtherData       `xml:"AltriDatiGestionali,omitempty"`
 }
 
@@ -89,6 +90,7 @@ func generateLineDetails(inv *bill.Invoice) []*LineDetail {
 			UnitPrice:        formatAmount8(&lp),
 			TotalPrice:       formatAmount8(line.Total),
 			PriceAdjustments: extractLinePriceAdjustments(line),
+			AdminRef:         line.Cost.String(),
 		}
 
 		if line.Period != nil {

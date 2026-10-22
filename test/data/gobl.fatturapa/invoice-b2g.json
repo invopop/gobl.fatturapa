@@ -4,7 +4,7 @@
 		"uuid": "019270f1-b0d8-7299-85ca-0a595a9ee9c7",
 		"dig": {
 			"alg": "sha256",
-			"val": "c29da4ff016a7e3ac83c0e89c94807f5a1e7fdd99801761e9b1219984413d73d"
+			"val": "6c495671ddf0d48ef093d74ed6770c6628be5e9405ce65de3c27e29ee49bf4f4"
 		}
 	},
 	"doc": {
@@ -99,6 +99,7 @@
 			{
 				"i": 2,
 				"quantity": "2",
+				"cost": "CAP-2024-0135",
 				"item": {
 					"name": "Camera Matrimoniale",
 					"price": "125.00"

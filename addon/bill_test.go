@@ -859,6 +859,24 @@ func TestInvoiceLineValidation(t *testing.T) {
 		err := rules.Validate(inv)
 		require.ErrorContains(t, err, "item name must use Latin-1 characters")
 	})
+
+	t.Run("cost reference length", func(t *testing.T) {
+		const tooLong = "line cost reference must be 20 ASCII characters or fewer"
+
+		inv := testInvoiceStandard(t)
+		inv.Lines[0].Cost = codeOf20
+		require.NoError(t, inv.Calculate())
+		require.NoError(t, rules.Validate(inv))
+
+		inv.Lines[0].Cost = codeOf21
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, rules.Validate(inv), tooLong)
+
+		// RiferimentoAmministrazione takes Basic Latin characters only
+		inv.Lines[0].Cost = "CAPITOLO-È"
+		require.NoError(t, inv.Calculate())
+		require.ErrorContains(t, rules.Validate(inv), tooLong)
+	})
 }
 
 func TestOrderingValidation(t *testing.T) {

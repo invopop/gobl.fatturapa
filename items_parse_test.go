@@ -298,3 +298,39 @@ func TestItemsPeriodParse(t *testing.T) {
 		assert.Equal(t, "2024-01-31", inv.Lines[0].Period.End.String())
 	})
 }
+
+func TestRiferimentoAmministrazioneInConversion(t *testing.T) {
+	t.Run("should map RiferimentoAmministrazione to the line cost", func(t *testing.T) {
+		data, err := os.ReadFile(filepath.Join(test.GetDataPath(test.PathFatturaPAGOBL), "invoice-b2g.xml"))
+		require.NoError(t, err)
+
+		env, err := test.ConvertToGOBL(data)
+		require.NoError(t, err)
+		invoice, ok := env.Extract().(*bill.Invoice)
+		require.True(t, ok)
+
+		require.Len(t, invoice.Lines, 2)
+		assert.Empty(t, invoice.Lines[0].Cost)
+		assert.Equal(t, cbc.Code("CAP-2024-0135"), invoice.Lines[1].Cost)
+	})
+
+	t.Run("should round-trip the line cost", func(t *testing.T) {
+		env := test.LoadTestFile("invoice-simple.json", test.PathGOBLFatturaPA)
+		test.ModifyInvoice(env, func(inv *bill.Invoice) {
+			inv.Lines[0].Cost = "CONTO-4010"
+		})
+
+		doc, err := test.ConvertFromGOBL(env)
+		require.NoError(t, err)
+		data, err := xml.MarshalIndent(doc, "", "\t")
+		require.NoError(t, err)
+
+		out, err := test.ConvertToGOBL(data)
+		require.NoError(t, err)
+		invoice, ok := out.Extract().(*bill.Invoice)
+		require.True(t, ok)
+
+		assert.Equal(t, cbc.Code("CONTO-4010"), invoice.Lines[0].Cost)
+		assert.Empty(t, invoice.Lines[1].Cost)
+	})
+}

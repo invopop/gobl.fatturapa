@@ -111,6 +111,11 @@ func goblBillInvoiceAddLineDetails(inv *bill.Invoice, lineDetails []*LineDetail,
 			}
 		}
 
+		// Add cost reference from RiferimentoAmministrazione
+		if ref := strings.TrimSpace(detail.AdminRef); ref != "" {
+			line.Cost = cbc.Code(ref)
+		}
+
 		// Add price adjustments
 		goblBillLineAddPriceAdjustments(line, detail.PriceAdjustments)
 
