@@ -82,6 +82,7 @@
 		{
 			"i": 2,
 			"quantity": "2.00",
+			"cost": "CAP-2024-0135",
 			"item": {
 				"name": "Camera Matrimoniale",
 				"price": "125.00"

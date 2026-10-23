@@ -194,6 +194,11 @@ func billInvoiceRules() *rules.Set {
 						),
 					),
 				),
+				rules.Field("cost",
+					rules.Assert("71", "line cost reference must be 20 ASCII characters or fewer",
+						is.MatchesRegexp(string20),
+					),
+				),
 			),
 		),
 		// Ordering despatch validation
