@@ -90,7 +90,7 @@
 					}
 				],
 				"price": "101.750000",
-				"unit": "PZ"
+				"unit": "piece"
 			},
 			"sum": "101.750000",
 			"taxes": [
@@ -116,8 +116,8 @@
 						"text": "Id: 2345 - QtÃ : 1"
 					}
 				],
-				"description": "(Unit: pz)",
-				"price": "36.890000"
+				"price": "36.890000",
+				"unit": "piece"
 			},
 			"sum": "36.890000",
 			"taxes": [
